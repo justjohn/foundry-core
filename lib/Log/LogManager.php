@@ -12,38 +12,38 @@ class LogManager {
     const INFO = "INFO";
     const ERROR = "ERROR";
 
-    private $database;
-    private $auth_manager;
+    private static $database;
+    private static $auth_manager;
 
     function __construct($database, $auth_manager) {
-        $this->database = $database;
-        $this->auth_manager = $auth_manager;
+        self::$database = $database;
+        self::$auth_manager = $auth_manager;
     }
 
-    public function error($action, $message) {
-        $this->log(self::ERROR, $action, $message);
+    public static function error($action, $message) {
+        self::log(self::ERROR, $action, $message);
     }
-    public function warn($action, $message) {
-        $this->log(self::WARN, $action, $message);
+    public static function warn($action, $message) {
+        self::log(self::WARN, $action, $message);
     }
-    public function info($action, $message) {
-        $this->log(self::INFO, $action, $message);
+    public static function info($action, $message) {
+        self::log(self::INFO, $action, $message);
     }
-    public function debug($action, $message) {
-        $this->log(self::DEBUG, $action, $message);
+    public static function debug($action, $message) {
+        self::log(self::DEBUG, $action, $message);
     }
 
-    public function log($level, $action, $message) {
+    public static function log($level, $action, $message) {
         // write to log
         $timestamp = time();
-        $user = $this->auth_manager->getUsername();
+        $user = self::$auth_manager->getUsername();
         $log_entry = new LogEntry();
         $log_entry->setLevel($level);
         $log_entry->setAction($action);
         $log_entry->setMessage($message);
         $log_entry->setUser($user);
         $log_entry->setTimestamp($timestamp);
-        $this->database->write_object($log_entry, "log");
+        self::$database->write_object($log_entry, "log");
         //print("<div>$level: $action / $user<br />$message</div>");
     }
 
@@ -60,7 +60,7 @@ class LogManager {
         if ($limit_number > 0) {
                 $limits = array($limit_start, $limit_number);
         }
-        return $this->database->load_objects("LogEntry", "log", 'id', $filter, array("timestamp"=>"DESC"), $limits);
+        return self::$database->load_objects("LogEntry", "log", 'id', $filter, array("timestamp"=>"DESC"), $limits);
     }
 
     /**
@@ -70,7 +70,7 @@ class LogManager {
      * @return array
      */
     public function getLogLength($filter = '') {
-        return $this->database->count_objects("log", $filter);
+        return self::$database->count_objects("log", $filter);
     }
 }
 ?>

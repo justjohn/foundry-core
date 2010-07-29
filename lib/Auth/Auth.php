@@ -99,9 +99,9 @@ class Auth {
                          $salt) {
 
         // Load the authentication cache.
-        if (isset($_SESSION["auth_cache"])) {
+        /* if (isset($_SESSION["auth_cache"])) {
             $this->auth_cache = $_SESSION["auth_cache"];
-        }
+        } */
 
         // include auth class
         include_once("Auth/Service/$auth_service.php");
@@ -121,7 +121,7 @@ class Auth {
      * Save the authentication cache.
      */
     public function __destruct() {
-        $_SESSION["auth_cache"] = $this->auth_cache;
+        // $_SESSION["auth_cache"] = $this->auth_cache;
     }
 
     /**
@@ -183,6 +183,7 @@ class Auth {
      */
     public function deleteUser($username) {
         $GLOBALS["log"]->info("Auth::deleteUser", "deleteUser('$username')");
+        if (empty($username)) return false;
         $result = $this->auth_service->deleteUser($username);
         if ($result) $this->getUsers();
         unset($this->auth_cache["user_groups"][$user]);
@@ -203,7 +204,6 @@ class Auth {
         if (isset($this->auth_cache["user"][$username]))
                 return $this->auth_cache["user"][$username];
 
-
         $user = $this->auth_service->getUser($username);
         $this->auth_cache["user"][$username] = $user;
         return $user;
@@ -215,6 +215,7 @@ class Auth {
      * @return boolean
      */
     public function userExists($username) {
+        if (empty($username)) return false;
         if (isset($this->auth_cache["user"][$username])) {
             return true;
         }
