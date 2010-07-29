@@ -14,7 +14,7 @@ class Database {
         // include auth class
         include_once("Database/Service/$db_service.php");
         if (!class_exists($db_service)) {
-            $GLOBALS["log"]->error("Database::__construct", "Unable to load database class '$db_service'.");
+            LogManager::error("Database::__construct", "Unable to load database class '$db_service'.");
             throw new ServiceLoadException("Unable to load database class '$db_service'.");
         }
         $this->database = new $db_service($db_config);

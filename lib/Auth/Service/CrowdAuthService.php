@@ -1,16 +1,21 @@
 <?php
 /**
- * Crowd Authentication Service Implementation
+ * Atlassian Crowd Authentication Service Implementation
  *
  * This file contains the logic required to authenticate against an Atlassian
- * Crowd endpoint.
+ * Crowd SOAP endpoint.
  *
  * This module contains code based on the Services_Atlassian_Crowd PEAR package
  * written by Luca Corbo (http://pear.php.net/packages/Services_Atlassian_Crowd)
+ * licensed under the http://www.apache.org/licenses/LICENSE-2.0 Apache License
  *
  * @package Auth
  * @author John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
+ * @copyright 2010 John Roepke, 2008 Infinite Campus Inc., 2008 Luca Corbo
+ * @link      http://pear.php.net/packages/Services_Atlassian_Crowd
+ * @link      http://www.atlassian.com/software/crowd
+ * @link      http://confluence.atlassian.com/display/CROWD/SOAP+API
+ * @link      http://confluence.atlassian.com/display/CROWDEXT/Integrate+Crowd+with+PHP
  */
 
 /**
@@ -19,12 +24,52 @@
  * @package   Auth
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010 John Roepke
+ * @link      http://pear.php.net/packages/Services_Atlassian_Crowd
+ * @link      http://www.atlassian.com/software/crowd
+ * @link      http://confluence.atlassian.com/display/CROWD/SOAP+API
+ * @link      http://confluence.atlassian.com/display/CROWDEXT/Integrate+Crowd+with+PHP
  */
 class CrowdAuthService implements AuthService {
-    private $app_token;
-    private $crowd;
+
+    /**
+     * The Crowd SOAP client
+     *
+     * @var object
+     */
+    protected $crowd_client;
+
+    /**
+     * Array contains the configuration parameters
+     *
+     * @var array
+     */
+    protected $crowd_config;
+
+    /**
+     * The Crowd application token
+     *
+     * @var string
+     */
+    protected $crowd_app_token;
+
     private $auth_token;
     private $sso_user;
+
+    /**
+     * The required configuration options to instantiate a CrowdAuthService.
+     *
+     * Required options are:
+     *
+     * - string  app_name:  The username which the application will use when it
+     *                      authenticates against the Crowd framework as a client.
+     *
+     * - string  app_credential: The password which the application will use when it
+     *                           authenticates against the Crowd framework
+     *                           as a client.
+     *
+     * - string  service_url: The SOAP WSDL URL for Crowd
+     *
+     */
     public static $required_options = array("app_name",
                                             "app_credential",
                                             "service_url");
@@ -38,12 +83,28 @@ class CrowdAuthService implements AuthService {
     public function __construct($options) {
         Service::validate($options, self::$required_options);
         try {
-            $this->crowd = new Services_Atlassian_Crowd($options);
-            $this->app_token = $this->crowd->authenticateApplication();
+            $access_exception = "Unable to connect to the Crowd SOAP endpoint. ".
+                                "Check configuration and ensure Crowd is running and accessable.";
+            $this->crowd_config = $options;
 
-        } catch (CrowdServiceException $exception) {
+            // Create the Crowd SOAP client
+            $this->crowd_client = new SoapClient($options['service_url']);
+            $credential = array('credential' => $options['app_credential']);
+
+            $name       = $options['app_name'];
+            $param      = array('in0' => array('credential' => $credential,
+                                               'name'       => $name));
+
+            $resp = $this->crowd_client->authenticateApplication($param);
+            $this->crowd_app_token = $resp->out->token;
+
+            if (empty($this->crowd_app_token)) {
+                throw new ServiceConnectionException($access_exception);
+            }
+
+        } catch (SoapFault $fault) {
             // Unable to connect.
-            throw new ServiceConnectionException("Unable to connect to the Crowd SOAP endpoint.");
+            throw new ServiceConnectionException($access_exception);
         }
     }
 
@@ -55,17 +116,34 @@ class CrowdAuthService implements AuthService {
      */
     public function authenticate($username, $password) {
         try {
-            // authenticate
-            $this->auth_token = $this->crowd->authenticatePrincipal($username, $password, $_SERVER['HTTP_USER_AGENT'], $_SERVER['REMOTE_ADDR']);
+            $user_agent = $_SERVER['HTTP_USER_AGENT'];
+            $remote_address = $_SERVER['REMOTE_ADDR'];
+
+            // Build the parameter used to authenticate the principal
+            $param = array('in0' => array('name'  => $this->crowd_config['app_name'],
+                                          'token' => $this->crowd_app_token),
+                           'in1' => array('application' => $this->crowd_config['app_name'],
+                                          'credential'  => array('credential' => $password),
+                                          'name'        => $username,
+                                          'validationFactors' => array(array('name'  => 'User-Agent',
+                                                                             'value' => $user_agent),
+                                                                       array('name'  => 'remote_address',
+                                                                             'value' => $remote_address))));
+
+            // Attempt to authenticate the user (principal) via Crowd.
+            $resp = $this->crowd_client->authenticatePrincipal($param);
+
+            // Get the principal's token
+            $this->auth_token = $resp->out;
 
             // Set SSO cookie
-            $result = $this->crowd->__call('getCookieInfo');
+            $result = $this->__call('getCookieInfo');
             $domain = $result->domain;
             $secure = $result->secure;
 
             setcookie("crowd_token_key", $this->auth_token, "7200", "/", $domain, $secure);
             return true;
-        } catch (CrowdServiceException $exception) {
+        } catch (SoapFault $fault) {
             //print($exception->getMessage());
             // Unable to connect.
             return false;
@@ -79,10 +157,9 @@ class CrowdAuthService implements AuthService {
      */
     public function changePassword($username, $password) {
         try {
-            $result = $this->crowd->__call('updatePrincipalCredential', array($username, $password));
+            $result = $this->__call('updatePrincipalCredential', array($username, $password));
             return true;
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
 
@@ -103,7 +180,7 @@ class CrowdAuthService implements AuthService {
      */
     public function getUsers() {
         try {
-            $result = $this->crowd->__call('searchPrincipals', array());
+            $result = $this->__call('searchPrincipals', array());
             $user_names = $result->SOAPPrincipal;
             $users = array();
             if (is_array($user_names) && !empty($user_names)) {
@@ -130,7 +207,6 @@ class CrowdAuthService implements AuthService {
             }
             return($users);
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
 
@@ -147,7 +223,7 @@ class CrowdAuthService implements AuthService {
         }
         try {
             // get user
-            $result = $this->crowd->__call('findPrincipalWithAttributesByName', array($username));
+            $result = $this->__call('findPrincipalWithAttributesByName', array($username));
             $attribute_objs = $result->attributes->SOAPAttribute;
             $attributes = array();
             if (count($attribute_objs) > 0) {
@@ -163,7 +239,6 @@ class CrowdAuthService implements AuthService {
             $user->setSurname($attributes["sn"]);
             return($user);
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
     }
@@ -185,11 +260,10 @@ class CrowdAuthService implements AuthService {
                     'sn' => $user->getSurname()
                 )
             );
-            $result = $this->crowd->__call('addPrincipal', array($user_array));
+            $result = $this->__call('addPrincipal', array($user_array));
 
             return true;
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
     }
@@ -201,11 +275,10 @@ class CrowdAuthService implements AuthService {
      */
     public function deleteUser($username) {
         try {
-            $result = $this->crowd->__call('removePrincipal', array($username));
+            $result = $this->__call('removePrincipal', array($username));
 
             return true;
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
     }
@@ -217,7 +290,7 @@ class CrowdAuthService implements AuthService {
     public function getGroups() {
         try {
             // get user
-            $result = $this->crowd->__call('searchGroups', array());
+            $result = $this->__call('searchGroups', array());
             $group_names = $result->SOAPGroup;
             $groups = array();
             if (is_array($group_names) && !empty($group_names)) {
@@ -240,7 +313,6 @@ class CrowdAuthService implements AuthService {
             }
             return($groups);
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
     }
@@ -256,21 +328,22 @@ class CrowdAuthService implements AuthService {
         }
         try {
             // get user
-            $result = $this->crowd->__call('findGroupWithAttributesByName', array($groupname));
-            $attribute_objs = $result->attributes->SOAPAttribute;
-            $attributes = array();
-            if (count($attribute_objs) > 0) {
-                foreach ($attribute_objs as $attribute) {
-                    $attributes[$attribute->name] = $attribute->values->string;
+            $result = $this->__call('findGroupWithAttributesByName', array($groupname));
+            $attribute_objs = $result->attributes;
+            $description = $result->description;
+            $members = $result->members;
+            $users = array();
+            if (count($member->string) > 0) {
+                foreach ($member->string as $user) {
+                    $users[$user] = $user;
                 }
             }
             $group = new Group();
             $group->setName($groupname);
-            $group->setDescription($attributes["description"]);
-            $group->setUsers($attributes["users"]);
+            $group->setDescription($description);
+            $group->setUsers($users);
             return($group);
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
     }
@@ -287,11 +360,10 @@ class CrowdAuthService implements AuthService {
                 "description" => $group->getDescription(),
                 "members" => array($group->getUsers())
             );
-            $result = $this->crowd->__call('addGroup', array($group_array));
+            $result = $this->__call('addGroup', array($group_array));
 
             return true;
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
     }
@@ -303,38 +375,36 @@ class CrowdAuthService implements AuthService {
      */
     public function deleteGroup($groupname) {
         try {
-            $result = $this->crowd->__call('removeGroup', array($groupname));
+            $result = $this->__call('removeGroup', array($groupname));
 
             return true;
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
     }
 
     /**
      * Get an array of groups the given user is a member of.
-     * @param string $user
+     * @param string $username
      * @return array
      */
-    public function getUserGroups($user) {
-        if ($user == '') {
+    public function getUserGroups($username) {
+        if ($username == '') {
             return false;
         }
         try {
             // get user
-            $result = $this->crowd->__call('findGroupMemberships', array($user));
+            $result = $this->__call('findGroupMemberships', array($username));
             $group_names = $result->string;
             $groups = array();
             if (is_array($group_names) && !empty($group_names)) {
                 foreach($group_names as $groupname) {
                     //$group = $this->getGroup($groupname);
-                    $groups[$groupname] = $group;
+                    $groups[$groupname] = $groupname;
                 }
             }
             return($groups);
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
     }
@@ -347,10 +417,9 @@ class CrowdAuthService implements AuthService {
      */
     public function addUserToGroup($username, $groupname) {
         try {
-            $result = $this->crowd->__call('addPrincipalToGroup', array($username, $groupname));
+            $result = $this->__call('addPrincipalToGroup', array($username, $groupname));
             return true;
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
     }
@@ -362,10 +431,9 @@ class CrowdAuthService implements AuthService {
      */
     public function removeUserFromGroup($username, $groupname) {
         try {
-            $result = $this->crowd->__call('removePrincipalFromGroup', array($username, $groupname));
+            $result = $this->__call('removePrincipalFromGroup', array($username, $groupname));
             return true;
         } catch (CrowdServiceException $exception) {
-            print($exception->getMessage()."\n");
         }
         return false;
     }
@@ -393,13 +461,12 @@ class CrowdAuthService implements AuthService {
         if (isset($_COOKIE['crowd_token_key'])) {
             $crowd_key = $_COOKIE['crowd_token_key'];
             try {
-                $result = $this->crowd->__call('findPrincipalByToken', array($crowd_key));
+                $result = $this->__call('findPrincipalByToken', array($crowd_key));
                 if ($result !== false) {
                     $this->sso_user = $result->name;
                     return $this->sso_user;
                 }
             } catch (CrowdServiceException $exception) {
-                //print($exception->getMessage()."\n");
             }
         }
         return false;
@@ -412,224 +479,12 @@ class CrowdAuthService implements AuthService {
         if (isset($_COOKIE['crowd_token_key'])) {
             $crowd_key = $_COOKIE['crowd_token_key'];
             try {
-                $result = $this->crowd->__call('invalidatePrincipalToken', array($crowd_key));
+                $result = $this->__call('invalidatePrincipalToken', array($crowd_key));
                 return $result;
             } catch (CrowdServiceException $exception) {
-                //print($exception->getMessage()."\n");
                 return false;
             }
         }
-    }
-}
-
-
-/**
- * Include the modified Services_Atlassian_Crowd class.
- */
-
-/**
- * This is a modified version of the Services_Atlassian_Crowd PEAR package
- * updated to support additional operations on the Crowd API.
- *
- * ----------------------------------------------------------------------------
- *
- * Services_Atlassian_Crowd is a package to use Atlassian Crowd from PHP
- *
- * Crowd is a web-based single sign-on (SSO) tool
- * that simplifies application provisioning and identity management.
- *
- * This package is derived from the PHP Client Library for Atlassian Crowd
- * class written by Infinite Campus, Inc.
- *
- * PHP version 5
- *
- * Copyright (C) 2008 Infinite Campus Inc., 2008 Luca Corbo
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @category  Services
- * @package   Services_Atlassian_Crowd
- * @author    Infinite Campus, Inc.
- * @author    Luca Corbo <lucor@php.net>
- * @copyright 2008 Infinite Campus Inc., 2008 Luca Corbo
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License
- * @link      http://pear.php.net/packages/Services_Atlassian_Crowd
- * @link      http://www.atlassian.com/software/crowd
- * @link      http://confluence.atlassian.com/display/CROWD/SOAP+API
- * @link      http://confluence.atlassian.com/display/CROWDEXT/Integrate+Crowd+with+PHP
- */
-
-
-/**
- * Class to use Crowd API from PHP
- *
- * @package   Auth
- * @author    Infinite Campus, Inc.
- * @author    Luca Corbo <lucor@php.net>
- * @copyright 2008 Infinite Campus Inc., 2008 Luca Corbo
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License
- * @link      http://pear.php.net/packages/Services_Atlassian_Crowd
- * @link      http://www.atlassian.com/software/crowd
- * @link      http://confluence.atlassian.com/display/CROWD/SOAP+API
- * @link      http://confluence.atlassian.com/display/CROWDEXT/Integrate+Crowd+with+PHP
- */
-class Services_Atlassian_Crowd
-{
-
-    /**
-     * The Crowd SOAP client
-     *
-     * @var object
-     */
-    protected $crowd_client;
-
-    /**
-     * Array contains the configuration parameters
-     *
-     * @var array
-     */
-    protected $crowd_config;
-
-    /**
-     * The Crowd application token
-     *
-     * @var string
-     */
-    protected $crowd_app_token;
-
-    /**
-     * The options required in configuration
-     *
-     * @see __construct
-     * @var array
-     */
-    private $_crowd_required_options = array('app_name', 'app_credential', 'service_url');
-
-    /**
-     * Create an application client using the passed in configuration parameters.
-     *
-     * Available options are:
-     *
-     * - string  app_name:  The username which the application will use when it
-     *                      authenticates against the Crowd framework as a client.
-     *
-     * - string  app_credential: The password which the application will use when it
-     *                           authenticates against the Crowd framework
-     *                           as a client.
-     *
-     * - string  service_url: The SOAP WSDL URL for Crowd
-     *
-     * @param array $options optional. An array of options used to connect to Crowd.
-     *
-     * @throws CrowdServiceException if there is an error communicating
-     *                                            with the Crowd security server.
-     */
-    public function __construct($options)
-    {
-        //Check for required parameters
-        foreach ($this->_crowd_required_options as $option) {
-            if (!array_key_exists($option, $options)) {
-                $exception_message = $option . ' is required!';
-                throw new CrowdServiceException($exception_message);
-            }
-        }
-
-        $this->crowd_config = $options;
-
-        // Create the Crowd SOAP client
-        try {
-            $this->crowd_client = new SoapClient($this->crowd_config['service_url']);
-        } catch (SoapFault $fault) {
-            $exception_message = 'Unable to connect to Crowd. Verify the service_url ' .
-                                 'property is defined and Crowd is running.';
-            throw new CrowdServiceException($exception_message . "\n" .
-                                                         $fault->getMessage(),
-                                                         $fault);
-        }
-    }
-
-    /**
-     * Authenticates an application client to the Crowd security server.
-     *
-     * @return string the application token
-     * @throws CrowdServiceException if there is an error communicating
-     *                                            with the Crowd security server.
-     */
-    public function authenticateApplication()
-    {
-        $credential = array('credential' => $this->crowd_config['app_credential']);
-        $name       = $this->crowd_config['app_name'];
-        $param      = array('in0' => array('credential' => $credential,
-                                           'name'       => $name));
-
-        $exception_message = 'Unable to login to Crowd. Verify the app_name and' .
-                             'app_credential properties are defined and valid.';
-        try {
-            $resp = $this->crowd_client->authenticateApplication($param);
-
-            $this->crowd_app_token = $resp->out->token;
-
-            if (empty($this->crowd_app_token)) {
-                throw new CrowdServiceException($exception_message . "\n" .
-                                                             $fault->getMessage());
-            }
-        } catch (SoapFault $fault) {
-            throw new CrowdServiceException($exception_message . "\n" .
-                                                         $fault->getMessage(), $fault);
-        }
-
-        return $this->crowd_app_token;
-    }
-
-    /**
-     * Authenticates a principal to the Crowd security server
-     * for the application client.
-     *
-     * @param string $name           The username to authenticate
-     * @param string $credential     The password of the user to authenticate
-     * @param string $user_agent     The user agent
-     * @param string $remote_address The remote address
-     *
-     * @return string the principal token
-     * @throws CrowdServiceException if there is an error communicating
-     *                                            with the Crowd security server.
-     */
-    public function authenticatePrincipal($name, $credential, $user_agent, $remote_address)
-    {
-
-        // Build the parameter used to authenticate the principal
-        $param = array('in0' => array('name'  => $this->crowd_config['app_name'],
-                                      'token' => $this->crowd_app_token),
-                       'in1' => array('application' => $this->crowd_config['app_name'],
-                                      'credential'  => array('credential' => $credential),
-                                      'name'        => $name,
-                                      'validationFactors' => array(array('name'  => 'User-Agent',
-                                                                         'value' => $user_agent),
-                                                                   array('name'  => 'remote_address',
-                                                                         'value' => $remote_address))));
-
-        // Attempt to authenticate the user (principal) via Crowd.
-        try {
-            $resp = $this->crowd_client->authenticatePrincipal($param);
-        } catch (SoapFault $fault) {
-            $message = $fault->getMessage();
-            $code = $fault->getCode();
-            throw new CrowdServiceException($message, $code);
-
-        }
-
-        // Get the principal's token
-        return $resp->out;
     }
 
     /**
@@ -723,6 +578,7 @@ class Services_Atlassian_Crowd
         }
     }
 }
+
 
 /**
  * Crowd Service Exception Class

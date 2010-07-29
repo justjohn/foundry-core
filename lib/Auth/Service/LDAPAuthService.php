@@ -98,7 +98,7 @@ class LDAPAuthService implements AuthService {
                             $this->ldap_attributes->managerDN . "," . $this->ldap_attributes->baseDN,
                             $this->ldap_attributes->managerPassword);
         if (!$result) {
-            print("LDAP Error: " . ldap_error($this->ldap_conn) . "<br />");
+            throw new ServiceConnectionException("Unable to bind to the LDAP directory.");
         }
         return $result;
     }
@@ -488,12 +488,12 @@ class LDAPAuthService implements AuthService {
                 $ug = 1;
                 foreach($entries as $entry) {
                     if (is_array($entry)) {
-                        $name = isset($entry[$attributes->groupNameAttr])?$entry[$attributes->groupNameAttr][0]:"Unnamed Group ".$ug++;
-                        $description = isset($entry[$attributes->groupDescAttr])?$entry[$attributes->groupDescAttr][0]:"";
-                        $group = new Group();
-                        $group->setName($name);
-                        $group->setDescription($description);
-                        $groups[$name] = $group;
+                        //$name = isset($entry[$attributes->groupNameAttr])?$entry[$attributes->groupNameAttr][0]:"Unnamed Group ".$ug++;
+                        //$description = isset($entry[$attributes->groupDescAttr])?$entry[$attributes->groupDescAttr][0]:"";
+                        //$group = new Group();
+                        //$group->setName($name);
+                        //$group->setDescription($description);
+                        $groups[$name] = $name;
                     }
                 }
             }

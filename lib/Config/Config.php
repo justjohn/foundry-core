@@ -65,7 +65,7 @@ class Config {
      * @param String $value The value of the configuration option.
      */
     public function setConfig($name, $value) {
-        $GLOBALS["log"]->info("ConfigManager::setConfig", "setConfig('$name', '$value')");
+        LogManager::info("ConfigManager::setConfig", "setConfig('$name', '$value')");
         $config = new Option();
         $config->setName(trim($name));
         $config->setValue(trim($value));

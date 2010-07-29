@@ -106,7 +106,7 @@ class Auth {
         // include auth class
         include_once("Auth/Service/$auth_service.php");
         if (!class_exists($auth_service)) {
-            $GLOBALS["log"]->error("Auth::__construct", "Unable to load auth class '$auth_service'.");
+            LogManager::error("Auth::__construct", "Unable to load auth class '$auth_service'.");
             throw new ServiceLoadException("Unable to load auth class '$auth_service'.");
         } else {
             $this->auth_service = new $auth_service($auth_config);
@@ -137,7 +137,7 @@ class Auth {
             $this->is_authenticated = true;
             $this->user = $user;
         } else {
-            $GLOBALS["log"]->warn("Auth::authenticate", "Failed authentication for authenticate('$user', '$password')");
+            LogManager::warn("Auth::authenticate", "Failed authentication for authenticate('$user', '$password')");
         }
         return $this->is_authenticated;
     }
@@ -170,7 +170,7 @@ class Auth {
      * @return boolean true on sucess, false on failure.
      */
     public function addUser($user, $password) {
-        $GLOBALS["log"]->info("Auth::addUser", "addUser('$user', '$password')");
+        LogManager::info("Auth::addUser", "addUser('$user', '$password')");
         $result = $this->auth_service->addUser($user, $password);
         if ($result) $this->getUsers();
         return $result;
@@ -182,7 +182,7 @@ class Auth {
      * @return boolean true on sucess, false on failure.
      */
     public function deleteUser($username) {
-        $GLOBALS["log"]->info("Auth::deleteUser", "deleteUser('$username')");
+        LogManager::info("Auth::deleteUser", "deleteUser('$username')");
         if (empty($username)) return false;
         $result = $this->auth_service->deleteUser($username);
         if ($result) $this->getUsers();
@@ -293,7 +293,7 @@ class Auth {
      * @return boolean
      */
     public function addGroup($group) {
-        $GLOBALS["log"]->info("Auth::addGroup", "addGroup('".get_a($group)."')");
+        LogManager::info("Auth::addGroup", "addGroup('".get_a($group)."')");
         $result = $this->auth_service->addGroup($group);
         $this->getGroups();
         return $result;
@@ -306,7 +306,7 @@ class Auth {
      * @return boolean true on success, false on failure.
      */
     public function deleteGroup($groupname) {
-        $GLOBALS["log"]->info("Auth::deleteGroup", "deleteGroup('$groupname')");
+        LogManager::info("Auth::deleteGroup", "deleteGroup('$groupname')");
         $result = $this->auth_service->deleteGroup($groupname);
         $this->auth_cache["user_groups"] = array();
         $this->getGroups();
@@ -321,6 +321,7 @@ class Auth {
      * @return boolean true on success, false on failure.
      */
     public function addUserToGroup($username, $groupname) {
+        LogManager::info("Auth::addUserToGroup", "addUserToGroup('$username', '$groupname')");
         $result = $this->auth_service->addUserToGroup($username, $groupname);
         unset($this->auth_cache["user_groups"][$username]);
         $this->getGroups();
@@ -335,6 +336,7 @@ class Auth {
      * @return boolean true on success, false on failure.
      */
     public function addSubgroupToGroup($subgroupname, $groupname) {
+        LogManager::info("Auth::addSubgroupToGroup", "addSubgroupToGroup('$subgroupname', '$groupname')");
         $result = $this->auth_service->addSubgroupToGroup($subgroupname, $groupname);
         unset($this->auth_cache["user_groups"][$username]);
         $this->getGroups();
@@ -349,6 +351,7 @@ class Auth {
      * @return boolean true on success, false on failure.
      */
     public function removeUserFromGroup($username, $groupname) {
+        LogManager::info("Auth::removeUserFromGroup", "removeUserFromGroup('$username', '$groupname')");
         $result = $this->auth_service->removeUserFromGroup($username, $groupname);
         unset($this->auth_cache["user_groups"][$username]);
         $this->getGroups();
@@ -363,6 +366,7 @@ class Auth {
      * @return boolean true on success, false on failure.
      */
     public function removeSubgroupFromGroup($subgroupname, $groupname) {
+        LogManager::info("Auth::removeSubgroupFromGroup", "removeSubgroupFromGroup('$subgroupname', '$groupname')");
         $result = $this->auth_service->removeSubgroupFromGroup($subgroupname, $groupname);
         unset($this->auth_cache["user_groups"][$username]);
         $this->getGroups();
@@ -429,6 +433,7 @@ class Auth {
      * @return string a reset token
      */
     public function createResetToken($username) {
+        LogManager::info("Auth::createResetToken", "createResetToken('$username')");
        $this->clearResetTokens($username); 
        $expiration = time() + $this->token_timeout;
        $token = md5(time() . $this->salt);
@@ -446,6 +451,7 @@ class Auth {
      * @param $username String (Optionaly) the username to clear tokens for.
      */
     public function clearResetTokens($username='') {
+        LogManager::info("Auth::clearResetTokens", "clearResetTokens('$username')");
         if ($username == '') {
             $conditions = array("expiration"=>array("<", time()));
         } else {
@@ -473,11 +479,12 @@ class Auth {
 
     /**
      * Change a user password.
-     * @param string $user
+     * @param string $username
      * @param string $password
      */
-    public function changePassword($user, $password) {
-        return $this->auth_service->changePassword($user, $password);
+    public function changePassword($username, $password) {
+        LogManager::info("Auth::changePassword", "changePassword('$username', '$password')");
+        return $this->auth_service->changePassword($username, $password);
     }
 
     /**
