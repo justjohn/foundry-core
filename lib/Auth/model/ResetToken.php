@@ -15,22 +15,22 @@ class ResetToken {
      * The token field.
      * @var string
      */
-    private $token;
+    public $token;
     /**
      * The username field.
      * @var string
      */
-    private $username;
+    public $username;
     /**
      * The expiration field.
      * @var integer
      */
-    private $expiration;
+    public $expiration;
     /**
      * The id field.
      * @var integer
      */
-    private $id;
+    public $id;
 
     /**
      * Set the token field.

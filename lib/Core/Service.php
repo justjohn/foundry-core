@@ -41,17 +41,4 @@ class Service {
         }
     }
 }
-
-/**
- * An exception class for missing required options.
- */
-class ServiceValidationException extends CoreException {}
-/**
- * An exception class for service connection errors.
- */
-class ServiceConnectionException extends CoreException {}
-/**
- * An exception class for loading service class errors.
- */
-class ServiceLoadException extends CoreException {}
 ?>

@@ -15,27 +15,35 @@ class User {
      * The username field.
      * @var string
      */
-    private $username;
+    public $username;
     /**
      * The displayName field.
      * @var string
      */
-    private $displayName;
+    public $displayName;
     /**
      * The email field.
      * @var string
      */
-    private $email;
+    public $email;
     /**
      * The firstName field.
      * @var string
      */
-    private $firstName;
+    public $firstName;
     /**
      * The surname field.
      * @var string
      */
-    private $surname;
+    public $surname;
+
+    public function __construct($username='', $email='', $displayname='', $fisrtname='', $surname='') {
+        $this->username = $username;
+        $this->email = $email;
+        $this->displayName = $displayname;
+        $this->firstName = $fisrtname;
+        $this->surname = $surname;
+    }
 
     /**
      * Set the username field.

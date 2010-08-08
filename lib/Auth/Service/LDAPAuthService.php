@@ -18,7 +18,7 @@
  * @copyright 2010 John Roepke
  * @license   TBD
  */
-class LDAPAuthService implements AuthService {
+class LDAPAuthService implements AuthService, AuthServiceSubgroups {
     /**
      * The LDAP connection
      * @var LDAP link identifier 
@@ -94,9 +94,10 @@ class LDAPAuthService implements AuthService {
      * @return boolean
      */
     private function bind() {
+        ldap_set_option($this->ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
         $result = ldap_bind($this->ldap_conn,
-                            $this->ldap_attributes->managerDN . "," . $this->ldap_attributes->baseDN,
-                            $this->ldap_attributes->managerPassword);
+                             $this->ldap_attributes->managerDN . "," . $this->ldap_attributes->baseDN,
+                             $this->ldap_attributes->managerPassword);
         if (!$result) {
             throw new ServiceConnectionException("Unable to bind to the LDAP directory.");
         }
@@ -168,8 +169,46 @@ class LDAPAuthService implements AuthService {
         $ldap_attr[$attributes->userPasswordAttr] = '{MD5}' . base64_encode(pack('H*',md5($password)));
 
         $userdn = $attributes->usernameAttr . "=" . $username . "," . $attributes->userDN . "," . $attributes->baseDN;
-        $result = ldap_add($this->ldap_conn, $userdn, $ldap_attr);
+        $result = @ldap_add($this->ldap_conn, $userdn, $ldap_attr);
         return $result;
+    }
+
+    /**
+     * Update a user.
+     * @param User $user The attributes of the user to update.
+     * @return boolean true on sucess, false on failure.
+     */
+    public function updateUser($user) {
+        $username = $user->getUsername();
+        $email = $user->getEmail();
+        $firstname = $user->getFirstName();
+        $surname = $user->getSurname();
+        $displayname = $user->getDisplayName();
+
+        // Surname is a required attribute, if blank default to username
+        if ($surname == '') {
+            $surname = $username;
+        }
+        // Display name defaults to First Last
+        if (trim($displayname) == "") {
+            $displayname = $firstname;
+            if ($firstname != '' && $surname != '') {
+                $displayname .= " ";
+            }
+            $displayname .= $surname;
+        }
+
+        $attributes = $this->ldap_attributes;
+        $userdn = $attributes->usernameAttr . "=" . $username . "," . $attributes->userDN . "," . $attributes->baseDN;
+
+        $user_info = array();
+        $user_info[$attributes->userEmailAttr] = $email;
+        $user_info[$attributes->userFirstNameAttr] = $firstname;
+        $user_info[$attributes->userSurnameAttr] = $surname;
+        $user_info[$attributes->userDisplayNameAttr] = $displayname;
+
+        return ldap_mod_replace($this->ldap_conn, $userdn, $user_info);
+
     }
 
     /**
@@ -202,7 +241,7 @@ class LDAPAuthService implements AuthService {
 
         $groupdn = $attributes->groupNameAttr . "=" . $name . "," . $attributes->groupDN . "," . $attributes->baseDN;
         //print("ldap_add(\$this->ldap_conn, '$groupdn', ".get_a($ldap_attr).")<br />");
-        $result = ldap_add($this->ldap_conn, $groupdn, $ldap_attr);
+        $result = @ldap_add($this->ldap_conn, $groupdn, $ldap_attr);
         return $result;
 
     }
@@ -215,7 +254,7 @@ class LDAPAuthService implements AuthService {
     public function deleteUser($username) {
         $attributes = $this->ldap_attributes;
         $userdn = $attributes->usernameAttr . "=" . $username . "," . $attributes->userDN . "," . $attributes->baseDN;
-        $result = ldap_delete($this->ldap_conn, $userdn);
+        $result = @ldap_delete($this->ldap_conn, $userdn);
         return $result;
     }
 
@@ -227,7 +266,7 @@ class LDAPAuthService implements AuthService {
     public function deleteGroup($groupname) {
         $attributes = $this->ldap_attributes;
         $groupdn = $attributes->groupNameAttr . "=" . $groupname . "," . $attributes->groupDN . "," . $attributes->baseDN;
-        $result = ldap_delete($this->ldap_conn, $groupdn);
+        $result = @ldap_delete($this->ldap_conn, $groupdn);
         return $result;
     }
     /**
@@ -272,7 +311,7 @@ class LDAPAuthService implements AuthService {
         $user_info = array();
         $user_info[$attributes->userPasswordAttr] = $password;
 
-        return ldap_mod_replace($this->ldap_conn, $userdn, $user_info);
+        return @ldap_mod_replace($this->ldap_conn, $userdn, $user_info);
     }
 
     /**
@@ -330,6 +369,21 @@ class LDAPAuthService implements AuthService {
         return false;
     }
 
+    
+    /**
+     * Returns an array of Group names keyed by group name.
+     * @return array an group names (strings) keyed by group names.
+     */
+    public function getGroupNames() {
+        $groups = $this->getGroups();
+        if (!empty($groups)) {
+            foreach ($groups as $groupname=>$group) {
+                $groups[$groupname] = $groupname;
+            }
+        }
+        return $groups;
+    }
+
     /**
      * Returns an array of Groups keyed by group name.
      * @return array an array of Group objects.
@@ -340,6 +394,7 @@ class LDAPAuthService implements AuthService {
         $search = "(objectclass=" . $attributes->groupObjectClass . ")";
         $entry = $attributes->groupDN . "," . $attributes->baseDN;
         $group_results = ldap_search($this->ldap_conn, $entry, $search);
+
         if ($group_results !== false) {
             $entries = ldap_get_entries($this->ldap_conn, $group_results);
             if ($entries["count"] > 0) {
@@ -379,8 +434,6 @@ class LDAPAuthService implements AuthService {
                     }
                 }
             }
-        } else {
-            return array();
         }
         return $groups;
     }
@@ -415,8 +468,6 @@ class LDAPAuthService implements AuthService {
                     }
                 }
             }
-        } else {
-            return array();
         }
         return $users;
     }
@@ -471,6 +522,25 @@ class LDAPAuthService implements AuthService {
     }
 
     /**
+     * Check to see if a group exists.
+     * @param string $groupname The group name to check.
+     * @return boolean
+     */
+    public function groupExists($groupname) {
+        $attributes = $this->ldap_attributes;
+        $dn = $attributes->groupNameAttr . "=" . $groupname . "," . $attributes->groupDN . "," . $attributes->baseDN;
+        $search = "(" . $attributes->groupNameAttr . "=" . $groupname . ")";
+        $result = @ldap_search($this->ldap_conn, $dn, $search);
+        if ($result === false) return false;
+        $info = @ldap_get_entries($this->ldap_conn, $result);
+        if ($info === false) {
+            return false;
+        } else {
+            return $info["count"] > 0;
+        }
+    }
+
+    /**
      * Get an array of groups the given user is a member of.
      * @param string $user
      * @return array
@@ -488,17 +558,12 @@ class LDAPAuthService implements AuthService {
                 $ug = 1;
                 foreach($entries as $entry) {
                     if (is_array($entry)) {
-                        //$name = isset($entry[$attributes->groupNameAttr])?$entry[$attributes->groupNameAttr][0]:"Unnamed Group ".$ug++;
-                        //$description = isset($entry[$attributes->groupDescAttr])?$entry[$attributes->groupDescAttr][0]:"";
-                        //$group = new Group();
-                        //$group->setName($name);
-                        //$group->setDescription($description);
+                        $name = isset($entry[$attributes->groupNameAttr])?$entry[$attributes->groupNameAttr][0]:"Unnamed Group ".$ug++;
+                        $description = isset($entry[$attributes->groupDescAttr])?$entry[$attributes->groupDescAttr][0]:"";
                         $groups[$name] = $name;
                     }
                 }
             }
-        } else {
-            print("Unable to get group DN.");
         }
         return $groups;
     }
@@ -509,6 +574,9 @@ class LDAPAuthService implements AuthService {
      * @param string $groupname The name of the group to add the user to.
      */
     public function addUserToGroup($username, $groupname) {
+        // Check if user exists
+        if (!$this->userExists($username)) return false;
+        
         $attributes = $this->ldap_attributes;
         $user  = $attributes->usernameAttr . "=" . $username . "," . $attributes->userDN . "," . $attributes->baseDN;
         $group = $attributes->groupNameAttr . "=" . $groupname . "," . $attributes->groupDN . "," . $attributes->baseDN;
@@ -516,7 +584,7 @@ class LDAPAuthService implements AuthService {
         $group_info = array();
         $group_info[$attributes->groupMemberAttr] = $user;
         
-        return ldap_mod_add($this->ldap_conn, $group, $group_info);
+        return @ldap_mod_add($this->ldap_conn, $group, $group_info);
     }
     /**
      * Add a subgroup to a group.
@@ -524,6 +592,9 @@ class LDAPAuthService implements AuthService {
      * @param string $groupname The name of the group to add the user to.
      */
     public function addSubgroupToGroup($subgroupname, $groupname) {
+        // Check if group exists
+        if (!$this->groupExists($subgroupname)) return false;
+
         $attributes = $this->ldap_attributes;
         $subgroup = $attributes->groupNameAttr . "=" . $subgroupname . "," . $attributes->groupDN . "," . $attributes->baseDN;
         $group    = $attributes->groupNameAttr . "=" . $groupname . "," . $attributes->groupDN . "," . $attributes->baseDN;
@@ -531,7 +602,7 @@ class LDAPAuthService implements AuthService {
         $group_info = array();
         $group_info[$attributes->groupMemberAttr] = $subgroup;
         
-        return ldap_mod_add($this->ldap_conn, $group, $group_info);
+        return @ldap_mod_add($this->ldap_conn, $group, $group_info);
     }
     /**
      * Remove a user from a group.
@@ -546,7 +617,7 @@ class LDAPAuthService implements AuthService {
         $group_info = array();
         $group_info[$attributes->groupMemberAttr] = $user;
         
-        return ldap_mod_del($this->ldap_conn, $group, $group_info);
+        return @ldap_mod_del($this->ldap_conn, $group, $group_info);
     }
     /**
      * Remove a subgroup from a group.
@@ -561,21 +632,7 @@ class LDAPAuthService implements AuthService {
         $group_info = array();
         $group_info[$attributes->groupMemberAttr] = $subgroup;
         
-        return ldap_mod_del($this->ldap_conn, $group, $group_info);
-    }
-
-    /**
-     * Check for a single sign on token.
-     * @return boolean false, LDAP doesn't support SSO
-     */
-    public function checkSSO() {
-        return false;
-    }
-    /**
-     * Logout of the SSO system. (has no effect, LDAP doesn't support SSO)
-     */
-    public function logoutSSO() {
-        return;
+        return @ldap_mod_del($this->ldap_conn, $group, $group_info);
     }
 }
 

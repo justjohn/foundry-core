@@ -15,22 +15,22 @@ class Group {
      * The name field.
      * @var string
      */
-    private $name;
+    public $name;
     /**
      * The description field.
      * @var string
      */
-    private $description;
+    public $description;
     /**
      * The users field.
      * @var array
      */
-    private $users;
+    public $users = array();
     /**
      * The subgroups field.
      * @var array
      */
-    private $subgroups;
+    public $subgroups = array();
 
     /**
      * Set the name field.
@@ -90,14 +90,6 @@ class Group {
      */
     public function getSubgroups() {
         return $this->subgroups;
-    }
-
-    /**
-     * Add a user to the group.
-     * @param string $user
-     */
-    public function addUser($user) {
-        $this->users[$user] = $user;
     }
 }
 ?>

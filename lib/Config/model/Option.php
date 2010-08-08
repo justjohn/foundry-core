@@ -15,17 +15,17 @@ class Option {
      * The name field.
      * @var string
      */
-    private $name;
+    public $name;
     /**
      * The value field.
      * @var string
      */
-    private $value;
+    public $value;
     /**
      * The id field.
      * @var integer
      */
-    private $id;
+    public $id;
 
     /**
      * Set the name field.

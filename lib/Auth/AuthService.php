@@ -62,11 +62,18 @@ interface AuthService
 
     /**
      * Add a user.
-     * @param User $user The details of the user to add.
+     * @param User $user The attributes of the user to add.
      * @param string $password The user's password.
      * @return boolean true on sucess, false on failure.
      */
     public function addUser($user, $password);
+
+    /**
+     * Update a user.
+     * @param User $user The attributes of the user to update.
+     * @return boolean true on sucess, false on failure.
+     */
+    public function updateUser($user);
 
     /**
      * Delete a user.
@@ -78,10 +85,31 @@ interface AuthService
     // Group Methods
 
     /**
+     * Check to see if a group exists.
+     * @param string $groupname The group name to check.
+     * @return boolean
+     */
+    public function groupExists($groupname);
+
+    /**
      * Returns an array of all the groups keyed by group name.
+     *
+     * This call should be avoided if at all possible since it may require the
+     * auth service to make a seperate call for each group. For example, if you
+     * have 100 groups in a Crowd directory; the only way to get complete
+     * information on each group is a seperate getGroup() call to the API. This
+     * results in 101 SOAP calls.
+     *
      * @return array|boolean
      */
     public function getGroups();
+
+
+    /**
+     * Returns an array of Group names keyed by group name.
+     * @return array an group names (strings) keyed by group names.
+     */
+    public function getGroupNames();
 
     /**
      * Get a group's members.
@@ -112,35 +140,11 @@ interface AuthService
     public function addUserToGroup($username, $groupname);
 
     /**
-     * Add a subgroup to a group.
-     * @param string $subgroupname The name of the subgroup to add to the group.
-     * @param string $groupname The name of the group to add the user to.
-     */
-    //public function addSubgroupToGroup($subgroupname, $groupname);
-
-    /**
      * Remove a user from a group.
      * @param string $username The username to remove from the group.
      * @param string $groupname The name of the group to remove the user from.
      */
     public function removeUserFromGroup($username, $groupname);
 
-    /**
-     * Remove a subgroup from a group.
-     * @param string $subgroupname The name of the subgroup to remove from the group.
-     * @param string $groupname The name of the group to remove the subgroup from.
-     */
-    //public function removeSubgroupFromGroup($subgroupname, $groupname);
-
-    /**
-     * Check for a single sign on token.
-     * @return boolean True if logged into a SSO, false if not.
-     */
-    public function checkSSO();
-
-    /**
-     * Logout of the SSO system.
-     */
-    public function logoutSSO();
 }
 ?>

@@ -15,32 +15,32 @@ class LogEntry {
      * The level field.
      * @var string
      */
-    private $level;
+    public $level;
     /**
      * The action field.
      * @var string
      */
-    private $action;
+    public $action;
     /**
      * The message field.
      * @var string
      */
-    private $message;
+    public $message;
     /**
      * The timestamp field.
      * @var integer
      */
-    private $timestamp;
+    public $timestamp;
     /**
      * The user field.
      * @var string
      */
-    private $user;
+    public $user;
     /**
      * The id field.
      * @var integer
      */
-    private $id;
+    public $id;
 
     /**
      * Set the level field.

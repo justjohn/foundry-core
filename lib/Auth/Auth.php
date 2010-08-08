@@ -18,6 +18,8 @@ register_class("ResetToken", "Auth/model/ResetToken.php");
  * Load the AuthService interface.
  */
 require_once("Auth/AuthService.php");
+require_once("Auth/AuthServiceSSO.php");
+require_once("Auth/AuthServiceSubgroups.php");
 
 /**
  * Authentication API and service loader.
@@ -125,6 +127,24 @@ class Auth {
     }
 
     /**
+     * Check for SSO support.
+     * @return boolean
+     */
+    public function SSOSupport() {
+        $implements = class_implements($this->auth_service);
+        return isset($implements["AuthServiceSSO"]);
+    }
+
+    /**
+     * Check for subgroup support.
+     * @return boolean
+     */
+    public function SubgroupSupport() {
+        $implements = class_implements($this->auth_service);
+        return isset($implements["AuthServiceSubgroup"]);
+    }
+
+    /**
      * Authenticate a user.
      *
      * @param string $user
@@ -140,6 +160,17 @@ class Auth {
             LogManager::warn("Auth::authenticate", "Failed authentication for authenticate('$user', '$password')");
         }
         return $this->is_authenticated;
+    }
+
+    /**
+     * Verify a username and password.
+     *
+     * @param string $user
+     * @param string $password
+     * @return boolean
+     */
+    public function verify($user, $password) {
+        return $this->auth_service->authenticate($user, $password);
     }
 
     /**
@@ -162,7 +193,6 @@ class Auth {
         }
     }
 
-
     /**
      * Add a user.
      * @param User $user The details of the user to add.
@@ -170,8 +200,20 @@ class Auth {
      * @return boolean true on sucess, false on failure.
      */
     public function addUser($user, $password) {
-        LogManager::info("Auth::addUser", "addUser('$user', '$password')");
+        LogManager::info("Auth::addUser", "addUser('".get_a($user)."', '$password')");
         $result = $this->auth_service->addUser($user, $password);
+        if ($result) $this->getUsers();
+        return $result;
+    }
+
+    /**
+     * Add a user.
+     * @param User $user The parameters of the user to update.
+     * @return boolean true on sucess, false on failure.
+     */
+    public function updateUser($user) {
+        LogManager::info("Auth::updateUser", "updateUser('".get_a($user).")");
+        $result = $this->auth_service->updateUser($user);
         if ($result) $this->getUsers();
         return $result;
     }
@@ -281,9 +323,23 @@ class Auth {
         if (isset($this->auth_cache["groups"]))
                 return $this->auth_cache["groups"];
 
-        $this->auth_cache["group"] = $groups;
+        $groups = $this->auth_service->getGroups();
         $this->auth_cache["groups"] = $groups;
-        return $this->auth_service->getGroups();
+        $this->auth_cache["group"] = $groups;
+        return $groups;
+    }
+
+    /**
+     * Get a list of all the groups.
+     * @return array
+     */
+    public function getGroupNames() {
+        if (isset($this->auth_cache["groups"]))
+                return $this->auth_cache["groups"];
+
+        $groups = $this->auth_service->getGroupNames();
+        $this->auth_cache["groups"] = $groups;
+        return $groups;
     }
 
     /**

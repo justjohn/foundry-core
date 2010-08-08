@@ -29,7 +29,7 @@
  * @link      http://confluence.atlassian.com/display/CROWD/SOAP+API
  * @link      http://confluence.atlassian.com/display/CROWDEXT/Integrate+Crowd+with+PHP
  */
-class CrowdAuthService implements AuthService {
+class CrowdAuthService implements AuthService, AuthServiceSSO {
 
     /**
      * The Crowd SOAP client
@@ -166,6 +166,15 @@ class CrowdAuthService implements AuthService {
     }
 
     /**
+     * Check to see if a group exists.
+     * @param string $groupname The group name to check.
+     * @return boolean
+     */
+    public function groupExists($groupname) {
+        return ($this->getGroup($groupname) instanceOf Group);
+    }
+
+    /**
      * Check to see if a user exists.
      * @param string $username The username to check.
      * @return boolean
@@ -200,8 +209,7 @@ class CrowdAuthService implements AuthService {
                     $user->setDisplayName($attributes["displayName"]);
                     $user->setFirstName($attributes["givenName"]);
                     $user->setSurname($attributes["sn"]);
-
-                    // Cache user object
+                    
                     $users[$user->getUsername()] = $user;
                 }
             }
@@ -234,13 +242,65 @@ class CrowdAuthService implements AuthService {
             $user = new User();
             $user->setUsername($username);
             $user->setEmail($attributes["mail"]);
-            $user->setDisplayName($attributes["displayName"]);
             $user->setFirstName($attributes["givenName"]);
             $user->setSurname($attributes["sn"]);
+            $user->setDisplayName($attributes["displayName"]);
             return($user);
         } catch (CrowdServiceException $exception) {
         }
         return false;
+    }
+
+    /**
+     * Update a user.
+     * @param User $user The attributes of the user to update.
+     * @return boolean true on sucess, false on failure.
+     */
+    public function updateUser($user) {
+        try {
+            $username = $user->getUsername();
+            $email = $user->getEmail();
+            $firstname = $user->getFirstName();
+            $surname = $user->getSurname();
+            $displayname = $user->getDisplayName();
+
+            // Surname is a required attribute, if blank default to username
+            if ($surname == '') {
+                $surname = $username;
+            }
+            // Display name defaults to First Last
+            if ($displayname == "") {
+                $displayname = $firstname;
+                if ($firstname != '' && $surname != '') {
+                    $displayname .= " ";
+                }
+                $displayname .= $surname;
+            }
+
+            $user_array = array($username, 'mail', $email);
+            $result = $this->__call('updatePrincipalAttribute', $user_array);
+
+            $user_array = array($username, 'givenName', $firstname);
+            $result = $this->__call('updatePrincipalAttribute', $user_array);
+
+            $user_array = array($username, 'sn', $surname);
+            $result = $this->__call('updatePrincipalAttribute', $user_array);
+
+            $user_array = array($username, 'displayName', $displayname);
+            //$result = $this->__call('updatePrincipalAttribute', $user_array);
+
+            return true;
+        } catch (CrowdServiceException $exception) {
+            print_a($exception);
+        }
+        return false;
+
+    }
+
+    private function soap_attribute($name, $value) {
+        return array('name'  => $name,
+                     'values' => array($value));
+
     }
 
     /**
@@ -253,14 +313,15 @@ class CrowdAuthService implements AuthService {
         try {
             $user_array = array(
                 'name' => $user->getUsername(),
+                'active' => true,
                 'attributes' => array(
-                    'mail' => $user->getEmail(),
-                    'displayName' => $user->getDisplayName(),
-                    'givenName' => $user->getFirstName(),
-                    'sn' => $user->getSurname()
+                    $this->soap_attribute('mail', $user->getEmail()),
+                    $this->soap_attribute('givenName', $user->getFirstName()),
+                    $this->soap_attribute('sn', $user->getSurname()),
+                    $this->soap_attribute('displayName', $user->getDisplayName())
                 )
             );
-            $result = $this->__call('addPrincipal', array($user_array));
+            $result = $this->__call('addPrincipal', array($user_array, $password));
 
             return true;
         } catch (CrowdServiceException $exception) {
@@ -287,6 +348,28 @@ class CrowdAuthService implements AuthService {
      * Returns an array of all the groups keyed by group name.
      * @return array|boolean
      */
+    public function getGroupNames() {
+        try {
+            // get user
+            $result = $this->__call('searchGroups', array());
+            $group_names = $result->SOAPGroup;
+            $groups = array();
+            if (is_array($group_names) && !empty($group_names)) {
+                foreach($group_names as $group_info) {
+                    $groupname = $group_info->name;
+                    $groups[$groupname] = $groupname;
+                }
+            }
+            return($groups);
+        } catch (CrowdServiceException $exception) {
+        }
+        return false;
+    }
+
+    /**
+     * Returns an array of all the groups keyed by group name.
+     * @return array|boolean
+     */
     public function getGroups() {
         try {
             // get user
@@ -296,19 +379,7 @@ class CrowdAuthService implements AuthService {
             if (is_array($group_names) && !empty($group_names)) {
                 foreach($group_names as $group_info) {
                     $groupname = $group_info->name;
-                    $group = new Group();
-                    $group->setName($groupname);
-                    $group->setDescription($group_info->description);
-                    $members = $group_info->members;
-                    if (isset($members->string)) {
-                        $members = $members->string;
-                        if (is_array($members)) {
-                            $group->setUsers($members);
-                        } else {
-                            $group->setUsers(array($members));
-                        }
-                    }
-                    $groups[$groupname] = $group;
+                    $groups[$groupname] = $this->getGroup($groupname);;
                 }
             }
             return($groups);
@@ -329,12 +400,16 @@ class CrowdAuthService implements AuthService {
         try {
             // get user
             $result = $this->__call('findGroupWithAttributesByName', array($groupname));
-            $attribute_objs = $result->attributes;
             $description = $result->description;
             $members = $result->members;
             $users = array();
-            if (count($member->string) > 0) {
-                foreach ($member->string as $user) {
+            if (empty($members->string)) {
+                // Do nothing, no members
+            } else if (is_string($members->string)) {
+                $users[$members->string] = $members->string;
+
+            } else if (is_array($members->string)) {
+                foreach ($members->string as $user) {
                     $users[$user] = $user;
                 }
             }
@@ -357,13 +432,14 @@ class CrowdAuthService implements AuthService {
         try {
             $group_array = array(
                 "name" => $group->getName(),
-                "description" => $group->getDescription(),
-                "members" => array($group->getUsers())
+                "members" => array($group->getUsers()),
+                "description" => $group->getDescription()
             );
             $result = $this->__call('addGroup', array($group_array));
 
             return true;
         } catch (CrowdServiceException $exception) {
+            //print_a($exception->getMessage());
         }
         return false;
     }
@@ -397,10 +473,13 @@ class CrowdAuthService implements AuthService {
             $result = $this->__call('findGroupMemberships', array($username));
             $group_names = $result->string;
             $groups = array();
-            if (is_array($group_names) && !empty($group_names)) {
-                foreach($group_names as $groupname) {
-                    //$group = $this->getGroup($groupname);
-                    $groups[$groupname] = $groupname;
+            if (!empty($group_names)) {
+                if (is_string($group_names)) {
+                    $groups[$group_names] = $group_names;
+                } else if (is_array($group_names)) {
+                    foreach($group_names as $groupname) {
+                        $groups[$groupname] = $groupname;
+                    }
                 }
             }
             return($groups);
@@ -530,16 +609,20 @@ class CrowdAuthService implements AuthService {
             case 'findGroupWithAttributesByName':
             case 'searchPrincipals':
             case 'searchGroups':
+            case 'removePrincipal':
+            case 'addGroup':
+            case 'removeGroup':
                 $params = array('in0' => array('name'  => $this->crowd_config['app_name'],
                                                'token' => $this->crowd_app_token),
                                 'in1' => $args[0]);
                 break;
+            case 'addPrincipal':
             case 'updatePrincipalCredential':
                 $params = array('in0' => array('name'  => $this->crowd_config['app_name'],
                                                'token' => $this->crowd_app_token),
                                 'in1' => $args[0],
                                 'in2' => array("credential" => $args[1],
-                                               "encryptedCredential" => "false") );
+                                               "encryptedCredential" => false));
                 break;
             case 'isValidPrincipalToken':
                 $params = array('in0' => array('name'  => $this->crowd_config['app_name'],
@@ -549,6 +632,12 @@ class CrowdAuthService implements AuthService {
                                                      'value' => $args[1]),
                                                array('name'  => 'remote_address',
                                                      'value' => $args[2])));
+                break;
+            case 'updatePrincipalAttribute':
+                $params = array('in0' => array('name'  => $this->crowd_config['app_name'],
+                                               'token' => $this->crowd_app_token),
+                                'in1' => $args[0],
+                                'in2' => $this->soap_attribute($args[1], $args[2]));
                 break;
             case 'addPrincipalToGroup':
             case 'removePrincipalFromGroup':
@@ -573,6 +662,8 @@ class CrowdAuthService implements AuthService {
                 return true;
             }
         } catch (SoapFault $fault) {
+            //print_a($params);
+            //print_a($fault->getMessage());
             throw new CrowdServiceException($fault->getMessage(),
                                             $fault->getCode());
         }
