@@ -9,9 +9,9 @@ require_once("Auth/Service/CrowdAuthService.php");
  */
 class CrowdAuthServiceTest extends AuthServiceTest
 {
-    protected static $crowd_options = array("app_name"=>"hubtest",
-                                     "app_credential"=>"v13sda0%T",
-                                     "service_url"=>"http://crowd.moqul.net/services/SecurityServer?wsdl");
+    protected static $crowd_options = array("app_name"=>"coretest",
+                                     "app_credential"=>"ois9S093*f",
+                                     "service_url"=>"http://crowd.phpfoundry.com/services/SecurityServer?wsdl");
 
     public function  __construct() {
         $auth_service = new CrowdAuthService(self::$crowd_options);

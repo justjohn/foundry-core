@@ -6,9 +6,9 @@ class LDAPAuthServiceTest extends AuthServiceTest
 {
     protected static $ldap_options = array(
         "connectionString"      => "ldap://localhost",
-        "baseDN"                => "dc=moqul,dc=net",
+        "baseDN"                => "dc=phpfoundry,dc=com",
         "managerDN"             => "cn=admin",
-        "managerPassword"       => "flashspeeder",
+        "managerPassword"       => "r-vq398rEuj",
         "userDN"                => "ou=people",
         "usernameAttr"          => "cn",
         "userFirstNameAttr"     => "givenName",
