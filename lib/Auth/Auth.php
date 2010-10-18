@@ -186,11 +186,7 @@ class Auth {
      * @return string|boolean
      */
     public function getUsername() {
-        if ($this->isAuthenticated()) {
-            return $this->user;
-        } else {
-            return false;
-        }
+        return $this->isAuthenticated()?$this->user:false;
     }
 
     /**
@@ -202,7 +198,11 @@ class Auth {
     public function addUser($user, $password) {
         LogManager::info("Auth::addUser", "addUser('".get_a($user)."', '$password')");
         $result = $this->auth_service->addUser($user, $password);
-        if ($result) $this->getUsers();
+        if ($result) {
+            $username = $user->getUsername();
+            $this->auth_cache["users"][$username] = $user;
+            $this->auth_cache["user"][$username] = $user;
+        }
         return $result;
     }
 
@@ -214,7 +214,11 @@ class Auth {
     public function updateUser($user) {
         LogManager::info("Auth::updateUser", "updateUser('".get_a($user).")");
         $result = $this->auth_service->updateUser($user);
-        if ($result) $this->getUsers();
+        if ($result) {
+            $username = $user->getUsername();
+            $this->auth_cache["users"][$username] = $user;
+            $this->auth_cache["user"][$username] = $user;
+        }
         return $result;
     }
 
@@ -227,8 +231,11 @@ class Auth {
         LogManager::info("Auth::deleteUser", "deleteUser('$username')");
         if (empty($username)) return false;
         $result = $this->auth_service->deleteUser($username);
-        if ($result) $this->getUsers();
-        unset($this->auth_cache["user_groups"][$user]);
+        if ($result) {
+            unset($this->auth_cache["users"][$username]);
+            unset($this->auth_cache["user_groups"][$username]);
+            unset($this->auth_cache["user"][$username]);
+        }
         return $result;
     }
 
@@ -315,17 +322,49 @@ class Auth {
         return $group;
     }
 
+
+    /**
+     * Get a group's membership (including subgroups)
+     * @param Group $group The group to get members from.
+     * @param array $members The array of members to add group members to.
+     * @return array An array of usernames keyed by username.
+     */
+    public function getGroupMembership($group, &$members = array()) {
+        $users = $group->getUsers();
+        if (!empty($users))
+            foreach ($users as $username => $user)
+                $members[$username] = $username;
+
+        $subgroups = $group->getSubgroups();
+        if (!empty($subgroups))
+            foreach ($subgroups as $subgroup)
+                $this->getGroupMembership($this->getGroups($subgroup), $members);
+
+        return $members;
+    }
+
     /**
      * Get a list of all the groups.
+     * @param boolean $flatten Include users from subgroups in group membership. Defaults to false.
      * @return array
      */
-    public function getGroups() {
-        if (isset($this->auth_cache["groups"]))
-                return $this->auth_cache["groups"];
+    public function getGroups($flatten = false) {
+        if (isset($this->auth_cache["groups"][$flatten])) {
+            return $this->auth_cache["groups"][$flatten];
+        } else {
+            $groups = $this->auth_service->getGroups();
+        }
+        // Don't cache with nested info
+        if (!$flatten) $this->auth_cache["group"] = $groups;
 
-        $groups = $this->auth_service->getGroups();
-        $this->auth_cache["groups"] = $groups;
-        $this->auth_cache["group"] = $groups;
+        if ($flatten && !empty($groups)) {
+            foreach ($groups as &$group) {
+                $members = $this->getGroupMembership($group);
+                $group->setUsers($members);
+            }
+            unset($group);
+        }
+        $this->auth_cache["groups"][$flatten] = $groups;
         return $groups;
     }
 
@@ -334,11 +373,11 @@ class Auth {
      * @return array
      */
     public function getGroupNames() {
-        if (isset($this->auth_cache["groups"]))
-                return $this->auth_cache["groups"];
+        if (isset($this->auth_cache["groupnames"]))
+                return $this->auth_cache["groupnames"];
 
         $groups = $this->auth_service->getGroupNames();
-        $this->auth_cache["groups"] = $groups;
+        $this->auth_cache["groupnames"] = $groups;
         return $groups;
     }
 
@@ -351,7 +390,12 @@ class Auth {
     public function addGroup($group) {
         LogManager::info("Auth::addGroup", "addGroup('".get_a($group)."')");
         $result = $this->auth_service->addGroup($group);
-        $this->getGroups();
+        // Invalidate groups cache
+        if ($result) {
+            $groupname = $group->getName();
+            $this->auth_cache["groups"][$groupname] = $group;
+            $this->auth_cache["group"][$groupname] = $group;
+        }
         return $result;
     }
 
@@ -364,8 +408,11 @@ class Auth {
     public function deleteGroup($groupname) {
         LogManager::info("Auth::deleteGroup", "deleteGroup('$groupname')");
         $result = $this->auth_service->deleteGroup($groupname);
-        $this->auth_cache["user_groups"] = array();
-        $this->getGroups();
+        // Invalidate groups cache
+        if ($result) {
+            $this->auth_cache["user_groups"] = array();
+            unset($this->auth_cache["groups"]);
+        }
         return $result;
     }
 
@@ -379,8 +426,11 @@ class Auth {
     public function addUserToGroup($username, $groupname) {
         LogManager::info("Auth::addUserToGroup", "addUserToGroup('$username', '$groupname')");
         $result = $this->auth_service->addUserToGroup($username, $groupname);
-        unset($this->auth_cache["user_groups"][$username]);
-        $this->getGroups();
+        if ($result) {
+            unset($this->auth_cache["groups"]);
+            unset($this->auth_cache["group"][$groupname]);
+            unset($this->auth_cache["user_groups"][$username]);
+        }
         return $result;
     }
 
@@ -394,8 +444,11 @@ class Auth {
     public function addSubgroupToGroup($subgroupname, $groupname) {
         LogManager::info("Auth::addSubgroupToGroup", "addSubgroupToGroup('$subgroupname', '$groupname')");
         $result = $this->auth_service->addSubgroupToGroup($subgroupname, $groupname);
-        unset($this->auth_cache["user_groups"][$username]);
-        $this->getGroups();
+        if ($result) {
+            unset($this->auth_cache["groups"]);
+            unset($this->auth_cache["group"][$groupname]);
+            unset($this->auth_cache["user_groups"][$username]);
+        }
         return $result;
     }
 
@@ -409,8 +462,11 @@ class Auth {
     public function removeUserFromGroup($username, $groupname) {
         LogManager::info("Auth::removeUserFromGroup", "removeUserFromGroup('$username', '$groupname')");
         $result = $this->auth_service->removeUserFromGroup($username, $groupname);
-        unset($this->auth_cache["user_groups"][$username]);
-        $this->getGroups();
+        if ($result) {
+            unset($this->auth_cache["groups"]);
+            unset($this->auth_cache["group"][$groupname]);
+            unset($this->auth_cache["user_groups"][$username]);
+        }
         return $result;
     }
 
@@ -424,8 +480,11 @@ class Auth {
     public function removeSubgroupFromGroup($subgroupname, $groupname) {
         LogManager::info("Auth::removeSubgroupFromGroup", "removeSubgroupFromGroup('$subgroupname', '$groupname')");
         $result = $this->auth_service->removeSubgroupFromGroup($subgroupname, $groupname);
-        unset($this->auth_cache["user_groups"][$username]);
-        $this->getGroups();
+        if ($result) {
+            unset($this->auth_cache["groups"]);
+            unset($this->auth_cache["group"][$groupname]);
+            unset($this->auth_cache["user_groups"][$username]);
+        }
         return $result;
     }
 
@@ -539,7 +598,7 @@ class Auth {
      * @param string $password
      */
     public function changePassword($username, $password) {
-        LogManager::info("Auth::changePassword", "changePassword('$username', '$password')");
+        LogManager::info("Auth::changePassword", "changePassword('$username', '********')");
         return $this->auth_service->changePassword($username, $password);
     }
 
