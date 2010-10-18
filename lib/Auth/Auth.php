@@ -6,7 +6,7 @@
  *
  * @package   Auth
  * @author    John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
+ * @copyright &copy; 2010 John Roepke
  */
 
 // Register the authentication related model classes with the class loader.
