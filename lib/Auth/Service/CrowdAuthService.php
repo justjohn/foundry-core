@@ -34,7 +34,7 @@ class CrowdAuthService implements AuthService, AuthServiceSSO {
     /**
      * The Crowd SOAP client
      *
-     * @var object
+     * @var SoapClient
      */
     protected $crowd_client;
 
@@ -592,6 +592,9 @@ class CrowdAuthService implements AuthService, AuthServiceSSO {
         if (!is_array($args)) {
             $args[0] = $args;
         }
+        if (!isset($args[0])) $args[0] = "";
+        if (!isset($args[1])) $args[1] = "";
+        if (!isset($args[2])) $args[2] = "";
 
         //Supported methods of Crowd's API
         switch ($method) {
@@ -655,7 +658,8 @@ class CrowdAuthService implements AuthService, AuthServiceSSO {
         }
 
         try {
-            $resp = $this->crowd_client->$method($params);
+            $resp = $this->crowd_client->__call($method, $params);
+            //$resp = $this->crowd_client->$method($params);
             if (isset($resp->out)) {
                 return $resp->out;
             } else {

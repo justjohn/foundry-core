@@ -1,6 +1,9 @@
 <?php
 require_once("common.php");
 require_once("Auth/AuthService.php");
+require_once("Auth/AuthServiceSSO.php");
+require_once("Auth/AuthServiceSubgroups.php");
+
 
 abstract class AuthServiceTest extends PHPUnit_Framework_TestCase
 {
@@ -211,6 +214,7 @@ abstract class AuthServiceTest extends PHPUnit_Framework_TestCase
         $groups = $this->auth_service->getGroupNames();
         
         foreach ($this->groups as $name=>$description) {
+            $this->assertTrue(isset($groups[$name]));
             $this->assertEquals($groups[$name], $name);
         }
     }
