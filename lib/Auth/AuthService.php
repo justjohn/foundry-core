@@ -49,7 +49,7 @@ interface AuthService
     /**
      * Get a user's information as an array.
      * @param string $username
-     * @return array
+     * @return User
      */
     public function getUser($username);
 
