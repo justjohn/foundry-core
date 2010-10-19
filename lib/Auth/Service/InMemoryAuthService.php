@@ -193,7 +193,15 @@ class InMemoryAuthService {
      * @return array
      */
     public function getUserGroups($username) {
-
+        if (empty($username) || !isset($this->users[$username])) return false;
+        $user_groups = array();
+        foreach ($this->groups as $groupname=>$group) {
+            $users = $group->getUsers();
+            if (isset($users[$username])) {
+                $user_groups[$groupname] = $groupname;
+            }
+        }
+        return $user_groups;
     }
 
     /**
@@ -202,7 +210,14 @@ class InMemoryAuthService {
      * @param string $groupname The name of the group to add the user to.
      */
     public function addUserToGroup($username, $groupname) {
+        if (empty($username) || empty($groupname)
+                || !isset($this->groups[$groupname])
+                || !isset($this->users[$username])) return false;
 
+        $group = &$this->groups[$groupname];
+        $users = $group->getUsers();
+        $users[$username] = $username;
+        $group->setUsers($users);
     }
 
     /**
@@ -211,7 +226,14 @@ class InMemoryAuthService {
      * @param string $groupname The name of the group to remove the user from.
      */
     public function removeUserFromGroup($username, $groupname) {
+        if (empty($username) || empty($groupname)
+                || !isset($this->groups[$groupname])
+                || !isset($this->users[$username])) return false;
 
+        $group = &$this->groups[$groupname];
+        $users = $group->getUsers();
+        unset($users[$username]);
+        $group->setUsers($users);
     }
 }
 ?>
