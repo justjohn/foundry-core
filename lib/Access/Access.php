@@ -112,7 +112,8 @@ class Access {
         $user_groups = $this->auth_manager->getUserGroups($username);
         $role = $this->getRole($role_key);
         $role_groups = $role->getGroups();
-        return !empty(array_intersect($user_groups, $role_groups));
+        $intersect = array_intersect($user_groups, $role_groups);
+        return !empty($intersect);
     }
 }
 ?>
