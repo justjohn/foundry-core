@@ -12,7 +12,6 @@
 // Register the authentication related model classes with the class loader.
 register_class("User", "Auth/model/User.php");
 register_class("Group", "Auth/model/Group.php");
-register_class("ResetToken", "Auth/model/ResetToken.php");
 
 /**
  * Load the AuthService interface.
@@ -35,11 +34,6 @@ class Auth {
      */
     private $auth_service;
     /**
-     * The database access layer.
-     * @var Database $database
-     */
-    private $database;
-    /**
      * Is there a current user authenticated.
      * @var boolean
      */
@@ -54,21 +48,6 @@ class Auth {
      * @var string
      */
     private $user;
-    /**
-     * The URL mapper.
-     * @var URL
-     */
-    private $url_manager;
-    /**
-     * Salt for generating the password reset tokens.
-     * @var string
-     */
-    private $salt;
-    /**
-     * The password reset time in seconds.
-     * @var integer
-     */
-    private $token_timeout = 86400;  // 24 hours
 
     /**
      * Cache authentication results locally.
@@ -89,16 +68,10 @@ class Auth {
      * @param String     $auth_service The name of the auth service class to load.
      * @param array      $auth_config  An array of configuration options to pass to the auth service.
      * @param string     $admin_group  The name of the site admin group.
-     * @param URL        $url_manager  The URL manager.
-     * @param Database   $database     The data layer.
-     * @param string     $salt         Salt for generating password reset tokens.
      */
     function __construct($auth_service,
                          array $auth_config,
-                         $admin_group,
-                         URL $url_manager,
-                         Database $database,
-                         $salt) {
+                         $admin_group) {
 
         // Load the authentication cache.
         /* if (isset($_SESSION["auth_cache"])) {
@@ -114,9 +87,6 @@ class Auth {
             $this->auth_service = new $auth_service($auth_config);
         }
         $this->admin_group = $admin_group;
-        $this->url_manager = $url_manager;
-        $this->database = $database;
-        $this->salt = $salt;
     }
 
     /**
@@ -510,87 +480,6 @@ class Auth {
     public function getAdminGroup() {
         return $this->admin_group;
     }
-
-    /**
-     * Build an authentication page.
-     *
-     * @param  string  $redirect_url Where to redirect to after authentication.
-     * @param  boolean $always_redirect Whether to redirect on failed authentication.
-     * @param  string  $username The username to pre-fill the field with.
-     * @param  string  $error Any errors to display on the page.
-     * @return string The authentication page.
-     */
-    public function buildAuthenticationPage($redirect_url,
-                                            $always_redirect=false,
-                                            $username='',
-                                            $error='') {
-        global $twig;
-        $login_url = $this->url_manager->getLoginURL($redirect_url);
-
-        $message = '';
-        if ($error == '') {
-            $message = 'Please login to continue.';
-        }
-
-        $template = $twig->loadTemplate("login/loginForm.html");
-        $model = array("always_redir" => $always_redirect,
-                       "username" => $username,
-                       "message" => $message,
-                       "error" => $error,
-                       "url_manager" => $this->url_manager,
-                       "login_url" => $login_url);
-        return $template->render($model);
-    }
-
-    /**
-     * Get a new password reset token for a username. Also clears any previous tokens for the username.
-     *
-     * @return string a reset token
-     */
-    public function createResetToken($username) {
-        LogManager::info("Auth::createResetToken", "createResetToken('$username')");
-       $this->clearResetTokens($username); 
-       $expiration = time() + $this->token_timeout;
-       $token = md5(time() . $this->salt);
-       $token_obj = new ResetToken();
-       $token_obj->setExpiration($expiration);
-       $token_obj->setToken($token);
-       $token_obj->setUsername($username);
-       $this->database->write_object($token_obj, "reset_tokens");
-       return $token;
-    }
-
-    /**
-     * Clear all expired reset tokens or tokens for the given username.
-     *
-     * @param $username String (Optionaly) the username to clear tokens for.
-     */
-    public function clearResetTokens($username='') {
-        LogManager::info("Auth::clearResetTokens", "clearResetTokens('$username')");
-        if ($username == '') {
-            $conditions = array("expiration"=>array("<", time()));
-        } else {
-            $conditions = array("username"=>$username);
-        }
-        $this->database->delete_object("reset_tokens", $conditions);
-    }
-
-    /**
-     * Get a reset token.
-     *
-     * @param string $token_value The token to lookup.
-     * @return boolean|ResetToken false if the token doesn't exist, a ResetToken otherwise.
-     */
-    public function getToken($token_value) {
-        // Remove old tokens
-        $this->clearResetTokens();
-        $token = $this->database->load_object("ResetToken", "reset_tokens", array("token"=>$token_value));
-        if ($token === false) {
-            return false;
-        }
-        return $token;
-    }
-
 
     /**
      * Change a user password.
