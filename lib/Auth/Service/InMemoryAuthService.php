@@ -151,7 +151,13 @@ class InMemoryAuthService {
      * @return array an group names (strings) keyed by group names.
      */
     public function getGroupNames() {
-        return array_keys($this->groups);
+        $group_names = array();
+        if (!empty($this->groups)) {
+            foreach (array_keys($this->groups) as $groupname) {
+                $group_names[$groupname] = $groupname;
+            }
+        }
+        return $group_names;
     }
 
     /**
@@ -208,32 +214,39 @@ class InMemoryAuthService {
      * Add a user to a group.
      * @param string $username The username to add to the group.
      * @param string $groupname The name of the group to add the user to.
+     * @return boolean
      */
     public function addUserToGroup($username, $groupname) {
         if (empty($username) || empty($groupname)
                 || !isset($this->groups[$groupname])
                 || !isset($this->users[$username])) return false;
 
-        $group = &$this->groups[$groupname];
+        $group = $this->groups[$groupname];
         $users = $group->getUsers();
         $users[$username] = $username;
         $group->setUsers($users);
+        $this->groups[$groupname] = $group;
+        return true;
     }
 
     /**
      * Remove a user from a group.
      * @param string $username The username to remove from the group.
      * @param string $groupname The name of the group to remove the user from.
+     * @return boolean 
      */
     public function removeUserFromGroup($username, $groupname) {
         if (empty($username) || empty($groupname)
                 || !isset($this->groups[$groupname])
                 || !isset($this->users[$username])) return false;
 
-        $group = &$this->groups[$groupname];
+        $group = $this->groups[$groupname];
         $users = $group->getUsers();
+        if (!isset($users[$username])) return false; // User is not in group
         unset($users[$username]);
         $group->setUsers($users);
+        $this->groups[$groupname] = $group;
+        return true;
     }
 }
 ?>
