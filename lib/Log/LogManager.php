@@ -1,5 +1,5 @@
 <?php
-register_class("LogEntry", "Log/model/LogEntry.php");
+Core::register_class("LogEntry", "Log/model/LogEntry.php");
 
 /**
  * Write log entries.

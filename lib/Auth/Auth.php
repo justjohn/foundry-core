@@ -10,8 +10,8 @@
  */
 
 // Register the authentication related model classes with the class loader.
-register_class("User", "Auth/model/User.php");
-register_class("Group", "Auth/model/Group.php");
+Core::register_class("User", "Auth/model/User.php");
+Core::register_class("Group", "Auth/model/Group.php");
 
 /**
  * Load the AuthService interface.

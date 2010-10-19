@@ -8,7 +8,7 @@
  */
 
 // Register the role related model classes with the class loader.
-register_class("Role", "Roles/model/Role.php");
+Core::register_class("Role", "Roles/model/Role.php");
 
 /**
  * Role Management.

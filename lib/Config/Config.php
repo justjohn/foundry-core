@@ -10,7 +10,7 @@
  */
 
 // Register data model with the class loader.
-register_class("Option", "Config/model/Option.php");
+Core::register_class("Option", "Config/model/Option.php");
 
 /**
  * Configuration Manager

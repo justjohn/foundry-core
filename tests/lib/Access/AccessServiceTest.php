@@ -42,7 +42,7 @@ abstract class AccessServiceTest extends PHPUnit_Framework_TestCase {
 
     public static function setUpBeforeClass()
     {
-        register_class("Role", "Access/model/Role.php");
+        Core::register_class("Role", "Access/model/Role.php");
     }
 
     public function testGetRole() {
