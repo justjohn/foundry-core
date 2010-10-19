@@ -117,30 +117,39 @@ class Auth {
     /**
      * Authenticate a user.
      *
-     * @param string $user
+     * @param string $username
      * @param string $password
      * @return boolean
      */
-    public function authenticate($user, $password) {
+    public function authenticate($username, $password) {
         $this->is_authenticated = false;
-        if ($this->auth_service->authenticate($user, $password)) {
+        if ($this->auth_service->authenticate($username, $password)) {
             $this->is_authenticated = true;
-            $this->user = $user;
+            $this->user = $username;
         } else {
-            LogManager::warn("Auth::authenticate", "Failed authentication for authenticate('$user', '$password')");
+            LogManager::warn("Auth::authenticate", "Failed authentication for authenticate('$username', '********')");
         }
         return $this->is_authenticated;
     }
 
     /**
+     * Mark a user as authenticated.
+     * @param string $username The user to mark as authenticated.
+     */
+    public function upauth($username) {
+        $this->is_authenticated = true;
+        $this->user = $username;
+    }
+
+    /**
      * Verify a username and password.
      *
-     * @param string $user
+     * @param string $username
      * @param string $password
      * @return boolean
      */
-    public function verify($user, $password) {
-        return $this->auth_service->authenticate($user, $password);
+    public function verify($username, $password) {
+        return $this->auth_service->authenticate($username, $password);
     }
 
     /**
