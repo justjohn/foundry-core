@@ -111,7 +111,7 @@ class MysqlDatabaseService extends mysqli implements DatabaseService {
     }
 
     // Load a class with the fields from a db table
-    public function load_objects($classname, $tablename, $key = "", $conditions = array(), $sort_rules = array(), $limits = array()) {
+    public function load_objects($classname, $tablename, $key = "", array $conditions = array(), array $sort_rules = array(), array $limits = array()) {
         if (!class_exists($classname)) {
             return false;
         }
@@ -182,7 +182,7 @@ class MysqlDatabaseService extends mysqli implements DatabaseService {
      *                           represent the field name, and the associated value is the condition.
      * @return object An instance of $classname on success, false on failure.
      */
-    public function load_object($classname, $tablename, $conditions = array()) {
+    public function load_object($classname, $tablename, array $conditions = array()) {
         $objects = $this->load_objects($classname, $tablename, "", $conditions);
         if (count($objects) > 0) {
             return array_pop($objects);
@@ -225,7 +225,7 @@ class MysqlDatabaseService extends mysqli implements DatabaseService {
      * @param string $tablename The name of the table in the database.
      * @return boolean true on success, false on failure. 
      */
-    public function write_object($object, $tablename) {
+    public function write_object(Model $object, $tablename) {
 
         // Get table field types
         $fields = Array();
@@ -268,7 +268,7 @@ class MysqlDatabaseService extends mysqli implements DatabaseService {
         }
 
     }
-    public function update_object($object, $tablename, $conditions, $updatefields) {
+    public function update_object(Model $object, $tablename, array $conditions, array $updatefields) {
 
         // Get table field types
         $fields = Array();
@@ -319,7 +319,7 @@ class MysqlDatabaseService extends mysqli implements DatabaseService {
         return true;
     }
 
-    public function delete_object($tablename, $conditions) {
+    public function delete_object($tablename, array $conditions) {
 
         // Get table field types
         $fields = Array();

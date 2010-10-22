@@ -53,5 +53,8 @@ class ServiceConnectionException extends CoreException {}
  * An exception class for loading service class errors.
  */
 class ServiceLoadException extends CoreException {}
-
+/**
+ * An exception for calling methods that don't exist in data models.
+ */
+class MethodDoesNotExistException extends CoreException {}
 ?>

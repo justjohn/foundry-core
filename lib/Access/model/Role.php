@@ -10,66 +10,13 @@
  *
  * @package DataModel
  */
-class Role {
-    /**
-     * The key field.
-     * @var string
-     */
-    private $key;
-    /**
-     * The description field.
-     * @var string
-     */
-    private $description;
-    /**
-     * The groups field.
-     * @var array
-     */
-    private $groups;
+class Role extends BaseModel {
 
-    /**
-     * Set the key field.
-     * @param string $key
-     */
-    public function setKey($key) {
-        $this->key = $key;
-    }
-    /**
-     * Get the key field.
-     * @return string
-     */
-    public function getKey() {
-        return $this->key;
-    }
+    private $fields = array("key"=>Model::STR, "description"=>Model::STR, "groups"=>Model::LST);
+    private $key_field = "key";
 
-    /**
-     * Set the description field.
-     * @param string $description
-     */
-    public function setDescription($description) {
-        $this->description = $description;
-    }
-    /**
-     * Get the description field.
-     * @return string
-     */
-    public function getDescription() {
-        return $this->description;
-    }
-
-    /**
-     * Set the groups field.
-     * @param array $groups
-     */
-    public function setGroups($groups) {
-        $this->groups = $groups;
-    }
-    /**
-     * Get the groups field.
-     * @return array
-     */
-    public function getGroups() {
-        return $this->groups;
+    function __construct() {
+        parent::__construct($this->fields, $this->key_field);
     }
 }
 ?>

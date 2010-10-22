@@ -71,11 +71,11 @@ class Database {
      * @param string $tablename The name of the table in the database.
      * @return boolean true on success, false on failure.
      */
-    public function write_object($object, $tablename) {
+    public function write_object(Model $object, $tablename) {
         return $this->database->write_object($object, $tablename);
     }
 
-    public function update_object($object, $tablename, $conditions, $updatefields) {
+    public function update_object(Model $object, $tablename, $conditions, $updatefields) {
         return $this->database->update_object($object, $tablename, $conditions, $updatefields);
     }
 

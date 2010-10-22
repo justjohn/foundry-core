@@ -2,6 +2,7 @@
 // Include library-wide functions
 require_once("Core/Exceptions.php");
 require_once("Core/Service.php");
+require_once("Core/Model.php");
 
 class Core {
     public static $class_registry = array();
