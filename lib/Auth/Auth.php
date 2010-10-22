@@ -175,7 +175,7 @@ class Auth {
      * @return boolean true on sucess, false on failure.
      */
     public function addUser($user, $password) {
-        LogManager::info("Auth::addUser", "addUser('".get_a($user)."', '$password')");
+        LogManager::info("Auth::addUser", "addUser('$user', '$password')");
         $result = $this->auth_service->addUser($user, $password);
         if ($result) {
             $username = $user->getUsername();
@@ -191,7 +191,7 @@ class Auth {
      * @return boolean true on sucess, false on failure.
      */
     public function updateUser($user) {
-        LogManager::info("Auth::updateUser", "updateUser('".get_a($user).")");
+        LogManager::info("Auth::updateUser", "updateUser('$user)");
         $result = $this->auth_service->updateUser($user);
         if ($result) {
             $username = $user->getUsername();
@@ -367,7 +367,7 @@ class Auth {
      * @return boolean
      */
     public function addGroup($group) {
-        LogManager::info("Auth::addGroup", "addGroup('".get_a($group)."')");
+        LogManager::info("Auth::addGroup", "addGroup('$group')");
         $result = $this->auth_service->addGroup($group);
         // Invalidate groups cache
         if ($result) {

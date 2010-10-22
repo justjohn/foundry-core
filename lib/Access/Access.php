@@ -8,7 +8,7 @@
  */
 
 // Register the role related model classes with the class loader.
-Core::register_class("Role", "Roles/model/Role.php");
+Core::register_class("Role", "Access/model/Role.php");
 
 /**
  * Role Management.
@@ -45,7 +45,7 @@ class Access {
 
         $this->auth_manager = $auth_manager;
         // include service class
-        include_once("Roles/Service/$access_service.php");
+        include_once("Access/Service/$access_service.php");
         if (!class_exists($access_service)) {
             LogManager::error("Access::__construct", "Unable to load access class '$access_service'.");
             throw new ServiceLoadException("Unable to load access class '$access_service'.");
@@ -59,16 +59,12 @@ class Access {
 
     /**
      * Add a role definition.
-     * @param string $role_key The name of the role.
-     * @param string $role_description The description of the role.
-     * @param array $role_groups The groups assigned to the role.
+     * @param Role $role The role.
      * @return boolean
      */
-    public function addRole($role_key, $role_description, array $role_groups) {
-        $role_key = trim($role_key);
-        if (empty($role_key) || empty($role_groups)) return false;
-        LogManager::info("Access::addRole", "addRole('$role_key', '$role_description', '".get_a($role_groups)."')");
-        $result = $this->access_service->addRole($role_key, $role_description, $role_groups);
+    public function addRole(Role $role) {
+        LogManager::info("Access::addRole", "addRole('$role')");
+        $result = $this->access_service->addRole($role);
         return $result;
     }
 

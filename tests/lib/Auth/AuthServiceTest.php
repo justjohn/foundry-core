@@ -1,12 +1,15 @@
 <?php
-require_once("common.php");
+set_include_path(get_include_path()
+        . PATH_SEPARATOR . "../lib/");
+
+require_once("Core/Core.php");
+require_once("Functions/debug.php");
 require_once("Auth/AuthService.php");
 require_once("Auth/AuthServiceSSO.php");
 require_once("Auth/AuthServiceSubgroups.php");
 
 
-abstract class AuthServiceTest extends PHPUnit_Framework_TestCase
-{
+abstract class AuthServiceTest extends PHPUnit_Framework_TestCase {
 
     /**
      * The authentication manager.

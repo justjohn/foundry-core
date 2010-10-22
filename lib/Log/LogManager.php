@@ -7,11 +7,12 @@ Core::register_class("LogEntry", "Log/model/LogEntry.php");
  * @package modules
  */
 class LogManager {
-    const DEBUG = "DEBUG";
-    const WARN = "WARN";
-    const INFO = "INFO";
-    const ERROR = "ERROR";
+    const DEBUG = 1;
+    const INFO  = 2;
+    const WARN  = 4;
+    const ERROR = 8;
 
+    private static $level = 4;
     private static $database;
     private static $auth_manager;
 
@@ -21,30 +22,41 @@ class LogManager {
     }
 
     public static function error($action, $message) {
-        self::log(self::ERROR, $action, $message);
+        if (self::ERROR >= self::$level)
+            self::log("ERROR", $action, $message);
     }
     public static function warn($action, $message) {
-        self::log(self::WARN, $action, $message);
+        if (self::WARN >= self::$level)
+            self::log("WARN", $action, $message);
     }
     public static function info($action, $message) {
-        self::log(self::INFO, $action, $message);
+        if (self::INFO >= self::$level)
+            self::log("INFO", $action, $message);
     }
     public static function debug($action, $message) {
-        self::log(self::DEBUG, $action, $message);
+        if (self::DEBUG >= self::$level)
+            self::log("DEBUG", $action, $message);
     }
 
     public static function log($level, $action, $message) {
         // write to log
         $timestamp = time();
-        $user = self::$auth_manager->getUsername();
+        $user = "Console";
+        if (isset(self::$auth_manager))
+            $user = self::$auth_manager->getUsername();
+
         $log_entry = new LogEntry();
         $log_entry->setLevel($level);
         $log_entry->setAction($action);
         $log_entry->setMessage($message);
         $log_entry->setUser($user);
         $log_entry->setTimestamp($timestamp);
-        self::$database->write_object($log_entry, "log");
-        //print("<div>$level: $action / $user<br />$message</div>");
+
+        if (isset(self::$database)) {
+            self::$database->write_object($log_entry, "log");
+        } else{
+            print($log_entry);
+        }
     }
 
     /**

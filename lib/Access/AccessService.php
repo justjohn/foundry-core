@@ -17,12 +17,10 @@
 interface AccessService {
     /**
      * Add a role definition.
-     * @param string $role_key The name of the role.
-     * @param string $role_description The description of the role.
-     * @param array $role_groups The groups assigned to the role.
-     * @return boolean
+     * @param string $role The role.
+     * @return Role
      */
-    public function addRole($role_key, $role_description, array $role_groups);
+    public function addRole(Role $role);
 
     /**
      * Remove a role.

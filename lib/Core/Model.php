@@ -113,6 +113,18 @@ class BaseModel implements Model {
         }
     }
 
+    public function __toString() {
+        $string = get_called_class() . " {\n";
+        if (!empty($this->fields)) {
+            foreach ($this->fields as $field=>$type) {
+                $string .= "\t$field ($type) = " . $this->data[$field] . "\n";
+            }
+        }
+        $string .= "}\n";
+        return $string;
+    }
+
+
     private function set($field, $data) {
         // Cast data to the appropriate type
         switch ($this->fields[$field]) {

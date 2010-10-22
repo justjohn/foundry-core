@@ -3,6 +3,7 @@
 require_once("Core/Exceptions.php");
 require_once("Core/Service.php");
 require_once("Core/Model.php");
+require_once("Log/LogManager.php");
 
 class Core {
     public static $class_registry = array();

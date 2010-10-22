@@ -1,5 +1,9 @@
 <?php
-require_once("common.php");
+set_include_path(get_include_path()
+        . PATH_SEPARATOR . "../lib/");
+
+require_once("Core/Core.php");
+require_once("Functions/debug.php");
 require_once("Access/AccessService.php");
 
 abstract class AccessServiceTest extends PHPUnit_Framework_TestCase {
@@ -27,7 +31,11 @@ abstract class AccessServiceTest extends PHPUnit_Framework_TestCase {
         foreach ($this->roles as $role_key => $role_info) {
             $role_groups = explode(",", $role_info["groups"]);
             $role_description = $role_info["desc"];
-            $this->access_service->addRole($role_key, $role_description, $role_groups);
+            $role = new Role();
+            $role->setKey($role_key);
+            $role->setDescription($role_description);
+            $role->setGroups($role_groups);
+            $this->access_service->addRole($role);
         }
     }
 
@@ -61,17 +69,18 @@ abstract class AccessServiceTest extends PHPUnit_Framework_TestCase {
         $role_key = "test";
         $role_description = "a test role";
         $role_groups = array("test", "other");
+        $role = new Role($role_key, $role_description, $role_groups);
         // Add a role
-        $result = $this->access_service->addRole($role_key, $role_description, $role_groups);
+        $result = $this->access_service->addRole($role);
         $this->assertTrue($result);
         // Try adding again
-        $result = $this->access_service->addRole($role_key, $role_description, $role_groups);
+        $result = $this->access_service->addRole($role);
         $this->assertFalse($result);
 
         // Check blank cases
-        $result = $this->access_service->addRole("", $role_description, $role_groups);
+        $result = $this->access_service->addRole(new Role("", $role_description, $role_groups));
         $this->assertFalse($result);
-        $result = $this->access_service->addRole("blah", "", array());
+        $result = $this->access_service->addRole(new Role("blah", "", array()));
         $this->assertFalse($result);
 
         // Remove role

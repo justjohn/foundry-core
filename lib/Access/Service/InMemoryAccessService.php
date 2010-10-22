@@ -52,13 +52,11 @@ class InMemoryAccessService implements AccessService {
      * @param array $role_groups The groups assigned to the role.
      * @return boolean
      */
-    public function addRole($role_key, $role_description, array $role_groups) {
+    public function addRole(Role $role) {
+        $role_key = $role->getKey();
+        $role_groups = $role->getGroups();
         if (empty($role_key) || empty($role_groups) ||
                 isset($this->roles[$role_key])) return false;
-        $role = new Role();
-        $role->setKey($role_key);
-        $role->setDescription($role_description);
-        $role->setGroups($role_groups);
         $this->roles[$role_key] = $role;
         return true;
     }
