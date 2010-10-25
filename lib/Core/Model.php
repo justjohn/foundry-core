@@ -58,7 +58,9 @@ class BaseModel implements Model {
         $this->key_field = $key_field;
 
         if (!empty($fields)) {
-            foreach ($fields as $field=>$type) {
+            foreach ($fields as $field_orig=>$type) {
+                $field = strtolower($field_orig);
+                $this->fields[$field] = $fields[$field_orig];
                 switch ($type) {
                     case Model::BOOL:
                         $init = false;
@@ -90,11 +92,11 @@ class BaseModel implements Model {
             // get call
             $set = false;
         } else {
-            throw new MethodDoesNotExistException("Method $name does not exist.");
+            $set = false;
+            $matches[1] = $name;
         }
 
-        $field = $matches[1];
-        $field = strtolower(substr($field, 0, 1)) . substr($field, 1);
+        $field = strtolower($matches[1]);
 
         // check field name
         if (!isset($this->fields[$field])) {
@@ -126,6 +128,7 @@ class BaseModel implements Model {
 
 
     private function set($field, $data) {
+        $field = strtolower($field);
         // Cast data to the appropriate type
         switch ($this->fields[$field]) {
             case Model::BOOL:

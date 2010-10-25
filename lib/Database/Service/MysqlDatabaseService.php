@@ -190,7 +190,7 @@ class MysqlDatabaseService extends mysqli implements DatabaseService {
         return false;
     }
 
-    public function count_objects($tablename, $conditions = array()) {
+    public function count_objects($tablename, array $conditions = array()) {
         // Get table field types
         $fields = Array();
         $fieldtype = Array();
