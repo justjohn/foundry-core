@@ -54,7 +54,6 @@ class BaseModel implements Model {
     private $data = array();
 
     function __construct(array $fields, $key_field) {
-        $this->fields = $fields;
         $this->key_field = $key_field;
 
         if (!empty($fields)) {
@@ -85,14 +84,12 @@ class BaseModel implements Model {
         $set_pattern = "/set([A-Z].*)/";
         $get_pattern = "/get([a-zA-Z].*)/";
 
+        $set = false;
         if (preg_match($set_pattern, $name, $matches) > 0) {
             // set call
             $set = true;
         } else if (preg_match($get_pattern, $name, $matches) > 0) {
-            // get call
-            $set = false;
         } else {
-            $set = false;
             $matches[1] = $name;
         }
 
