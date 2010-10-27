@@ -159,11 +159,13 @@ class MysqlDatabaseService extends mysqli implements DatabaseService {
                 //print($methodcall."<br />");
                 eval($methodcall);
             }
+            $keyval = "";
             if ($key != "") {
-                $keyval = "";
                 $fieldName = "\$keyval = \$object->get".strtoupper(substr($key, 0, 1)).substr($key, 1) . "();";
-                //print($fieldName."<br />");
+                ///print($fieldName."<br />");
                 eval($fieldName);
+            }
+            if (!empty($keyval)) {
                 $objectarray[$keyval] = $object;
             } else {
                 $objectarray[] = $object;

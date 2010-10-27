@@ -83,7 +83,7 @@ class BaseModel implements Model {
     function __call($name, $arguments) {
 
         $set_pattern = "/set([A-Z].*)/";
-        $get_pattern = "/get([A-Z].*)/";
+        $get_pattern = "/get([a-zA-Z].*)/";
 
         if (preg_match($set_pattern, $name, $matches) > 0) {
             // set call
@@ -133,12 +133,16 @@ class BaseModel implements Model {
         switch ($this->fields[$field]) {
             case Model::BOOL:
                 $data = (boolean)$data;
+                break;
             case Model::INT:
                 $data = (int)$data;
+                break;
             case Model::LST:
                 $data = (array)$data;
+                break;
             case Model::STR:
             default:
+                $data = (string)$data;
         }
         $this->data[$field] = $data;
     }
