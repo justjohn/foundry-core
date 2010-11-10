@@ -19,7 +19,9 @@ function print_a($arr) {
  */
 function get_a($arr) {
     ob_start();
+    print("<pre>");
     var_dump($arr);
+    print("</pre>");
     $content = ob_get_contents();
     ob_end_clean();
     return $content;
