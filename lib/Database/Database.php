@@ -35,7 +35,7 @@ class Database {
      * @return object|boolean An array of $classname instances keyed by the $key field (if set),
      *                        false on failure.
      */
-    public function load_objects($classname, $tablename, $key = "", $conditions = array(), $sort_rules = array(), $limits = array()) {
+    public function load_objects($classname, $tablename, $key = "", array $conditions = array(), array $sort_rules = array(), array $limits = array()) {
         return $this->database->load_objects($classname, $tablename, $key, $conditions, $sort_rules, $limits);
     }
 
@@ -47,7 +47,7 @@ class Database {
      *                           represent the field name, and the associated value is the condition.
      * @return integer|boolean The count on success, false on failure.
      */
-    public function count_objects($tablename, $conditions = array()) {
+    public function count_objects($tablename, array $conditions = array()) {
         return $this->database->count_objects($tablename, $conditions);
     }
 
@@ -60,7 +60,7 @@ class Database {
      *                           represent the field name, and the associated value is the condition.
      * @return object An instance of $classname on success, false on failure.
      */
-    public function load_object($classname, $tablename, $conditions = array()) {
+    public function load_object($classname, $tablename, array $conditions = array()) {
         return $this->database->load_object($classname, $tablename, $conditions);
     }
 
@@ -75,11 +75,11 @@ class Database {
         return $this->database->write_object($object, $tablename);
     }
 
-    public function update_object(Model $object, $tablename, $conditions, $updatefields) {
+    public function update_object(Model $object, $tablename, array $conditions, array $updatefields) {
         return $this->database->update_object($object, $tablename, $conditions, $updatefields);
     }
 
-    public function delete_object($tablename, $conditions) {
+    public function delete_object($tablename, array $conditions) {
         return $this->database->delete_object($tablename, $conditions);
     }
 }

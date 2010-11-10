@@ -67,8 +67,8 @@ class LogManager {
      * @param integer $limit_start The start record to return from.
      * @return array An array of LogEntry objects.
      */
-    public function getLog($filter='', $limit_number=0, $limit_start=0) {
-        $limits = '';
+    public function getLog(array $filter=array(), $limit_number=0, $limit_start=0) {
+        $limits = array();
         if ($limit_number > 0) {
                 $limits = array($limit_start, $limit_number);
         }
@@ -81,7 +81,7 @@ class LogManager {
      * @param array $filter An array of database filters.
      * @return array
      */
-    public function getLogLength($filter = '') {
+    public function getLogLength($filter = array()) {
         return self::$database->count_objects("log", $filter);
     }
 }
