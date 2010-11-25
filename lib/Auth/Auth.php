@@ -109,9 +109,9 @@ class Auth {
      * Check for subgroup support.
      * @return boolean
      */
-    public function SubgroupSupport() {
+    public function subgroupSupport() {
         $implements = class_implements($this->auth_service);
-        return isset($implements["AuthServiceSubgroup"]);
+        return isset($implements["AuthServiceSubgroups"]);
     }
 
     /**
@@ -303,28 +303,51 @@ class Auth {
 
 
     /**
-     * Get a group's membership (including subgroups)
+     * Get a group's membership (including subgroups if supported)
      * @param Group $group The group to get members from.
      * @param array $members The array of members to add group members to.
+     * @param array $groups The groups already checked (to prevent infinite recursion)
      * @return array An array of usernames keyed by username.
      */
-    public function getGroupMembership($group, &$members = array()) {
+    public function getGroupMembership($group, &$members = array(), &$groups = array()) {
+        $groupname = $group->getName();
+        $groups[$groupname] = $groupname;
         $users = $group->getUsers();
         if (!empty($users))
             foreach ($users as $username => $user)
                 $members[$username] = $username;
 
-        $subgroups = $group->getSubgroups();
-        if (!empty($subgroups))
-            foreach ($subgroups as $subgroup)
-                $this->getGroupMembership($this->getGroups($subgroup), $members);
-
+        if ($this->subgroupSupport()) {
+            $subgroups = $group->getSubgroups();
+            if (!empty($subgroups)) {
+                foreach ($subgroups as $subgroup) {
+                    $subgroupname = $subgroup->getName();
+                    if (!isset($groups[$subgroupname])) {
+                        $this->getGroupMembership($subgroup, $members, $groups);
+                    }
+                }
+            }
+        }
         return $members;
     }
-
+    
+    /**
+     * Check if a user is a member of the group or any of it's subgroups.
+     * @param string $username The username to check.
+     * @param string $groupname The name of the group to check.
+     * @return boolean True if the user is in the group, false if not.
+     */
+    public function userInGroup($username, $groupname) {
+        if ($this->getUser($username) === false) return false;
+        $group = $this->getGroup($groupname);
+        if ($group === false) return false;
+        $users = $this->getGroupMembership($group);
+        return isset($users[$username]);
+    }
+    
     /**
      * Get a list of all the groups.
-     * @param boolean $flatten Include users from subgroups in group membership. Defaults to false.
+     * @param boolean $flatten Include users from subgroups in group membership (if supported). Defaults to false.
      * @return array
      */
     public function getGroups($flatten = false) {
@@ -336,7 +359,7 @@ class Auth {
         // Don't cache with nested info
         if (!$flatten) $this->auth_cache["group"] = $groups;
 
-        if ($flatten && !empty($groups)) {
+        if ($flatten && !empty($groups) && $this->subgroupSupport()) {
             foreach ($groups as &$group) {
                 $members = $this->getGroupMembership($group);
                 $group->setUsers($members);
@@ -520,7 +543,9 @@ class Auth {
      * Logout of the SSO system.
      */
     public function logoutSSO() {
-        return $this->auth_service->logoutSSO();
+        if ($this->SSOSupport()) {
+            return $this->auth_service->logoutSSO();
+        }
     }
 
     /**
@@ -530,7 +555,11 @@ class Auth {
      * @return boolean
      */
     public function authSSO($auth_token) {
-        return $this->auth_service->authSSO($auth_token);
+        if ($this->SSOSupport()) {
+            return $this->auth_service->authSSO($auth_token);
+        } else {
+            return true;
+        }
     }
 }
 ?>
