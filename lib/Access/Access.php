@@ -11,6 +11,11 @@
 Core::register_class("Role", "Access/model/Role.php");
 
 /**
+ * Load the AccessService interface.
+ */
+require_once("Access/AccessService.php");
+
+/**
  * Role Management.
  *
  * @package   Role
@@ -26,6 +31,14 @@ class Access {
      * Authenticated role.
      */
     const AUTHENTICATED = "authenticated";
+    /**
+     * The anonymouse role.
+     */
+    const ANONYMOUS = "anonymous";
+    /**
+     * The all role.
+     */
+    const ALL = "all";
 
     /**
      * The current access service.
@@ -39,9 +52,9 @@ class Access {
      */
     private $auth_manager;
 
-    public function __construct(Auth $auth_manager,
-                                $access_service,
-                                array $service_config = array()) {
+    public function __construct($access_service,
+                                array $service_config,
+                                Auth $auth_manager) {
 
         $this->auth_manager = $auth_manager;
         // include service class
@@ -55,6 +68,12 @@ class Access {
                 throw new ServiceLoadException("Access class invalid - '$access_service' does not implement AccessService.");
             }
         }
+        
+        // Special pre-defined roles
+        $this->addRole(new Role(Access::ADMIN, "Admin Role", array($this->auth_manager->getAdminGroup())));
+        $this->addRole(new Role(Access::AUTHENTICATED, "Authenticated Role"));
+        $this->addRole(new Role(Access::ANONYMOUS, "Anonymous Role (non-authenticated only)"));
+        $this->addRole(new Role(Access::ALL, "Anonymous + Authenticated Role (allow access to everyone)"));
     }
 
     /**
@@ -100,14 +119,27 @@ class Access {
      * @param string $role_key The role to check.
      * @return boolean
      */
-    public function hasRole($username, $role_key) {
+    public function hasRole($role_key, $username = '') {
         LogManager::debug("Access::hasRole", "hasRole('$username', '$role_key')");
         $username = trim($username);
         $role_key = trim($role_key);
-        if (empty($username) || empty($role_key)) return false;
-        $user_groups = $this->auth_manager->getUserGroups($username);
+        if (empty($role_key)) return false;
+        if ($role_key == Access::ALL) return true;
+        if (empty($username)) {
+            $username = $this->auth_manager->getUsername();
+        }
+        if ($role_key == Access::AUTHENTICATED && $this->auth_manager->isAuthenticated()) {
+            return true;
+        }
+        if ($role_key == Access::ANONYMOUS && !$this->auth_manager->isAuthenticated()) {
+            return true;
+        }
         $role = $this->getRole($role_key);
+        if ($role === false) {
+            return false;
+        }
         $role_groups = $role->getGroups();
+        $user_groups = $this->auth_manager->getUserGroups($username);
         $intersect = array_intersect($user_groups, $role_groups);
         return !empty($intersect);
     }
