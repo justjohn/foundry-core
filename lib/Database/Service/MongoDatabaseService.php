@@ -37,6 +37,7 @@ class MongoDatabaseService extends Mongo implements DatabaseService {
         if (count($rules) > 0) {
             // Build where caluse
             foreach($rules as $key=>$value) {
+                $key = strtolower($key);
                 $op = "";
                 if (is_array($value)) {
                     $op = $value[0];
@@ -64,6 +65,8 @@ class MongoDatabaseService extends Mongo implements DatabaseService {
         $sort = array();
         if (count($rules) > 0) {
             foreach ($rules as $key => $op) {
+                $key = strtolower($key);
+                
                 if ($op == "DESC") $op = -1;
                 else if ($op == "ASC") $op = 1;
                 
@@ -231,6 +234,7 @@ class MongoDatabaseService extends Mongo implements DatabaseService {
         
         $data = array();
         foreach ($updatefields as $field) {
+            $field = strtolower($field);
             $data[$field] = $object->get($field);
         }
         

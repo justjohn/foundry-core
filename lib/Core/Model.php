@@ -43,6 +43,7 @@ interface Model {
     /**
      * Get the value of a single field.
      * @param string $field The name of the field to get.
+     * @throws FieldDoesNotExistException
      */
     public function get($field);
     
@@ -75,12 +76,13 @@ class BaseModel implements Model {
     private $data = array();
 
     function __construct(array $fields, $key_field) {
-        $this->key_field = $key_field;
+        $this->key_field = strtolower($key_field);
 
         if (!empty($fields)) {
             foreach ($fields as $field_orig=>$type) {
+                // get cannonical field name (lowercase)
                 $field = strtolower($field_orig);
-                $this->fields[$field] = $fields[$field_orig];
+                $this->fields[$field] = $type;
                 switch ($type) {
                     case Model::BOOL:
                         $init = false;
@@ -95,6 +97,7 @@ class BaseModel implements Model {
                     default:
                         $init = "";
                 }
+                // initialize data with the correct data type
                 $this->data[$field] = $init;
             }
         }
@@ -145,6 +148,13 @@ class BaseModel implements Model {
     }
 
 
+    /**
+     * Set a field in the model.
+     * 
+     * @param string $field The field to set.
+     * @param object $data The data to set in the field.
+     * @throws FieldDoesNotExistException
+     */
     public function set($field, $data) {
         $field = strtolower($field);
         // check field name
@@ -172,6 +182,7 @@ class BaseModel implements Model {
     /**
      * Get the value of a single field.
      * @param string $field The name of the field to get.
+     * @throws FieldDoesNotExistException
      */
     public function get($field) {
         $field = strtolower($field);
