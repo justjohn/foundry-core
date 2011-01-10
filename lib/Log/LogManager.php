@@ -41,7 +41,7 @@ class LogManager {
     public static function log($level, $action, $message) {
         // write to log
         $timestamp = time();
-        $user = "Console";
+        $user = "console";
         if (isset(self::$auth_manager))
             $user = self::$auth_manager->getUsername();
 
@@ -51,7 +51,7 @@ class LogManager {
         $log_entry->setMessage($message);
         $log_entry->setUser($user);
         $log_entry->setTimestamp($timestamp);
-
+            
         if (isset(self::$database)) {
             self::$database->write_object($log_entry, "log");
         } else{

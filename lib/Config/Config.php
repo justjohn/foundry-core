@@ -53,8 +53,10 @@ class Config {
         }
         $config_objs = $this->database->load_objects("Option", "config_options", "name");
         $config = array();
-        foreach ($config_objs as $name=>$config_obj) {
-            $config[$name] = $config_obj->getValue();
+        if (count($config_objs) > 0) {
+            foreach ($config_objs as $name=>$config_obj) {
+                $config[$name] = $config_obj->getValue();
+            }
         }
         return $config;
     }

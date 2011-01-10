@@ -30,6 +30,27 @@ interface Model {
      * @return string The key field.
      */
     function getKeyField();
+    
+    /**
+     * Set a field in the model.
+     * 
+     * @param string $field The field to set.
+     * @param object $data The data to set in the field.
+     * @throws FieldDoesNotExistException
+     */
+    function set($field, $data);
+    
+    /**
+     * Get the value of a single field.
+     * @param string $field The name of the field to get.
+     */
+    public function get($field);
+    
+    /**
+     * Get the model as an array.
+     */
+    public function getAsArray();
+
 }
 
 /**
@@ -113,10 +134,10 @@ class BaseModel implements Model {
     }
 
     public function __toString() {
-        $string = get_called_class() . " {\n";
+        $string = "{\n";  //get_called_class()
         if (!empty($this->fields)) {
             foreach ($this->fields as $field=>$type) {
-                $string .= "\t$field ($type) = " . $this->data[$field] . "\n";
+                $string .= "\t$field : \"" . str_replace('"', '\\"', $this->data[$field]) . "\"\n";
             }
         }
         $string .= "}\n";
@@ -124,8 +145,12 @@ class BaseModel implements Model {
     }
 
 
-    private function set($field, $data) {
+    public function set($field, $data) {
         $field = strtolower($field);
+        // check field name
+        if (!isset($this->fields[$field])) {
+            throw new FieldDoesNotExistException("Field $field does not exist.");
+        }
         // Cast data to the appropriate type
         switch ($this->fields[$field]) {
             case Model::BOOL:
@@ -143,9 +168,30 @@ class BaseModel implements Model {
         }
         $this->data[$field] = $data;
     }
+    
+    /**
+     * Get the value of a single field.
+     * @param string $field The name of the field to get.
+     */
+    public function get($field) {
+        $field = strtolower($field);
+        // check field name
+        if (!isset($this->fields[$field])) {
+            throw new FieldDoesNotExistException("Field $field does not exist.");
+        }
+
+        return $this->data[$field];
+    } 
+    
+    /**
+     * Get the model as an array.
+     */
+    public function getAsArray() {
+        return $this->data;
+    }
 
     /**
-     * Get all the fields in the database.
+     * Get all the fields in the object.
      *
      * @return array An array of field names.
      */

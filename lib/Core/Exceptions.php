@@ -57,4 +57,8 @@ class ServiceLoadException extends CoreException {}
  * An exception for calling methods that don't exist in data models.
  */
 class MethodDoesNotExistException extends CoreException {}
+/**
+ * An exception for calling fields that don't exist in data models.
+ */
+class FieldDoesNotExistException extends CoreException {}
 ?>

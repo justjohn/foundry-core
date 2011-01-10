@@ -260,7 +260,7 @@ class MysqlDatabaseService extends mysqli implements DatabaseService {
 
             // Execure Query
             if ($stmt->execute() === false) {
-                print("Error executing query: " . mysqli_stmt_error($stmt) . "<br />");
+                //print("Error executing query: " . mysqli_stmt_error($stmt) . "<br />");
                 return false;
             }
             return true;

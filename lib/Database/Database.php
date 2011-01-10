@@ -19,11 +19,12 @@ class Database {
         }
         $this->database = new $db_service($db_config);
     }
+    
     /**
      * Load objects from a table in the database.
      *
      * @param string $classname  The name of the class type to instantiate and load data into.
-     * @param string $tablename  The name of the table in the database.
+     * @param string $db_key  The name of the table in the database.
      * @param string $key        The table column to key the returned array with.
      * @param array  $conditions The conditions for the database query in an array where keys
      *                           represent the field name, and the associated value is the condition.
@@ -35,52 +36,68 @@ class Database {
      * @return object|boolean An array of $classname instances keyed by the $key field (if set),
      *                        false on failure.
      */
-    public function load_objects($classname, $tablename, $key = "", array $conditions = array(), array $sort_rules = array(), array $limits = array()) {
-        return $this->database->load_objects($classname, $tablename, $key, $conditions, $sort_rules, $limits);
+    public function load_objects($classname, $db_key, $key = "", array $conditions = array(), array $sort_rules = array(), array $limits = array()) {
+        return $this->database->load_objects($classname, $db_key, $key, $conditions, $sort_rules, $limits);
     }
 
     /**
      * Get a count of objects in a table.
      *
-     * @param string $tablename The name of the table in the database.
+     * @param string $db_key The name of the table in the database.
      * @param array  $conditions The conditions for the database query in an array where keys
      *                           represent the field name, and the associated value is the condition.
      * @return integer|boolean The count on success, false on failure.
      */
-    public function count_objects($tablename, array $conditions = array()) {
-        return $this->database->count_objects($tablename, $conditions);
+    public function count_objects($db_key, array $conditions = array()) {
+        return $this->database->count_objects($db_key, $conditions);
     }
 
     /**
      * Load an object from the database.
      *
      * @param string $classname The name of the class type to instantiate and load data into.
-     * @param string $tablename The name of the table in the database.
+     * @param string $db_key The name of the table in the database.
      * @param array  $conditions The conditions for the database query in an array where keys
      *                           represent the field name, and the associated value is the condition.
      * @return object An instance of $classname on success, false on failure.
      */
-    public function load_object($classname, $tablename, array $conditions = array()) {
-        return $this->database->load_object($classname, $tablename, $conditions);
+    public function load_object($classname, $db_key, array $conditions = array()) {
+        return $this->database->load_object($classname, $db_key, $conditions);
     }
 
     /**
      * Writes the values from the object into the given database table.
      *
-     * @param object $object The object with the data to write into the database.
-     * @param string $tablename The name of the table in the database.
+     * @param Model $object The object with the data to write into the database.
+     * @param string $db_key The name of the table in the database.
      * @return boolean true on success, false on failure.
      */
-    public function write_object(Model $object, $tablename) {
-        return $this->database->write_object($object, $tablename);
+    public function write_object(Model $object, $db_key) {
+        return $this->database->write_object($object, $db_key);
     }
 
-    public function update_object(Model $object, $tablename, array $conditions, array $updatefields) {
-        return $this->database->update_object($object, $tablename, $conditions, $updatefields);
+    /**
+     * Update an existing object in the database.
+     *
+     * @param Model  $object The object data to update with.
+     * @param string $db_key The name of the table to update.
+     * @param array  $conditions The conditions for the database objects to update in an array where keys
+     *                           represent the field name, and the associated value is the condition.
+     * @param array  $updatefields An array of fields to update in each object.
+     */
+    public function update_object(Model $object, $db_key, array $conditions, array $updatefields) {
+        return $this->database->update_object($object, $db_key, $conditions, $updatefields);
     }
 
-    public function delete_object($tablename, array $conditions) {
-        return $this->database->delete_object($tablename, $conditions);
+    /**
+     * Delete object[s] from the database.
+     *
+     * @param $db_key The database object/table reference (tablename, key, etc...)
+     * @param $conditions The delete conditions.
+     * @return boolean true on success, false on failure.
+     */
+    public function delete_object($db_key, array $conditions) {
+        return $this->database->delete_object($db_key, $conditions);
     }
 }
 
