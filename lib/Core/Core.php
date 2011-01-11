@@ -1,9 +1,11 @@
 <?php
+namespace foundry\core;
+
 // Include library-wide functions
 require_once("Core/Exceptions.php");
 require_once("Core/Service.php");
 require_once("Core/Model.php");
-require_once("Log/LogManager.php");
+require_once("Log/Log.php");
 
 class Core {
     public static $class_registry = array();
@@ -16,6 +18,15 @@ class Core {
     static function register_class($class_name, $class_file) {
         self::$class_registry[$class_name] = $class_file;
     }
+
+    /**
+     * Register the model autoloader.
+     */
+    static function registerAutoloader() {
+        // Register autoloader
+        spl_autoload_register('\foundry\core\__autoload');
+    }
+
 }
 
 /**
@@ -30,6 +41,5 @@ function __autoload($class_name) {
     return false;
 }
 
-// Register autoloader
-spl_autoload_register('__autoload');
+Core::registerAutoloader();
 ?>

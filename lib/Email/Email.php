@@ -1,4 +1,6 @@
 <?php
+namespace foundry\core\email;
+
 /**
  * Send emails.
  * @package modules
@@ -43,8 +45,8 @@ class Email {
             $mail_options['auth'] = false;
         }
 
-        $this->smtp = Mail::factory('smtp', $mail_options);
-        if (PEAR::isError($this->smtp)) {
+        $this->smtp = \Mail::factory('smtp', $mail_options);
+        if (\PEAR::isError($this->smtp)) {
             registerError("Unable to setup mail object, error is " . $this->smtp->message);
         }
     }
@@ -71,7 +73,7 @@ class Email {
                           'Return-Path'  => $from,
                           'Subject'      => $this->prefix.' '.$subject);
 
-        $mime = new Mail_mime($crlf);
+        $mime = new \Mail_mime($crlf);
 
         if ($textbody == '') {
             $textbody = $body;
@@ -84,7 +86,7 @@ class Email {
 
         $mail = $this->smtp->send($to, $headers, $body);
 
-        return !PEAR::isError($mail);
+        return !\PEAR::isError($mail);
     }
 }
 ?>

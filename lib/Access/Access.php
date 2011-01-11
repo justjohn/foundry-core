@@ -1,4 +1,7 @@
 <?php
+namespace foundry\core\access;
+use \foundry\core\logging\Log as Log;
+
 /**
  * Role Management.
  *
@@ -8,7 +11,7 @@
  */
 
 // Register the role related model classes with the class loader.
-Core::register_class("Role", "Access/model/Role.php");
+\foundry\core\Core::register_class("foundry\core\access\Role", "Access/model/Role.php");
 
 /**
  * Load the AccessService interface.
@@ -54,18 +57,19 @@ class Access {
 
     public function __construct($access_service,
                                 array $service_config,
-                                Auth $auth_manager) {
+                                \foundry\core\auth\Auth $auth_manager) {
 
         $this->auth_manager = $auth_manager;
         // include service class
         include_once("Access/Service/$access_service.php");
+        $access_service = 'foundry\core\access\\'.$access_service;
         if (!class_exists($access_service)) {
-            LogManager::error("Access::__construct", "Unable to load access class '$access_service'.");
-            throw new ServiceLoadException("Unable to load access class '$access_service'.");
+            Log::error("Access::__construct", "Unable to load access class '$access_service'.");
+            throw new \foundry\core\exceptions\ServiceLoadException("Unable to load access class '$access_service'.");
         } else {
             $this->access_service = new $access_service($service_config);
             if (!$this->access_service instanceof AccessService) {
-                throw new ServiceLoadException("Access class invalid - '$access_service' does not implement AccessService.");
+                throw new \foundry\core\exceptions\ServiceLoadException("Access class invalid - '$access_service' does not implement AccessService.");
             }
         }
         
@@ -82,7 +86,7 @@ class Access {
      * @return boolean
      */
     public function addRole(Role $role) {
-        LogManager::info("Access::addRole", "addRole('$role')");
+        Log::info("Access::addRole", "addRole('$role')");
         $result = $this->access_service->addRole($role);
         return $result;
     }
@@ -93,7 +97,7 @@ class Access {
      * @return boolean
      */
     public function removeRole($role_key) {
-        LogManager::info("Access::removeRole", "removeRole('$role_key')");
+        Log::info("Access::removeRole", "removeRole('$role_key')");
         $role_key = trim($role_key);
         if (empty($role_key)) return false;
         $result = $this->access_service->removeRole($role_key);
@@ -106,7 +110,7 @@ class Access {
      * @return Role The role if found, false otherwise.
      */
     public function getRole($role_key) {
-        LogManager::debug("Access::getRole", "getRole('$role_key')");
+        Log::debug("Access::getRole", "getRole('$role_key')");
         $role_key = trim($role_key);
         if (empty($role_key)) return false;
         $result = $this->access_service->getRole($role_key);
@@ -120,7 +124,7 @@ class Access {
      * @return boolean
      */
     public function hasRole($role_key, $username = '') {
-        LogManager::debug("Access::hasRole", "hasRole('$username', '$role_key')");
+        Log::debug("Access::hasRole", "hasRole('$username', '$role_key')");
         $username = trim($username);
         $role_key = trim($role_key);
         if (empty($role_key)) return false;

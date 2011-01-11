@@ -1,4 +1,7 @@
 <?php
+namespace foundry\core\config;
+use \foundry\core\logging\Log as Log;
+
 /**
  * Configuration Manager
  * 
@@ -10,7 +13,7 @@
  */
 
 // Register data model with the class loader.
-Core::register_class("Option", "Config/model/Option.php");
+\foundry\core\Core::register_class("foundry\core\config\Option", "Config/model/Option.php");
 
 /**
  * Configuration Manager
@@ -31,7 +34,7 @@ class Config {
      * Setup the configuration manager.
      * @param Database $database
      */
-    public function __construct($database) {
+    public function __construct(\foundry\core\database\Database $database) {
        $this->database = $database;
     }
 
@@ -44,18 +47,22 @@ class Config {
      */
     public function getConfig($name='') {
         if ($name != '') {
-            $config = $this->database->load_object("Option", "config_options", array("name"=>$name));
+            $config = $this->database->load_object('\foundry\core\config\Option', "config_options", array("name"=>$name));
             if ($config !== false) {
                 return $config->getValue();
             } else {
                 return false;
             }
         }
-        $config_objs = $this->database->load_objects("Option", "config_options", "name");
+        $config_objs = $this->database->load_objects('\foundry\core\config\Option', "config_options", "name");
         $config = array();
-        if (count($config_objs) > 0) {
-            foreach ($config_objs as $name=>$config_obj) {
-                $config[$name] = $config_obj->getValue();
+        if ($config_objs === false) {
+            die("unable to load configuration from database");
+        } else {
+            if (count($config_objs) > 0) {
+                foreach ($config_objs as $name=>$config_obj) {
+                   $config[$name] = $config_obj->getValue();
+                }
             }
         }
         return $config;
@@ -67,7 +74,7 @@ class Config {
      * @param String $value The value of the configuration option.
      */
     public function setConfig($name, $value) {
-        LogManager::info("ConfigManager::setConfig", "setConfig('$name', '$value')");
+        Log::info("ConfigManager::setConfig", "setConfig('$name', '$value')");
         $config = new Option();
         $config->setName(trim($name));
         $config->setValue(trim($value));

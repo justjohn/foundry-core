@@ -1,4 +1,6 @@
 <?php
+namespace foundry\core\auth;
+
 /**
  * Authentication Service Single Sign-On Support Interface
  *

@@ -1,6 +1,8 @@
 <?php
+namespace foundry\core\database;
+use \foundry\core\Model as Model;
 
-class MysqlDatabaseService extends mysqli implements DatabaseService {
+class MysqlDatabaseService extends \mysqli implements DatabaseService {
     public static $required_options = array("host",
                                             "username",
                                             "password",
@@ -14,7 +16,7 @@ class MysqlDatabaseService extends mysqli implements DatabaseService {
                              $options["db"]);
 
         if (mysqli_connect_error()) {
-            throw new ServiceConnectionException("Unable to connect to the MySQL database.");
+            throw new \foundry\core\exceptions\ServiceConnectionException("Unable to connect to the MySQL database.");
         }
     }
 

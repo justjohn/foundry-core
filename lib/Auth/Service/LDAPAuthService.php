@@ -1,4 +1,6 @@
 <?php
+namespace foundry\core\auth;
+
 /**
  * LDAP Authentication Service Implementation
  *
@@ -99,7 +101,7 @@ class LDAPAuthService implements AuthService, AuthServiceSubgroups {
                              $this->ldap_attributes->managerDN . "," . $this->ldap_attributes->baseDN,
                              $this->ldap_attributes->managerPassword);
         if (!$result) {
-            throw new ServiceConnectionException("Unable to bind to the LDAP directory.");
+            throw new \foundry\core\exceptions\ServiceConnectionException("Unable to bind to the LDAP directory.");
         }
         return $result;
     }
@@ -111,7 +113,7 @@ class LDAPAuthService implements AuthService, AuthServiceSubgroups {
      * @throws ServiceConnectionException All required options are not present.
      */
     public function __construct($options) {
-        Service::validate($options, self::$required_options);
+        \foundry\core\Service::validate($options, self::$required_options);
         $ldap_attr = new LDAPAttributes($options);
         $this->ldap_attributes = $ldap_attr;
         $ldap_conn = ldap_connect($ldap_attr->connectionString);
@@ -123,7 +125,7 @@ class LDAPAuthService implements AuthService, AuthServiceSubgroups {
                 return;
             }
         }
-        throw new ServiceConnectionException("Unable to connect and bind to the LDAP directory.");
+        throw new \foundry\core\exceptions\ServiceConnectionException("Unable to connect and bind to the LDAP directory.");
     }
 
     /**
@@ -206,7 +208,6 @@ class LDAPAuthService implements AuthService, AuthServiceSubgroups {
         $user_info[$attributes->userFirstNameAttr] = $firstname;
         $user_info[$attributes->userSurnameAttr] = $surname;
         $user_info[$attributes->userDisplayNameAttr] = $displayname;
-
         return ldap_mod_replace($this->ldap_conn, $userdn, $user_info);
 
     }

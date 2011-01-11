@@ -1,12 +1,14 @@
 <?php
-Core::register_class("LogEntry", "Log/model/LogEntry.php");
+namespace foundry\core\logging;
+
+\foundry\core\Core::register_class('foundry\core\logging\LogEntry', "Log/model/LogEntry.php");
 
 /**
  * Write log entries.
  *
  * @package modules
  */
-class LogManager {
+class Log {
     const DEBUG = 1;
     const INFO  = 2;
     const WARN  = 4;
@@ -72,7 +74,7 @@ class LogManager {
         if ($limit_number > 0) {
                 $limits = array($limit_start, $limit_number);
         }
-        return self::$database->load_objects("LogEntry", "log", 'id', $filter, array("timestamp"=>"DESC"), $limits);
+        return self::$database->load_objects("foundry\core\logging\LogEntry", "log", 'id', $filter, array("timestamp"=>"DESC"), $limits);
     }
 
     /**

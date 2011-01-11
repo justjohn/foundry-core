@@ -1,4 +1,5 @@
 <?php
+namespace foundry\core;
 
 /**
  * The Service class provides basic configuration option validation during

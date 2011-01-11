@@ -1,4 +1,7 @@
 <?php
+namespace foundry\core\auth;
+use \foundry\core\logging\Log as Log;
+
 /**
  * Authentication API and service loader.
  * 
@@ -10,8 +13,8 @@
  */
 
 // Register the authentication related model classes with the class loader.
-Core::register_class("User", "Auth/model/User.php");
-Core::register_class("Group", "Auth/model/Group.php");
+\foundry\core\Core::register_class('foundry\core\auth\User', "Auth/model/User.php");
+\foundry\core\Core::register_class('foundry\core\auth\Group', "Auth/model/Group.php");
 
 /**
  * Load the AuthService interface.
@@ -80,9 +83,10 @@ class Auth {
 
         // include auth class
         include_once("Auth/Service/$auth_service.php");
+        $auth_service = 'foundry\core\auth\\'.$auth_service;
         if (!class_exists($auth_service)) {
-            LogManager::error("Auth::__construct", "Unable to load auth class '$auth_service'.");
-            throw new ServiceLoadException("Unable to load auth class '$auth_service'.");
+            Log::error("Auth::__construct", "Unable to load auth class '$auth_service'.");
+            throw new \foundry\core\exceptions\ServiceLoadException("Unable to load auth class '$auth_service'.");
         } else {
             $this->auth_service = new $auth_service($auth_config);
         }
@@ -127,7 +131,7 @@ class Auth {
             $this->is_authenticated = true;
             $this->user = $username;
         } else {
-            LogManager::warn("Auth::authenticate", "Failed authentication for authenticate('$username', '********')");
+            Log::warn("Auth::authenticate", "Failed authentication for authenticate('$username', '********')");
         }
         return $this->is_authenticated;
     }
@@ -175,7 +179,7 @@ class Auth {
      * @return boolean true on sucess, false on failure.
      */
     public function addUser($user, $password) {
-        LogManager::info("Auth::addUser", "addUser('$user', '$password')");
+        Log::info("Auth::addUser", "addUser('$user', '$password')");
         $result = $this->auth_service->addUser($user, $password);
         if ($result) {
             $username = $user->getUsername();
@@ -191,7 +195,7 @@ class Auth {
      * @return boolean true on sucess, false on failure.
      */
     public function updateUser($user) {
-        LogManager::info("Auth::updateUser", "updateUser('$user)");
+        Log::info("Auth::updateUser", "updateUser('$user)");
         $result = $this->auth_service->updateUser($user);
         if ($result) {
             $username = $user->getUsername();
@@ -207,7 +211,7 @@ class Auth {
      * @return boolean true on sucess, false on failure.
      */
     public function deleteUser($username) {
-        LogManager::info("Auth::deleteUser", "deleteUser('$username')");
+        Log::info("Auth::deleteUser", "deleteUser('$username')");
         if (empty($username)) return false;
         $result = $this->auth_service->deleteUser($username);
         if ($result) {
@@ -390,7 +394,7 @@ class Auth {
      * @return boolean
      */
     public function addGroup($group) {
-        LogManager::info("Auth::addGroup", "addGroup('$group')");
+        Log::info("Auth::addGroup", "addGroup('$group')");
         $result = $this->auth_service->addGroup($group);
         // Invalidate groups cache
         if ($result) {
@@ -408,7 +412,7 @@ class Auth {
      * @return boolean true on success, false on failure.
      */
     public function deleteGroup($groupname) {
-        LogManager::info("Auth::deleteGroup", "deleteGroup('$groupname')");
+        Log::info("Auth::deleteGroup", "deleteGroup('$groupname')");
         $result = $this->auth_service->deleteGroup($groupname);
         // Invalidate groups cache
         if ($result) {
@@ -426,7 +430,7 @@ class Auth {
      * @return boolean true on success, false on failure.
      */
     public function addUserToGroup($username, $groupname) {
-        LogManager::info("Auth::addUserToGroup", "addUserToGroup('$username', '$groupname')");
+        Log::info("Auth::addUserToGroup", "addUserToGroup('$username', '$groupname')");
         $result = $this->auth_service->addUserToGroup($username, $groupname);
         if ($result) {
             unset($this->auth_cache["groups"]);
@@ -444,7 +448,7 @@ class Auth {
      * @return boolean true on success, false on failure.
      */
     public function addSubgroupToGroup($subgroupname, $groupname) {
-        LogManager::info("Auth::addSubgroupToGroup", "addSubgroupToGroup('$subgroupname', '$groupname')");
+        Log::info("Auth::addSubgroupToGroup", "addSubgroupToGroup('$subgroupname', '$groupname')");
         $result = $this->auth_service->addSubgroupToGroup($subgroupname, $groupname);
         if ($result) {
             unset($this->auth_cache["groups"]);
@@ -462,7 +466,7 @@ class Auth {
      * @return boolean true on success, false on failure.
      */
     public function removeUserFromGroup($username, $groupname) {
-        LogManager::info("Auth::removeUserFromGroup", "removeUserFromGroup('$username', '$groupname')");
+        Log::info("Auth::removeUserFromGroup", "removeUserFromGroup('$username', '$groupname')");
         $result = $this->auth_service->removeUserFromGroup($username, $groupname);
         if ($result) {
             unset($this->auth_cache["groups"]);
@@ -480,7 +484,7 @@ class Auth {
      * @return boolean true on success, false on failure.
      */
     public function removeSubgroupFromGroup($subgroupname, $groupname) {
-        LogManager::info("Auth::removeSubgroupFromGroup", "removeSubgroupFromGroup('$subgroupname', '$groupname')");
+        Log::info("Auth::removeSubgroupFromGroup", "removeSubgroupFromGroup('$subgroupname', '$groupname')");
         $result = $this->auth_service->removeSubgroupFromGroup($subgroupname, $groupname);
         if ($result) {
             unset($this->auth_cache["groups"]);
@@ -519,7 +523,7 @@ class Auth {
      * @param string $password
      */
     public function changePassword($username, $password) {
-        LogManager::info("Auth::changePassword", "changePassword('$username', '********')");
+        Log::info("Auth::changePassword", "changePassword('$username', '********')");
         return $this->auth_service->changePassword($username, $password);
     }
 

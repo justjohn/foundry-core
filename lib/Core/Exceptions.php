@@ -1,4 +1,6 @@
 <?php
+namespace foundry\core\exceptions;
+
 // Based on code from http://us2.php.net/exceptions by ask@nilpo.com
 
 interface IException
@@ -16,7 +18,7 @@ interface IException
     public function __construct($message = null, $code = 0);
 }
 
-abstract class CoreException extends Exception implements IException
+abstract class CoreException extends \Exception implements IException
 {
     protected $message = 'Unknown exception';     // Exception message
     private   $string;                            // Unknown
@@ -61,4 +63,8 @@ class MethodDoesNotExistException extends CoreException {}
  * An exception for calling fields that don't exist in data models.
  */
 class FieldDoesNotExistException extends CoreException {}
+/**
+ * An exception for classes unable to load model classes.
+ */
+class ModelDoesNotExistException extends CoreException {}
 ?>

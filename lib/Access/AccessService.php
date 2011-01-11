@@ -1,4 +1,6 @@
 <?php
+namespace foundry\core\access;
+
 /**
  * Interface for Role management.
  *

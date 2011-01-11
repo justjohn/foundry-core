@@ -1,4 +1,6 @@
 <?php
+namespace foundry\core\database;
+use \foundry\core\Model as Model;
 
 /**
  * The database interface.
@@ -6,13 +8,13 @@
  * This interface treats all databases as object-based. For a table-based database
  * this is done by mapping object fields to table fields.
  */
-class MongoDatabaseService extends Mongo implements DatabaseService {
+class MongoDatabaseService extends \Mongo implements DatabaseService {
     public static $required_options = array("host", "username", "password", "db");
 
     private $db;
 
     public function __construct($options) {
-        Service::validate($options, self::$required_options);
+        \foundry\core\Service::validate($options, self::$required_options);
         $username = $options["username"];
         $password = $options["password"];
         $host = $options["host"];
@@ -22,7 +24,7 @@ class MongoDatabaseService extends Mongo implements DatabaseService {
             $this->db = parent::selectDB($options["db"]);
             
         } catch (MongoConnectionException $exception) {
-            throw new ServiceConnectionException("Unable to connect to MongoDB.");
+            throw new \foundry\core\exceptions\ServiceConnectionException("Unable to connect to MongoDB.");
         }
     }
 
@@ -32,7 +34,7 @@ class MongoDatabaseService extends Mongo implements DatabaseService {
      *
      * @param array $rules
      */
-    private function get_conditions(array $rules) {
+    private function get_conditions(array $rules, Model $obj=NULL) {
         $condition = array();
         if (count($rules) > 0) {
             // Build where caluse
@@ -42,6 +44,10 @@ class MongoDatabaseService extends Mongo implements DatabaseService {
                 if (is_array($value)) {
                     $op = $value[0];
                     $value = $value[1];
+                }
+                if ($obj !== NULL) {
+                    $type = $obj->getFieldType($key);
+                    if ($type == Model::INT) $value = intval($value);
                 }
                 if (empty($op)) {
                     $condition[$key] = $value;
@@ -97,9 +103,11 @@ class MongoDatabaseService extends Mongo implements DatabaseService {
                                  array $sort_rules = array(),
                                  array $limits = array()) {
         if (!class_exists($classname)) {
-            return false;
+            throw new \foundry\core\exceptions\ModelDoesNotExistException("Unable to load class $classname");
         }
+        $key = strtolower($key);
         //print("\nCollection: $collection_name\n");
+
         $obj = new $classname();
         $fields = $obj->getFields();
         if (count($fields) == 0) return false;
@@ -107,7 +115,7 @@ class MongoDatabaseService extends Mongo implements DatabaseService {
         $objects = array();
         $collection = $this->db->selectCollection($collection_name);
         
-        $condition = $this->get_conditions($conditions);
+        $condition = $this->get_conditions($conditions, $obj);
         $cursor = $collection->find();
         //print("\tPre-condition: " . $cursor->count() . "\n");
         
@@ -230,7 +238,7 @@ class MongoDatabaseService extends Mongo implements DatabaseService {
         
         $collection = $this->db->selectCollection($collection_name);
         $array = $object->getAsArray();
-        $condition = $this->get_conditions($conditions);
+        $condition = $this->get_conditions($conditions, $object);
         
         $data = array();
         foreach ($updatefields as $field) {

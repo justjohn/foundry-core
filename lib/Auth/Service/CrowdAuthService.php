@@ -1,4 +1,6 @@
 <?php
+namespace foundry\core\auth;
+
 /**
  * Atlassian Crowd Authentication Service Implementation
  *

@@ -1,10 +1,16 @@
 <?php
+namespace foundry\core\database;
+use \foundry\core\Model as Model;
+use \foundry\core\logging\Log as Log;
+
 /**
  * Load the AuthService interface.
  */
 require_once("Database/DatabaseService.php");
 
 class Database {
+
+    const KEY_FIELD = "id";
 
     private $database;
     
@@ -13,9 +19,10 @@ class Database {
         
         // include auth class
         include_once("Database/Service/$db_service.php");
+        $db_service = 'foundry\core\database\\'.$db_service;
         if (!class_exists($db_service)) {
-            LogManager::error("Database::__construct", "Unable to load database class '$db_service'.");
-            throw new ServiceLoadException("Unable to load database class '$db_service'.");
+            Log::error("Database::__construct", "Unable to load database class '$db_service'.");
+            throw new \foundry\core\exceptions\ServiceLoadException("Unable to load database class '$db_service'.");
         }
         $this->database = new $db_service($db_config);
     }
