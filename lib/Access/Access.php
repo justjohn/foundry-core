@@ -1,5 +1,9 @@
 <?php
 namespace foundry\core\access;
+
+\foundry\core\Core::requires('\foundry\core\auth\Auth');
+\foundry\core\Core::requires('\foundry\core\logging\Log');
+
 use \foundry\core\logging\Log as Log;
 
 /**

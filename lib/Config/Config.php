@@ -1,5 +1,9 @@
 <?php
 namespace foundry\core\config;
+
+\foundry\core\Core::requires('\foundry\core\logging\Log');
+\foundry\core\Core::requires('\foundry\core\database\Database');
+
 use \foundry\core\logging\Log as Log;
 
 /**

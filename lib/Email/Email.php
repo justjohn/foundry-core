@@ -1,6 +1,10 @@
 <?php
 namespace foundry\core\email;
 
+\foundry\core\Core::requires('\foundry\core\logging\Log');
+
+use \foundry\core\logging\Log as Log;
+
 /**
  * Send emails.
  * @package modules
@@ -61,6 +65,8 @@ class Email {
      * @return boolean
      */
     public function sendEmail($to, $subject, $body, $textbody = '', $from = '') {
+        Log::info('Log::sendEmail', "sendEmail($to, $subject, ".get_a($body).", <pre>$textbody</pre>, $from)");
+        
         if (trim($to) == '') {
             return false;
         }

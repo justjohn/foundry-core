@@ -23,7 +23,7 @@ class MongoDatabaseService extends \Mongo implements DatabaseService {
             parent::connect();
             $this->db = parent::selectDB($options["db"]);
             
-        } catch (MongoConnectionException $exception) {
+        } catch (\MongoConnectionException $exception) {
             throw new \foundry\core\exceptions\ServiceConnectionException("Unable to connect to MongoDB.");
         }
     }
