@@ -9,17 +9,22 @@ use \foundry\core\Model as Model;
  * this is done by mapping object fields to table fields.
  */
 class MongoDatabaseService extends \Mongo implements DatabaseService {
-    public static $required_options = array("host", "username", "password", "db");
+    public static $required_options = array("host", "db");
 
     private $db;
 
     public function __construct($options) {
         \foundry\core\Service::validate($options, self::$required_options);
-        $username = $options["username"];
-        $password = $options["password"];
+        $username = isset($options["username"])?$options["username"]:'';
+        $password = isset($options["password"])?$options["password"]:'';
         $host = $options["host"];
         try {
-            parent::__construct("mongodb://$username:$password@$host/" . $options["db"]);
+            $cred = $username;
+            if (!empty($password)) {
+                $cred .= ':' . $password;
+            }
+            $cred = !empty($cred)?"$cred@":'';
+            parent::__construct("mongodb://$cred$host/" . $options["db"]);
             parent::connect();
             $this->db = parent::selectDB($options["db"]);
             
@@ -163,7 +168,6 @@ class MongoDatabaseService extends \Mongo implements DatabaseService {
                 }
             }
         }
-        //print_a($objects);
         return $objects;        
     }
 

@@ -1,7 +1,8 @@
 <?php
 namespace foundry\core\database;
+use \foundry\core\Core as Core;
 
-\foundry\core\Core::requires('\foundry\core\logging\Log');
+Core::requires('\foundry\core\logging\Log');
 
 use \foundry\core\Model as Model;
 use \foundry\core\logging\Log as Log;
@@ -12,14 +13,17 @@ use \foundry\core\logging\Log as Log;
 require_once("Database/DatabaseService.php");
 
 class Database {
+    public static $required_options = array("service", "service_config");
 
     const KEY_FIELD = "id";
 
     private $database;
     
-    function __construct($db_service,
-                         array $db_config) {
-        
+    function __construct() {
+        $config = Core::getConfig('\foundry\core\database\Database');
+        \foundry\core\Service::validate($config, self::$required_options);
+        $db_service = $config["service"];
+        $db_config = $config["service_config"];
         // include auth class
         include_once("Database/Service/$db_service.php");
         $db_service = 'foundry\core\database\\'.$db_service;
@@ -111,4 +115,5 @@ class Database {
     }
 }
 
+return new Database();
 ?>

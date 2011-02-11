@@ -26,5 +26,15 @@ class LogEntry extends \foundry\core\BaseModel {
     function __construct() {
         parent::__construct($this->fields, $this->key_field);
     }
+    
+    function toString() {
+        $string = $this->getTimestamp() . " / " . Log::getLabel($this->getLevel()) . ": " . $this->getAction() . "\n" . 
+                  $this->getMessage() . "\n";
+        return $string;
+    }
+    function toLimitedString() {
+        $string = $this->getTimestamp() . " / " . Log::getLabel($this->getLevel()) . ": " . $this->getAction() . "\n";
+        return $string;
+    }
 }
 ?>

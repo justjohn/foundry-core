@@ -34,19 +34,19 @@ class Log {
 
     public static function error($action, $message) {
         if (self::ERROR >= self::$level)
-            self::log("ERROR", $action, $message, self::$user_function, self::$log_function);
+            self::log(self::ERROR, $action, $message, self::$user_function, self::$log_function);
     }
     public static function warn($action, $message) {
         if (self::WARN >= self::$level)
-            self::log("WARN", $action, $message, self::$user_function, self::$log_function);
+            self::log(self::WARN, $action, $message, self::$user_function, self::$log_function);
     }
     public static function info($action, $message) {
         if (self::INFO >= self::$level)
-            self::log("INFO", $action, $message, self::$user_function, self::$log_function);
+            self::log(self::INFO, $action, $message, self::$user_function, self::$log_function);
     }
     public static function debug($action, $message) {
         if (self::DEBUG >= self::$level)
-            self::log("DEBUG", $action, $message, self::$user_function, self::$log_function);
+            self::log(self::DEBUG, $action, $message, self::$user_function, self::$log_function);
     }
 
     public static function log($level, $action, $message, \Closure $user_function, \Closure $log_function) {
@@ -63,9 +63,24 @@ class Log {
     
         $log_function($log_entry);
     }
+    
+    public static function getLabel($error_level) {
+        switch ($error_level) {
+            case self::DEBUG:
+                return "DEBUG";
+            case self::INFO:
+                return "INFO";
+            case self::WARN:
+                return "WARN";
+            case self::ERROR:
+                return "ERROR";
+            default:
+                return "OTHER";
+        }
+    }
 }
 
-Log::$log_function = function($log_entry) {
+Log::$log_function = function(LogEntry $log_entry) {
     error_log($log_entry);
 };
 Log::$user_function = function() {

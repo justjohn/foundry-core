@@ -1,8 +1,9 @@
 <?php
 namespace foundry\core\access;
+use \foundry\core\Core as Core;
 
-\foundry\core\Core::requires('\foundry\core\auth\Auth');
-\foundry\core\Core::requires('\foundry\core\logging\Log');
+Core::requires('\foundry\core\auth\Auth');
+Core::requires('\foundry\core\logging\Log');
 
 use \foundry\core\logging\Log as Log;
 
@@ -15,7 +16,7 @@ use \foundry\core\logging\Log as Log;
  */
 
 // Register the role related model classes with the class loader.
-\foundry\core\Core::register_class("foundry\core\access\Role", "Access/model/Role.php");
+Core::register_class("foundry\core\access\Role", "Access/model/Role.php");
 
 /**
  * Load the AccessService interface.
@@ -30,6 +31,10 @@ require_once("Access/AccessService.php");
  * @copyright &copy; 2010 John Roepke
  */
 class Access {
+    /**
+     * The configuration options required to initialize an Auth service.
+     */
+    public static $required_options = array("service", "service_config");
     /**
      * Admin role.
      */
@@ -59,11 +64,13 @@ class Access {
      */
     private $auth_manager;
 
-    public function __construct($access_service,
-                                array $service_config,
-                                \foundry\core\auth\Auth $auth_manager) {
-
-        $this->auth_manager = $auth_manager;
+    public function __construct() {
+        $config = Core::getConfig('\foundry\core\access\Access');
+        \foundry\core\Service::validate($config, self::$required_options);
+        $access_service = $config["service"];
+        $service_config = $config["service_config"];
+        $this->auth_manager = Core::get('\foundry\core\auth\Auth');
+        
         // include service class
         include_once("Access/Service/$access_service.php");
         $access_service = 'foundry\core\access\\'.$access_service;
@@ -152,4 +159,6 @@ class Access {
         return !empty($intersect);
     }
 }
+
+return new Access();
 ?>

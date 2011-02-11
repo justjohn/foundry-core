@@ -1,7 +1,8 @@
 <?php
 namespace foundry\core\email;
+use \foundry\core\Core as Core;
 
-\foundry\core\Core::requires('\foundry\core\logging\Log');
+Core::requires('\foundry\core\logging\Log');
 
 use \foundry\core\logging\Log as Log;
 
@@ -30,8 +31,8 @@ class Email {
      */
     private $email;
 
-    public function  __construct($options) {
-
+    public function  __construct() {
+        $options = Core::getConfig('\foundry\core\email\Email');
         $this->email = $options['email'];
         $this->prefix = $options['prefix'];
 
@@ -95,4 +96,6 @@ class Email {
         return !\PEAR::isError($mail);
     }
 }
+
+return new Email();
 ?>

@@ -1,8 +1,9 @@
 <?php
 namespace foundry\core\config;
+use \foundry\core\Core as Core;
 
-\foundry\core\Core::requires('\foundry\core\logging\Log');
-\foundry\core\Core::requires('\foundry\core\database\Database');
+Core::requires('\foundry\core\logging\Log');
+Core::requires('\foundry\core\database\Database');
 
 use \foundry\core\logging\Log as Log;
 
@@ -17,7 +18,7 @@ use \foundry\core\logging\Log as Log;
  */
 
 // Register data model with the class loader.
-\foundry\core\Core::register_class("foundry\core\config\Option", "Config/model/Option.php");
+Core::register_class("foundry\core\config\Option", "Config/model/Option.php");
 
 /**
  * Configuration Manager
@@ -38,8 +39,8 @@ class Config {
      * Setup the configuration manager.
      * @param Database $database
      */
-    public function __construct(\foundry\core\database\Database $database) {
-       $this->database = $database;
+    public function __construct() {
+       $this->database = Core::get('\foundry\core\database\Database');
     }
 
     /**
@@ -90,4 +91,6 @@ class Config {
         }
     }
 }
+
+return new Config();
 ?>

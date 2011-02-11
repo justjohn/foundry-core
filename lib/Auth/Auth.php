@@ -1,7 +1,8 @@
 <?php
 namespace foundry\core\auth;
+use \foundry\core\Core as Core;
 
-\foundry\core\Core::requires('\foundry\core\logging\Log');
+Core::requires('\foundry\core\logging\Log');
 
 use \foundry\core\logging\Log as Log;
 
@@ -16,8 +17,8 @@ use \foundry\core\logging\Log as Log;
  */
 
 // Register the authentication related model classes with the class loader.
-\foundry\core\Core::register_class('foundry\core\auth\User', "Auth/model/User.php");
-\foundry\core\Core::register_class('foundry\core\auth\Group', "Auth/model/Group.php");
+Core::register_class('foundry\core\auth\User', "Auth/model/User.php");
+Core::register_class('foundry\core\auth\Group', "Auth/model/Group.php");
 
 /**
  * Load the AuthService interface.
@@ -34,6 +35,10 @@ require_once("Auth/AuthServiceSubgroups.php");
  * @copyright 2010 John Roepke
  */
 class Auth {
+    /**
+     * The configuration options required to initialize an Auth service.
+     */
+    public static $required_options = array("service", "service_config");
     /**
      * The authentication service.
      * @var AuthService
@@ -75,9 +80,12 @@ class Auth {
      * @param array      $auth_config  An array of configuration options to pass to the auth service.
      * @param string     $admin_group  The name of the site admin group.
      */
-    function __construct($auth_service,
-                         array $auth_config,
-                         $admin_group) {
+    function __construct() {
+        $config = Core::getConfig('\foundry\core\auth\Auth');
+        \foundry\core\Service::validate($config, self::$required_options);
+        $auth_service = $config["service"];
+        $auth_config = $config["service_config"];
+        $admin_group = $config["admin_group"];
 
         // Load the authentication cache.
         /* if (isset($_SESSION["auth_cache"])) {
@@ -569,4 +577,6 @@ class Auth {
         }
     }
 }
+
+return new Auth();
 ?>

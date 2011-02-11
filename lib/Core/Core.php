@@ -3,22 +3,6 @@ namespace foundry\core;
 
 Core::provides('\foundry\core\Core');
 
-// Required for all core modules
-Core::provides('\foundry\core\Exceptions', 'Core/Exceptions.php', true);
-Core::provides('\foundry\core\Service',    'Core/Service.php',    true);
-Core::provides('\foundry\core\Model',      'Core/Model.php',      true);
-
-// Optional functionality  
-Core::provides('\foundry\core\access\Access',     'Access/Access.php');
-Core::provides('\foundry\core\auth\Auth',         'Auth/Auth.php');
-Core::provides('\foundry\core\config\Config',     'Config/Config.php');
-Core::provides('\foundry\core\database\Database', 'Database/Database.php');
-Core::provides('\foundry\core\email\Email',       'Email/Email.php');
-Core::provides('\foundry\core\logging\Log',       'Log/Log.php');
-
-// Load common functions for debugging
-require_once("Functions/common.php");
-
 class Core {
     public static $class_registry = array();
 
@@ -43,6 +27,13 @@ class Core {
     public static $provided_modules = array();
     public static $required_modules = array();
     
+    /**
+     * Register a module and provide it's location on disk.
+     * @param string $module The module name.
+     * @param string $location The location on disk of the module.
+     * @param boolean $load_now Immediatly load the module without requiring
+     *                          it to be required first. (default = false)
+     */
     static function provides($module, $location=false, $load_now=false) {
         self::$provided_modules[$module] = $location;
         if ($location === false) {
@@ -53,18 +44,61 @@ class Core {
             Core::requires($module);
         }
     }
+    
+    /**
+     * Mark a module as required and load it (if it isn.'t already loaded)
+     * @param string $module The module name.
+     */
     static function requires($module) {
-        if (isset(self::$included_modules[$module])) return;
+        if (isset(self::$included_modules[$module])) return self::$module_instance[$module];
         
         if (isset(self::$provided_modules[$module])) {
-            $result = @include_once(self::$provided_modules[$module]);
-            self::$included_modules[$module] = true;
-            if ($result === false) {
-                die("Unable to load module '$module': Check that '" . self::$provided_modules[$module] . "' is on the path.\n" . get_a(debug_backtrace()));
+            try {
+                $result = include_once(self::$provided_modules[$module]);
+                self::$included_modules[$module] = true;
+                if ($result === false) {
+                    die("Unable to load module '$module': Check that '" . self::$provided_modules[$module] . "' is on the path.\n" . get_a(debug_backtrace()));
+                } else {
+                    self::$module_instance[$module] = $result;
+                    return $result;
+                }
+            } catch (\foundry\core\exceptions\ServiceConnectionException $exception) {
+                die("<b>$module</b>: Unable to connect to service. (<i>Exception details follow</i>)<br /><br />" . $exception->getMessage());
+            } catch (\foundry\core\exceptions\ServiceValidationException $exception) {
+                die("<b>$module</b>: Module configuration does not contain all required options. (<i>Exception details follow</i>)<br /><br />" . $exception->getMessage());
+            } catch (\foundry\core\exceptions\ServiceLoadException $exception) {
+                die("<b>$module</b>: Unable to load service. (<i>Exception details follow</i>)<br /><br />" . $exception->getMessage());
             }
         } else {
-            die("Unable to load module '$module'.<br />" . get_a(debug_backtrace()));
+            die("Unable to load module '$module'.<br />" . \get_a(debug_backtrace()));
         }
+    }
+    
+    public static $module_config = array();
+    
+    /**
+     * Provide configuration information for a module.
+     */
+    static function configure($module, $configuration) {
+        if (empty($module) || empty($configuration)) return;
+        self::$module_config[$module] = $configuration;
+    }
+    
+    static function getConfig($module) {
+        if (isset(self::$module_config[$module])) {
+            return self::$module_config[$module];
+        } else {
+            return false;
+        }
+    }
+    
+    public static $module_instance = array();
+    
+    static function get($module) {
+        if (isset(self::$module_instance[$module])) {
+            return self::$module_instance[$module]; 
+        }
+        return false;
     }
 }
 
