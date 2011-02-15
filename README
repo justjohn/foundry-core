@@ -1,7 +1,7 @@
-The Foundry Core libraries are on on-demand framework that provides infrastructure for module loading and dependency management among modules. With the core framework you only need to know the name of the module you want to load and it's configuration parameters. For example, you can load a Mongo database connection with the following snippet:
+The Foundry Core libraries are on on-demand framework that provides infrastructure for module loading and dependency management among modules. With the core framework you only need to know the name of the module you want to load and it's configuration parameters. For example, you can load a Mongo database connection with the following snippets:
 
+configuration.php
 <?php
-
 // Provide configuration for the database
 Core::configure('\foundry\core\database\Database',
     array(
@@ -12,18 +12,23 @@ Core::configure('\foundry\core\database\Database',
         )
     )
 );
+?>
+
+index.php
+<?php
+require_once('configuration.php');
 
 // Require the database library
 Core::requires('\foundry\core\database\Database');
 
 // Get the loaded module
 $database = Core::get('\foundry\core\database\Database');
-
 ?>
 
-The beauty of this approach is that you need only provide the configuration for all the modules up front. All the heavy lifting is done only when the module is required, and only once, since after a module is loaded it won't be loaded again in the same request. Modules can also require other modules, so if you build a project management module based on a database, you need only put a Core::requires(...) at the top of the module to ensure that the database library is loaded when needed.
+The advantage of this approach is that you need only provide the configuration for all the modules in one plave. All the heavy lifting is done only when the module is required, and only once, since after a module is loaded, it's cached, so it won't be loaded again during the same request. 
+Modules can also require other modules, so if you build a project management module based on a database, you can put the Core::requires('\...\Database') at the top of the module to require the database library is loaded.
 
 Usage:
 
-Include the Foundry Core libraries in your PHP include path and consult the online documentation for detailed usage.
+Include the Foundry Core libraries in your PHP include path and consult the documentation for detailed usage.
 
