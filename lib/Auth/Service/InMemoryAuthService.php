@@ -1,5 +1,5 @@
 <?php
-namespace foundry\core\auth
+namespace foundry\core\auth;
 
 /**
  * In-memory Authentication Service Implementation

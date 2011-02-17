@@ -1,15 +1,7 @@
 <?php
-set_include_path(get_include_path()
-        . PATH_SEPARATOR . "../lib/");
+namespace foundry\core\auth;
 
-require_once("Core/Core.php");
-require_once("Functions/debug.php");
-require_once("Auth/AuthService.php");
-require_once("Auth/AuthServiceSSO.php");
-require_once("Auth/AuthServiceSubgroups.php");
-
-
-abstract class AuthServiceTest extends PHPUnit_Framework_TestCase {
+abstract class AuthServiceTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * The authentication manager.
@@ -27,14 +19,7 @@ abstract class AuthServiceTest extends PHPUnit_Framework_TestCase {
     protected $added_groups = array();
 
     public function __construct($auth_service) {
-        $this->auth_service = $auth_service;
-    }
-
-    public static function setUpBeforeClass()
-    {
-        Core::register_class("User", "Auth/model/User.php");
-        Core::register_class("Group", "Auth/model/Group.php");
-        Core::register_class("ResetToken", "Auth/model/ResetToken.php");
+        $this->auth_service = $auth_service->getAuthService();
     }
 
     public function setUp() {

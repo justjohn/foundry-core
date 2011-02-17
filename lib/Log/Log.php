@@ -17,7 +17,7 @@ class Log {
     /**
      * The minimum level to log.
      */
-    private static $level;
+    private static $level = self::WARN;
     
     public static $log_function;
     public static $user_function;
@@ -55,7 +55,7 @@ class Log {
         $user = $user_function();
 
         $log_entry = new LogEntry();
-        $log_entry->setLevel($level);
+        $log_entry->setLevel(self::getLabel($level));
         $log_entry->setAction($action);
         $log_entry->setMessage($message);
         $log_entry->setUser($user);
@@ -84,7 +84,7 @@ Log::$log_function = function(LogEntry $log_entry) {
     error_log($log_entry);
 };
 Log::$user_function = function() {
-    return "none";
+    return "";
 };
 
 ?>

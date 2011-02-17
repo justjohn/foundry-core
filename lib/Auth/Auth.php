@@ -38,7 +38,7 @@ class Auth {
     /**
      * The configuration options required to initialize an Auth service.
      */
-    public static $required_options = array("service", "service_config");
+    public static $required_options = array("service", "service_config", "admin_group");
     /**
      * The authentication service.
      * @var AuthService
@@ -316,6 +316,14 @@ class Auth {
         return $group;
     }
 
+    /**
+     * Check if a group exists.
+     * @param string $groupname The name of the group.
+     * @return boolean
+     */
+    public function groupExists($groupname) {
+        return ($this->getGroup($groupname) !== false);
+    }
 
     /**
      * Get a group's membership (including subgroups if supported)
@@ -575,6 +583,16 @@ class Auth {
         } else {
             return true;
         }
+    }
+
+    /**
+     * Get direct access to the underlying authentication service.
+     * This SHOULD NOT BE USED except for testing the underlying auth service.
+     *
+     * @return AuthService
+     */
+    public function getAuthService() {
+        return $this->auth_service;
     }
 }
 

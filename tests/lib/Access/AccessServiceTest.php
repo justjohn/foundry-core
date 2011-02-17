@@ -1,12 +1,7 @@
 <?php
-set_include_path(get_include_path()
-        . PATH_SEPARATOR . "../lib/");
+namespace foundry\core\access;
 
-require_once("Core/Core.php");
-require_once("Functions/debug.php");
-require_once("Access/AccessService.php");
-
-abstract class AccessServiceTest extends PHPUnit_Framework_TestCase {
+abstract class AccessServiceTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * The access service to test.
@@ -46,11 +41,6 @@ abstract class AccessServiceTest extends PHPUnit_Framework_TestCase {
         foreach ($this->roles as $role_key => $role_info) {
             $this->access_service->removeRole($role_key);
         }
-    }
-
-    public static function setUpBeforeClass()
-    {
-        Core::register_class("Role", "Access/model/Role.php");
     }
 
     public function testGetRole() {

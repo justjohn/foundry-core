@@ -1,10 +1,17 @@
 <?php
-require_once("lib/Auth/AuthServiceTest.php");
-require_once("Auth/Service/LDAPAuthService.php");
+namespace foundry\core\auth;
+use \foundry\core\Core as Core;
 
-class LDAPAuthServiceTest extends AuthServiceTest
-{
-    protected static $ldap_options = array(
+set_include_path(get_include_path()
+        . PATH_SEPARATOR . "../lib/");
+require_once("_foundry_core_init.php");
+
+require_once("lib/Auth/AuthServiceTest.php");
+
+Core::configure('\foundry\core\auth\Auth', array(
+    "admin_group" => "svn_administrators",
+    "service" => 'LDAPAuthService',
+    "service_config" => array(
         "connectionString"      => "ldap://localhost",
         "baseDN"                => "dc=phpfoundry,dc=com",
         "managerDN"             => "cn=admin",
@@ -28,10 +35,15 @@ class LDAPAuthServiceTest extends AuthServiceTest
         "roleNameAttr"          => "cn",
         "roleDescAttr"          => "description",
         "roleMemberAttr"        => "uniqueMember"
-    );
+    )
+));
 
+Core::requires('\foundry\core\auth\Auth');
+
+class LDAPAuthServiceTest extends AuthServiceTest
+{
     public function  __construct() {
-        $auth_service = new LDAPAuthService(self::$ldap_options);
+        $auth_service = Core::get('\foundry\core\auth\Auth');
         parent::__construct($auth_service);
     }
 }
