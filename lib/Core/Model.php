@@ -38,14 +38,14 @@ interface Model {
      * 
      * @param string $field The field to set.
      * @param object $data The data to set in the field.
-     * @throws FieldDoesNotExistException
+     * @throws \foundry\core\exceptions\FieldDoesNotExistException
      */
     function set($field, $data);
     
     /**
      * Get the value of a single field.
      * @param string $field The name of the field to get.
-     * @throws FieldDoesNotExistException
+     * @throws \foundry\core\exceptions\FieldDoesNotExistException
      */
     public function get($field);
     
@@ -105,6 +105,13 @@ class BaseModel implements Model {
         }
     }
 
+    /**
+     * Handle undefined functions (primarily set/get calls).
+     * @param string $name The name of the function to handle.
+     * @param array $arguments The function arguments.
+     * @throws \foundry\core\exceptions\MethodDoesNotExistException If the field being
+     *         referenced by a set/get function does not exist.
+     */
     function __call($name, $arguments) {
 
         $set_pattern = "/set([A-Z].*)/";
@@ -123,7 +130,7 @@ class BaseModel implements Model {
 
         // check field name
         if (!isset($this->fields[$field])) {
-            throw new MethodDoesNotExistException("Field $field does not exist.");
+            throw new \foundry\core\exceptions\MethodDoesNotExistException("Field $field does not exist.");
         }
 
         if ($set) {
@@ -155,13 +162,13 @@ class BaseModel implements Model {
      * 
      * @param string $field The field to set.
      * @param object $data The data to set in the field.
-     * @throws FieldDoesNotExistException
+     * @throws \foundry\core\exceptions\FieldDoesNotExistException
      */
     public function set($field, $data) {
         $field = strtolower($field);
         // check field name
         if (!isset($this->fields[$field])) {
-            throw new FieldDoesNotExistException("Field $field does not exist.");
+            throw new \foundry\core\exceptions\FieldDoesNotExistException("Field $field does not exist.");
         }
         // Cast data to the appropriate type
         switch ($this->fields[$field]) {
@@ -184,13 +191,13 @@ class BaseModel implements Model {
     /**
      * Get the value of a single field.
      * @param string $field The name of the field to get.
-     * @throws FieldDoesNotExistException
+     * @throws \foundry\core\exceptions\FieldDoesNotExistException
      */
     public function get($field) {
         $field = strtolower($field);
         // check field name
         if (!isset($this->fields[$field])) {
-            throw new FieldDoesNotExistException("Field $field does not exist.");
+            throw new \foundry\core\exceptions\FieldDoesNotExistException("Field $field does not exist.");
         }
 
         return $this->data[$field];
