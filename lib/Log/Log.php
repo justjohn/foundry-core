@@ -17,7 +17,7 @@ class Log {
     /**
      * The minimum level to log.
      */
-    private static $level;
+    private static $level = self::WARN;
     
     public static $log_function;
     public static $user_function;

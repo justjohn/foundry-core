@@ -93,6 +93,10 @@ class Email {
 
         $mail = $this->smtp->send($to, $headers, $body);
 
+        if (\PEAR::isError($mail)) {
+            Log::error('Log::sendEmail', "Sending message to $to failed with the following error: " . get_a($mail));
+        }
+
         return !\PEAR::isError($mail);
     }
 }

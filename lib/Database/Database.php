@@ -75,8 +75,8 @@ class Database {
      *                           represent the field name, and the associated value is the condition.
      * @return object An instance of $classname on success, false on failure.
      */
-    public function load_object($classname, $db_key, array $conditions = array()) {
-        return $this->database->load_object($classname, $db_key, $conditions);
+    public function load_object($classname, $db_key, array $conditions = array(), array $sort_rules = array()) {
+        return $this->database->load_object($classname, $db_key, $conditions, $sort_rules);
     }
 
     /**

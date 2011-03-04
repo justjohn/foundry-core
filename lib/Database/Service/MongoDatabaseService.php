@@ -135,12 +135,15 @@ class MongoDatabaseService extends \Mongo implements DatabaseService {
         }
         
         $start = 0;
+        $end = -1;
         if (count($limits) == 1) {
-            $cursor = $cursor->limit($limits[0]);
+            $end = $limits[0];
+            //$cursor = $cursor->limit($end);
         }
         if (count($limits) == 2) {
             $start = $limits[0];
-            $cursor = $cursor->limit(($start + 1) + $limits[1]);
+            $end = ($start + 1) + $limits[1];
+            //$cursor = $cursor->limit($end);
         }
         $i = 0;
         if (count($cursor) > 0) {
@@ -166,6 +169,8 @@ class MongoDatabaseService extends \Mongo implements DatabaseService {
                 } else {
                     $objects[] = $obj;
                 }
+                
+                if ($end >= 0 && $i >= $end) break;
             }
         }
         return $objects;        
@@ -197,8 +202,9 @@ class MongoDatabaseService extends \Mongo implements DatabaseService {
      * @return object An instance of $classname on success, false on failure.
      */
     public function load_object($classname, $collection_name,
-                                array $conditions = array()) {
-        $objects = $this->load_objects($classname, $collection_name, "", $conditions, array(), array(1));
+                                array $conditions = array(),
+                                array $sort_rules = array()) {
+        $objects = $this->load_objects($classname, $collection_name, "", $conditions, $sort_rules, array(1));
         if (count($objects) > 0) {
             return $objects[0];
         } else {
