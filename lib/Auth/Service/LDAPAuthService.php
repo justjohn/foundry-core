@@ -349,8 +349,7 @@ class LDAPAuthService implements AuthService, AuthServiceSubgroups {
                                 if (strpos($user, $attributes->groupDN.",".$attributes->baseDN) !== false) {
                                     $user = str_replace(",".$attributes->groupDN.",".$attributes->baseDN, "", $user);
                                     $user = str_replace($attributes->groupNameAttr."=", "", $user);
-                                    $subgroup = $this->getGroup($user);
-                                    $subgroups[$subgroup->getName()] = $subgroup;
+                                    $subgroups[$user] = $user;
                                 }
                             }
                         }
@@ -418,10 +417,8 @@ class LDAPAuthService implements AuthService, AuthServiceSubgroups {
                                 }
                                 if (strpos($user, $attributes->groupDN.",".$attributes->baseDN) !== false) {
                                     $user = str_replace(",".$attributes->groupDN.",".$attributes->baseDN, "", $user);
-                                    $user = str_replace($attributes->groupNameAttr."=", "", $user);
-                                    $subgroup = $this->getGroup($user);
-                                    
-                                    $subgroups[$subgroup->getName()] = $subgroup;
+                                    $user = str_replace($attributes->groupNameAttr."=", "", $user);                                    
+                                    $subgroups[$user] = $user;
                                 }
                             }
                         }
@@ -437,7 +434,7 @@ class LDAPAuthService implements AuthService, AuthServiceSubgroups {
         }
         return $groups;
     }
-
+    
     /**
      * Returns an array of Users keyed by username.
      * @return array an array of Users.

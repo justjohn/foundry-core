@@ -221,7 +221,7 @@ class MongoDatabaseService extends \Mongo implements DatabaseService {
      */
     public function write_object(Model $object, $collection_name) {
         $collection = $this->db->selectCollection($collection_name);
-        $array = $object->getAsArray();
+        $array = $object->asArray();
         
         try {
             $collection->insert($array, true);
@@ -247,7 +247,7 @@ class MongoDatabaseService extends \Mongo implements DatabaseService {
         if (count($updatefields) == 0) return false;
         
         $collection = $this->db->selectCollection($collection_name);
-        $array = $object->getAsArray();
+        $array = $object->asArray();
         $condition = $this->get_conditions($conditions, $object);
         
         $data = array();

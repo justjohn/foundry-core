@@ -1,11 +1,4 @@
 <?php
-namespace foundry\core\auth;
-use \foundry\core\Core as Core;
-
-Core::requires('\foundry\core\logging\Log');
-
-use \foundry\core\logging\Log as Log;
-
 /**
  * Authentication API and service loader.
  * 
@@ -15,6 +8,12 @@ use \foundry\core\logging\Log as Log;
  * @author    John Roepke <john@justjohn.us>
  * @copyright &copy; 2010 John Roepke
  */
+ 
+namespace foundry\core\auth;
+use \foundry\core\Core as Core;
+use \foundry\core\logging\Log as Log;
+
+Core::requires('\foundry\core\logging\Log');
 
 // Register the authentication related model classes with the class loader.
 Core::register_class('foundry\core\auth\User', "Auth/model/User.php");
@@ -75,10 +74,6 @@ class Auth {
 
     /**
      * Setup the auth manager.
-     *
-     * @param String     $auth_service The name of the auth service class to load.
-     * @param array      $auth_config  An array of configuration options to pass to the auth service.
-     * @param string     $admin_group  The name of the site admin group.
      */
     function __construct() {
         $config = Core::getConfig('\foundry\core\auth\Auth');
@@ -117,7 +112,7 @@ class Auth {
      */
     public function SSOSupport() {
         $implements = class_implements($this->auth_service);
-        return isset($implements["AuthServiceSSO"]);
+        return isset($implements['foundry\core\auth\AuthServiceSSO']);
     }
 
     /**
@@ -126,7 +121,7 @@ class Auth {
      */
     public function subgroupSupport() {
         $implements = class_implements($this->auth_service);
-        return isset($implements["AuthServiceSubgroups"]);
+        return isset($implements['foundry\core\auth\AuthServiceSubgroups']);
     }
 
     /**
@@ -276,6 +271,7 @@ class Auth {
             return $this->auth_cache["users"];
         }
         $users = $this->auth_service->getUsers();
+        ksort($users);
         $this->auth_cache["users"] = $users;
         $this->auth_cache["user"] = $users;
         return $users;
@@ -294,6 +290,7 @@ class Auth {
 
         if ($this->is_authenticated) {
             $groups = $this->auth_service->getUserGroups($user);
+            ksort($groups);
             $this->auth_cache["user_groups"][$user] = $groups;
             return $groups;
         } else {
@@ -309,7 +306,7 @@ class Auth {
     public function getGroup($groupname) {
         // Check local cache
         if (isset($this->auth_cache["group"][$groupname]))
-                return $this->auth_cache["group"][$groupname];
+            return $this->auth_cache["group"][$groupname];
 
         $group = $this->auth_service->getGroup($groupname);
         $this->auth_cache["group"][$groupname] = $group;
@@ -336,21 +333,23 @@ class Auth {
         $groupname = $group->getName();
         $groups[$groupname] = $groupname;
         $users = $group->getUsers();
-        if (!empty($users))
-            foreach ($users as $username => $user)
+        if (!empty($users)) {
+            foreach ($users as $username => $user) {
                 $members[$username] = $username;
-
+            }
+        }
         if ($this->subgroupSupport()) {
             $subgroups = $group->getSubgroups();
             if (!empty($subgroups)) {
-                foreach ($subgroups as $subgroup) {
-                    $subgroupname = $subgroup->getName();
+                foreach ($subgroups as $subgroupname) {
+                    $subgroup = $this->getGroup($subgroupname);
                     if (!isset($groups[$subgroupname])) {
                         $this->getGroupMembership($subgroup, $members, $groups);
                     }
                 }
             }
         }
+        uksort($members, "strcasecmp");
         return $members;
     }
     
@@ -389,6 +388,7 @@ class Auth {
             }
             unset($group);
         }
+        uksort($groups, "strcasecmp");
         $this->auth_cache["groups"][$flatten] = $groups;
         return $groups;
     }
@@ -402,6 +402,7 @@ class Auth {
                 return $this->auth_cache["groupnames"];
 
         $groups = $this->auth_service->getGroupNames();
+        uksort($groups, "strcasecmp");
         $this->auth_cache["groupnames"] = $groups;
         return $groups;
     }

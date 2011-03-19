@@ -52,8 +52,17 @@ interface Model {
     /**
      * Get the model as an array.
      */
-    public function getAsArray();
+    public function asArray();
+    
+    /**
+     * Get the model as JSON.
+     */
+    public function asJSON();
 
+    /**
+     * Get the model as XML.
+     */
+    public function asXML();
 }
 
 /**
@@ -206,8 +215,26 @@ class BaseModel implements Model {
     /**
      * Get the model as an array.
      */
-    public function getAsArray() {
+    public function asArray() {
         return $this->data;
+    }
+    
+    /**
+     * Get the model as JSON.
+     */
+    public function asJSON() {
+        Core::requires('\foundry\core\utilities\Renderer');
+        
+        return \foundry\core\utilities\Renderer::asJSON($this);
+    }
+
+    /**
+     * Get the model as XML.
+     */
+    public function asXML() {
+        Core::requires('\foundry\core\utilities\Renderer');
+        
+        return \foundry\core\utilities\Renderer::asXML($this);
     }
 
     /**
@@ -215,7 +242,7 @@ class BaseModel implements Model {
      *
      * @return array An array of field names.
      */
-    function getFields() {
+    public function getFields() {
         return $this->fields;
     }
 
@@ -226,7 +253,7 @@ class BaseModel implements Model {
      * @param string $fieldname
      * @return mixed false if the field doesn't exist, the field type as a string if it does exist.
      */
-    function getFieldType($fieldname) {
+    public function getFieldType($fieldname) {
         if (isset($this->fields[$fieldname])) {
             return $this->fields[$fieldname];
         } else {
@@ -239,7 +266,7 @@ class BaseModel implements Model {
      *
      * @return string The key field.
      */
-    function getKeyField() {
+    public function getKeyField() {
         return $this->key_field;
     }
 }
