@@ -33,14 +33,14 @@ index.php
     $database = Core::get('\foundry\core\database\Database');
     ?>
 
-Note the configuration is seperate from usage and doesn't require the module to be loaded. This means you can configure all your modules in a single file and include it everywhere in you site but only load the modules when they're needed. Also, once a module is loaded it's cached in the framework so it only needs to be loaded once per instiation.
+Note the configuration is seperate from usage and doesn't require the module to be loaded. This means you can configure all your modules in a single file and include it everywhere in your site but only load the modules when they're needed. Also, once a module is loaded it's cached in the framework so it only needs to be loaded once per instantiation.
 
 Modules can also require other modules, so if you build a project management module that requires a database and authentication, you can put the necessary Core::requires('...') statements at the top of your module and when you use the module elsewhere you only need to use a single requires statement. 
 
 Usage
 -----
 
-Include '<install path>/lib/_foundry_core_init.php' and consult the documentation for detailed use of the provided modules and module framework.
+Include 'INSTALL_PATH/lib/_foundry_core_init.php' and consult the documentation for detailed use of the provided modules and module framework.
 
 License
 -------
