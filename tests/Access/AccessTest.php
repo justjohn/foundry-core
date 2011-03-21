@@ -2,11 +2,7 @@
 namespace foundry\core\access;
 use \foundry\core\Core as Core;
 
-set_include_path(get_include_path()
-        . PATH_SEPARATOR . "../lib/");
-require_once("_foundry_core_init.php");
-
-require_once("lib/Access/AccessServiceTest.php");
+require_once("AccessServiceTest.php");
 
 Core::configure('\foundry\core\access\Access', array(
     "admin_group" => "svn_administrators",

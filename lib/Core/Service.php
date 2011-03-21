@@ -30,11 +30,11 @@ class Service {
      */
     public static function validate($options, $required_options) {
         if (!is_array($options) || !is_array($required_options)) {
-            throw new \foundry\core\exceptions\ServiceValidationException("Passed options are not in expected format (array) got " . get_a($option) .
+            throw new \foundry\core\exceptions\ServiceValidationException("Passed options are not in expected format (array) got " . get_a($options, false) .
                                                                           ", check that the options have been set");
         }
         if (empty($options) && !empty($required_options)) {
-            throw new \foundry\core\exceptions\ServiceValidationException("No options set, required: " . get_a($required_options));
+            throw new \foundry\core\exceptions\ServiceValidationException("No options set, required: " . get_a($required_options, false));
         }
         
         $option_keys = array_keys($options);
@@ -44,8 +44,8 @@ class Service {
          */
         $used_options = array_intersect($option_keys, $required_options);
         if(count($used_options) != count($required_options)) {
-            throw new \foundry\core\exceptions\ServiceValidationException("Not all required options are present, found " . get_a($option_keys)
-                                                                        . " required: " . get_a($required_options));
+            throw new \foundry\core\exceptions\ServiceValidationException("Not all required options are present, found " . get_a($option_keys, false)
+                                                                        . " required: " . get_a($required_options, false));
         }
     }
 }

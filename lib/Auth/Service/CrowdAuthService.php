@@ -684,6 +684,6 @@ class CrowdAuthService implements AuthService, AuthServiceSSO {
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010 John Roepke
  */
-class CrowdServiceException extends CoreException {}
+class CrowdServiceException extends \foundry\core\exceptions\CoreException {}
 
 ?>

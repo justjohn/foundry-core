@@ -1,5 +1,8 @@
 <?php
-require_once("lib/Auth/AuthServiceTest.php");
+namespace foundry\core\auth;
+use \foundry\core\Core as Core;
+
+require_once("AuthServiceTest.php");
 require_once("Auth/Service/CrowdAuthService.php");
 
 /**
@@ -7,7 +10,7 @@ require_once("Auth/Service/CrowdAuthService.php");
  *
  * @author john
  */
-class CrowdAuthServiceTest extends AuthServiceTest
+/* class CrowdAuthServiceTest extends AuthServiceTest
 {
     protected static $crowd_options = array("app_name"=>"coretest",
                                      "app_credential"=>"ois9S093*f",
@@ -17,5 +20,5 @@ class CrowdAuthServiceTest extends AuthServiceTest
         $auth_service = new CrowdAuthService(self::$crowd_options);
         parent::__construct($auth_service);
     }
-}
+} */
 ?>

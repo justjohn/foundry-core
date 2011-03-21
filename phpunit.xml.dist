@@ -5,7 +5,7 @@
          backupGlobals="false"
          backupStaticAttributes="false"
          strict="true"
-         verbose="true">
+         verbose="false">
   <testsuites>
     <testsuite name="foundry-core">
       <directory suffix="Test.php">tests</directory>

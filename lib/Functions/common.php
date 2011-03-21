@@ -14,16 +14,25 @@ function print_a($arr) {
 
 /**
  * Get a textual representation of an array or object.
- * @param object $arr
- * @return string
+ * @param object|array $object The object or array to get output for.
+ * @param boolean $html_format Should the output be HTML formatted (surrounded
+ *        with <pre> tags). Defaults to true if not set.
+ * @return string The value of an object from var_dump or an array from print_r
+ *         that is optionally (if $html_format is true) surrounded with <pre>
+ *         tags and escaped.
  */
-function get_a($arr) {
-    ob_start();
-    print("<pre>");
-    var_dump($arr);
-    print("</pre>");
-    $content = ob_get_contents();
-    ob_end_clean();
+function get_a($object, $html_format = true) {
+    if (is_array($object)) {
+        $content = print_r($object, true);
+    } else {
+        ob_start();
+        var_dump($object);
+        $content = ob_get_contents();
+        ob_end_clean();
+    }
+    if ($html_format) {
+        $content = "<pre>".htmlentites($content)."</pre>";
+    }
     return $content;
 }
 

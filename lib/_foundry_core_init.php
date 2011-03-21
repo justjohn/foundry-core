@@ -1,6 +1,9 @@
 <?php
 namespace foundry\core;
 
+set_include_path(get_include_path() .
+                 PATH_SEPARATOR . __DIR__ );
+
 // Load common functions for debugging
 require_once("Functions/common.php");
 
