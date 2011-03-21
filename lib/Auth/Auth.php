@@ -2,11 +2,17 @@
 /**
  * Authentication API and service loader.
  * 
- * This file contains the authentication API and code for loading authentication services.
+ * This file contains the authentication API and code for loading authentication
+ * services from the Auth/Services directory.
+ * 
+ * Currently there are two available services:
+ * 1. LDAPAuthService: Authenticates against an LDAP directory.
+ * 2. CrowdAuthService: Authenticates against an <a href="http://www.atlassian.com/software/crowd/">Atlassian Crowd</a> service endpoint.
  *
- * @package   Auth
+ * @package   foundry\core\auth
+ * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010 John Roepke
+ * @copyright &copy; 2010-2011 John Roepke
  */
  
 namespace foundry\core\auth;
@@ -20,7 +26,7 @@ Core::register_class('foundry\core\auth\User', "Auth/model/User.php");
 Core::register_class('foundry\core\auth\Group', "Auth/model/Group.php");
 
 /**
- * Load the AuthService interface.
+ * Load the AuthService interfaces.
  */
 require_once("Auth/AuthService.php");
 require_once("Auth/AuthServiceSSO.php");
@@ -29,9 +35,10 @@ require_once("Auth/AuthServiceSubgroups.php");
 /**
  * Authentication API and service loader.
  * 
- * @package   Auth
+ * @package   foundry\core\auth
+ * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
+ * @copyright &copy; 2010-2011 John Roepke
  */
 class Auth {
     /**
@@ -152,11 +159,12 @@ class Auth {
     }
 
     /**
-     * Verify a username and password.
+     * Verify a username and password are correct.
      *
-     * @param string $username
-     * @param string $password
-     * @return boolean
+     * @param string $username The username to check.
+     * @param string $password The password to verify is correct.
+     * @return boolean True if the username/password successfully authenticate,
+     *                 false if they do not.
      */
     public function verify($username, $password) {
         return $this->auth_service->authenticate($username, $password);
@@ -172,16 +180,16 @@ class Auth {
 
     /**
      * Get the currently logged in user's username or false when no one is logged in.
-     * @return string|boolean
+     * @return string|boolean The username or false if there isn't an authenticated user.
      */
     public function getUsername() {
         return $this->isAuthenticated()?$this->user:false;
     }
 
     /**
-     * Add a user.
+     * Add a new user to the configured authentication service.
      * @param User $user The details of the user to add.
-     * @param string $password The user's password.
+     * @param string $password The new user's password.
      * @return boolean true on sucess, false on failure.
      */
     public function addUser($user, $password) {
@@ -196,7 +204,7 @@ class Auth {
     }
 
     /**
-     * Add a user.
+     * Update a user in the configured authentication service.
      * @param User $user The parameters of the user to update.
      * @return boolean true on sucess, false on failure.
      */
@@ -212,7 +220,7 @@ class Auth {
     }
 
     /**
-     * Delete a user.
+     * Delete a user from the configured authentication service..
      * @param string $username The username to delete.
      * @return boolean true on sucess, false on failure.
      */
@@ -229,9 +237,11 @@ class Auth {
     }
 
     /**
-     * Get a user's details
-     * @param string $username The user to lookup, defaults to the current user if blank.
-     * @return User|boolean
+     * Get a user's information from the authentication service.
+     * @param string $username The username to lookup, defaults to the current user
+     *                         if left blank.
+     * @return User|boolean The user's information if the user exists, false if the
+     *                      user can't be found.
      */
     public function getUser($username = '') {
         $username = trim($username);
@@ -248,9 +258,9 @@ class Auth {
     }
 
     /**
-     * Check to see if a user exists.
+     * Check to see if a username exists.
      * @param string $username The username to check.
-     * @return boolean
+     * @return boolean true if the user exists, false if not.
      */
     public function userExists($username) {
         if (empty($username)) return false;
@@ -262,9 +272,9 @@ class Auth {
     }
 
     /**
-     * Get a list of all the users.
+     * Get a list of all the users keyed by username.
      *
-     * @return array An array of User objects.
+     * @return array An array of User objects keyed by username.
      */
     public function getUsers() {
         if (isset($this->auth_cache["users"])) {
@@ -280,7 +290,9 @@ class Auth {
     /**
      * Get a list of groups the current user is a member of.
      * @param string $user The user to get groups for; if blank the current user is used.
-     * @return array
+     * @return array An array of the groups that the user is a member of. If the user
+     *               can't be found or the $user parameter is blank and there is no
+     *               logged in user, an empty array is returned.
      */
     public function getUserGroups($user='') {
         if ($user == '') $user = $this->user;
