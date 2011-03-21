@@ -92,5 +92,5 @@ class Config {
     }
 }
 
-return new Config();
+return '\foundry\core\config\Config';
 ?>

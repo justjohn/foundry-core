@@ -52,26 +52,39 @@ class Core {
     static function requires($module) {
         if (isset(self::$included_modules[$module])) return self::$module_instance[$module];
         
-        if (isset(self::$provided_modules[$module])) {
-            try {
+        //try {
+            if (isset(self::$provided_modules[$module])) {
                 $result = include_once(self::$provided_modules[$module]);
                 self::$included_modules[$module] = true;
                 if ($result === false) {
-                    die("Unable to load module '$module': Check that '" . self::$provided_modules[$module] . "' is on the path.\n" . get_a(debug_backtrace()));
+                    throw new \foundry\core\exceptions\ServiceLoadException(
+                            "Unable to load module '$module': Check that '" .
+                            self::$provided_modules[$module] .
+                            "' is on the path.\n");
                 } else {
                     self::$module_instance[$module] = $result;
                     return $result;
                 }
-            } catch (\foundry\core\exceptions\ServiceConnectionException $exception) {
-                die("<b>$module</b>: Unable to connect to service. (<i>Exception details follow</i>)<br /><br />" . $exception->getMessage());
-            } catch (\foundry\core\exceptions\ServiceValidationException $exception) {
-                die("<b>$module</b>: Module configuration does not contain all required options. (<i>Exception details follow</i>)<br /><br />" . $exception->getMessage());
-            } catch (\foundry\core\exceptions\ServiceLoadException $exception) {
-                die("<b>$module</b>: Unable to load service. (<i>Exception details follow</i>)<br /><br />" . $exception->getMessage());
+            } else {
+                throw new \foundry\core\exceptions\ServiceLoadException(
+                    "Unable to load module '$module' since it hasn't been" .
+                    "registered with the classloader");
             }
-        } else {
-            die("Unable to load module '$module'.<br />" . \get_a(debug_backtrace()));
-        }
+        /* } catch (\foundry\core\exceptions\ServiceConnectionException $exception) {
+            die("<b>$module</b>: Unable to connect to service. " .
+                "(<i>Exception details follow</i>)<br />\n<br />\n" .
+                $exception->getMessage());
+
+        } catch (\foundry\core\exceptions\ServiceValidationException $exception) {
+            die("<b>$module</b>: Module configuration does not contain all required options. " .
+                "(<i>Exception details follow</i>)<br />\n<br />\n" .
+                $exception->getMessage());
+
+        } catch (\foundry\core\exceptions\ServiceLoadException $exception) {
+            die("<b>$module</b>: Unable to load service. " .
+                "(<i>Exception details follow</i>)<br />\n<br />\n" .
+                $exception->getMessage() . "\n\n" . get_a(debug_backtrace()));
+        } */
     }
     
     public static $module_config = array();
