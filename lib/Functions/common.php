@@ -18,7 +18,7 @@ function print_a($arr) {
  * @param boolean $html_format Should the output be HTML formatted (surrounded
  *        with <pre> tags). Defaults to true if not set.
  * @return string The value of an object from var_dump or an array from print_r
- *         that is optionally (if $html_format is true) surrounded with <pre>
+ *         that is optionally (if $html_format is true) surrounded with &lt;pre&gt;
  *         tags and escaped.
  */
 function get_a($object, $html_format = true) {

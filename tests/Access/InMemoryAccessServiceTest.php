@@ -3,8 +3,15 @@ namespace foundry\core\access;
 use \foundry\core\Core as Core;
 
 Core::configure('\foundry\core\access\Access', array(
-    "admin_group" => "svn_administrators",
     "service" => 'InMemoryAccessService',
+    "service_config" => array(
+        "cache"=>false
+    )
+));
+
+Core::configure('\foundry\core\auth\Auth', array(
+    "admin_group" => "svn_administrators",
+    "service" => 'InMemoryAuthService',
     "service_config" => array(
         "cache"=>false
     )
