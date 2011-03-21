@@ -31,7 +31,7 @@ function get_a($object, $html_format = true) {
         ob_end_clean();
     }
     if ($html_format) {
-        $content = "<pre>".htmlentites($content)."</pre>";
+        $content = "<pre>".htmlentities($content)."</pre>";
     }
     return $content;
 }
