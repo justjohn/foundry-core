@@ -1,6 +1,6 @@
 <?php
 namespace foundry\core\database;
-use \foundry\core\Model as Model;
+use \foundry\core\Model;
 
 /**
  * The database interface.
@@ -8,7 +8,7 @@ use \foundry\core\Model as Model;
  * This interface treats all databases as object-based. For a table-based database
  * this is done by mapping object fields to table fields.
  */
-class MongoDatabaseService extends \Mongo implements DatabaseService {
+class Mongo extends \Mongo implements DatabaseService {
     public static $required_options = array("host", "db");
 
     private $db;

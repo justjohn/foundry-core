@@ -8,7 +8,7 @@ namespace foundry\core\access;
  * @author    John Roepke <john@justjohn.us>
  * @copyright &copy; 2010 John Roepke
  */
-class InMemoryAccessService implements AccessService {
+class InMemory implements AccessService {
     /**
      * The role definitions.
      * @var array

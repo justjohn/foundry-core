@@ -21,7 +21,7 @@ namespace foundry\core\auth;
  * @copyright 2010 John Roepke
  * @license   TBD
  */
-class InMemoryAuthService {
+class InMemory {
 
     /**
      * The user database keyed by username.

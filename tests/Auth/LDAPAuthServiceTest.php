@@ -6,7 +6,7 @@ require_once("AuthServiceTest.php");
 
 Core::configure('\foundry\core\auth\Auth', array(
     "admin_group" => "svn_administrators",
-    "service" => 'LDAPAuthService',
+    "service" => 'LDAP',
     "service_config" => array(
         "connectionString"      => "ldap://localhost",
         "baseDN"                => "dc=phpfoundry,dc=com",

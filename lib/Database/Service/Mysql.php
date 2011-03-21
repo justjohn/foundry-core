@@ -1,15 +1,15 @@
 <?php
 namespace foundry\core\database;
-use \foundry\core\Model as Model;
+use \foundry\core\Model;
 
-class MysqlDatabaseService extends \mysqli implements DatabaseService {
+class Mysql extends \mysqli implements DatabaseService {
     public static $required_options = array("host",
                                             "username",
                                             "password",
                                             "db");
 
     public function __construct($options) {
-        Service::validate($options, self::$required_options);
+        \foundry\core\Service::validate($options, self::$required_options);
         @parent::__construct($options["host"],
                              $options["username"],
                              $options["password"],

@@ -13,7 +13,7 @@ configuration.php
     // Provide configuration for the database
     Core::configure('\foundry\core\database\Database',
         array(
-            'service' => 'MongoDatabaseService',
+            'service' => 'Mongo',
             'service_options' => array(
                 'host'      => 'localhost',
                 'db'        => 'data'

@@ -20,7 +20,7 @@ namespace foundry\core\auth;
  * @copyright 2010 John Roepke
  * @license   TBD
  */
-class LDAPAuthService implements AuthService, AuthServiceSubgroups {
+class LDAP implements AuthService, AuthServiceSubgroups {
     /**
      * The LDAP connection
      * @var LDAP link identifier 

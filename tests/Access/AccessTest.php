@@ -5,7 +5,7 @@ use \foundry\core\Core as Core;
 require_once("AccessServiceTest.php");
 
 Core::configure('\foundry\core\access\Access', array(
-    "service" => 'InMemoryAccessService',
+    "service" => 'InMemory',
     "service_config" => array(
         "cache"=>false
     )
@@ -13,7 +13,7 @@ Core::configure('\foundry\core\access\Access', array(
 
 Core::configure('\foundry\core\auth\Auth', array(
     "admin_group" => "svn_administrators",
-    "service" => 'InMemoryAuthService',
+    "service" => 'InMemory',
     "service_config" => array(
         "cache"=>false
     )

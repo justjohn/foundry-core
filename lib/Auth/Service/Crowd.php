@@ -1,6 +1,4 @@
 <?php
-namespace foundry\core\auth;
-
 /**
  * Atlassian Crowd Authentication Service Implementation
  *
@@ -20,18 +18,20 @@ namespace foundry\core\auth;
  * @link      http://confluence.atlassian.com/display/CROWDEXT/Integrate+Crowd+with+PHP
  */
 
+namespace foundry\core\auth;
+
 /**
  * Crowd Authentication Service
  *
  * @package   Auth
  * @author    John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
+ * @copyright 2010 John Roepke, 2008 Infinite Campus Inc., 2008 Luca Corbo
  * @link      http://pear.php.net/packages/Services_Atlassian_Crowd
  * @link      http://www.atlassian.com/software/crowd
  * @link      http://confluence.atlassian.com/display/CROWD/SOAP+API
  * @link      http://confluence.atlassian.com/display/CROWDEXT/Integrate+Crowd+with+PHP
  */
-class CrowdAuthService implements AuthService, AuthServiceSSO {
+class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * The Crowd SOAP client

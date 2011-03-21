@@ -13,7 +13,7 @@ Core::configure('\foundry\core\auth\Auth', array(
 Core::requires('\foundry\core\auth\Auth');
 
 require_once("AuthServiceTest.php");
-require_once("Auth/Service/InMemoryAuthService.php");
+require_once("Auth/Service/InMemory.php");
 
 /**
  * Description of InMemoryAuthService
