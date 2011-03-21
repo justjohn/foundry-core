@@ -11,8 +11,10 @@
  
 namespace foundry\core\cache;
 
-use \foundry\core\Core as Core;
-use \foundry\core\logging\Log as Log;
+use foundry\core\Core;
+use foundry\core\Service;
+use foundry\core\exceptions\ServiceLoadException;
+use foundry\core\logging\Log;
 
 Core::requires('\foundry\core\logging\Log');
 
@@ -45,7 +47,7 @@ class Cache {
      */
     function __construct() {
         $config = Core::getConfig('\foundry\core\cache\Cache');
-        \foundry\core\Service::validate($config, self::$required_options);
+        Service::validate($config, self::$required_options);
         $service = $config["service"];
         $service_config = $config["service_config"];
 
@@ -54,7 +56,7 @@ class Cache {
         $auth_service = 'foundry\core\cache\\'.$service;
         if (!class_exists($service)) {
             Log::error("Cache::__construct", "Unable to load cache service class '$service'.");
-            throw new \foundry\core\exceptions\ServiceLoadException("Unable to load cache service class '$service'.");
+            throw new ServiceLoadException("Unable to load cache service class '$service'.");
         } else {
             $this->auth_service = new $service($service_config);
         }

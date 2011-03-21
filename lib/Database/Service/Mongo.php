@@ -1,6 +1,11 @@
 <?php
 namespace foundry\core\database;
-use \foundry\core\Model;
+
+use foundry\core\Model;
+use foundry\core\Service;
+use foundry\core\exceptions\ServiceConnectionException;
+use foundry\core\exceptions\ModelDoesNotExistException;
+use foundry\core\exceptions\FieldDoesNotExistException;
 
 /**
  * The database interface.
@@ -14,7 +19,7 @@ class Mongo extends \Mongo implements DatabaseService {
     private $db;
 
     public function __construct($options) {
-        \foundry\core\Service::validate($options, self::$required_options);
+        Service::validate($options, self::$required_options);
         $username = isset($options["username"])?$options["username"]:'';
         $password = isset($options["password"])?$options["password"]:'';
         $host = $options["host"];
@@ -29,7 +34,7 @@ class Mongo extends \Mongo implements DatabaseService {
             $this->db = parent::selectDB($options["db"]);
             
         } catch (\MongoConnectionException $exception) {
-            throw new \foundry\core\exceptions\ServiceConnectionException("Unable to connect to MongoDB.");
+            throw new ServiceConnectionException("Unable to connect to MongoDB.");
         }
     }
 
@@ -108,7 +113,7 @@ class Mongo extends \Mongo implements DatabaseService {
                                  array $sort_rules = array(),
                                  array $limits = array()) {
         if (!class_exists($classname)) {
-            throw new \foundry\core\exceptions\ModelDoesNotExistException("Unable to load class $classname");
+            throw new ModelDoesNotExistException("Unable to load class $classname");
         }
         $key = strtolower($key);
         //print("\nCollection: $collection_name\n");
@@ -226,7 +231,7 @@ class Mongo extends \Mongo implements DatabaseService {
         try {
             $collection->insert($array, true);
             
-        } catch (MongoCursorException $exception) {
+        } catch (\MongoCursorException $exception) {
             return false;
         }
         return true;
@@ -259,7 +264,7 @@ class Mongo extends \Mongo implements DatabaseService {
         try {
             $collection->update($condition, array('$set'=>$data), array('multiple'=>true, 'safe'=>true));
             
-        } catch (MongoCursorException $exception) {
+        } catch (\MongoCursorException $exception) {
             return false;
         }
         return true;
@@ -277,7 +282,7 @@ class Mongo extends \Mongo implements DatabaseService {
         $condition = $this->get_conditions($conditions);
         try {
             $collection->remove($condition, array("safe" => true));
-        } catch (MongoCursorException $exception) {
+        } catch (\MongoCursorException $exception) {
             return false;
         }
         return true;

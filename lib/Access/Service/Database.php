@@ -1,6 +1,12 @@
 <?php
 namespace foundry\core\access;
 
+use foundry\core\Core;
+use foundry\core\Service;
+use foundry\core\database\Database;
+
+Core::requires('\foundry\core\database\Database');
+
 /**
  * Database implementation of the access service.
  *
@@ -43,9 +49,9 @@ class Database implements AccessService {
      * @param array $options service options.
      * @param \foundry\core\database\Database The database.
      */
-    public function __construct($options, \foundry\core\database\Database $database) {
-        \foundry\core\Service::validate($options, self::$required_options);
-        $this->database = $database;
+    public function __construct(array $options) {
+        Service::validate($options, self::$required_options);
+        $this->database = Core::get('\foundry\core\database\Database');
         $this->options = $options;
     }
 

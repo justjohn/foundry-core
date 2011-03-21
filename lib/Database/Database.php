@@ -1,11 +1,13 @@
 <?php
 namespace foundry\core\database;
-use \foundry\core\Core as Core;
+
+use foundry\core\Core;
+use foundry\core\Model;
+use foundry\core\Service;
+use foundry\core\exceptions\ServiceLoadException;
+use foundry\core\logging\Log;
 
 Core::requires('\foundry\core\logging\Log');
-
-use \foundry\core\Model as Model;
-use \foundry\core\logging\Log as Log;
 
 /**
  * Load the AuthService interface.
@@ -21,7 +23,7 @@ class Database {
     
     function __construct() {
         $config = Core::getConfig('\foundry\core\database\Database');
-        \foundry\core\Service::validate($config, self::$required_options);
+        Service::validate($config, self::$required_options);
         $db_service = $config["service"];
         $db_config = $config["service_config"];
         // include auth class
@@ -29,7 +31,7 @@ class Database {
         $db_service = 'foundry\core\database\\'.$db_service;
         if (!class_exists($db_service)) {
             Log::error("Database::__construct", "Unable to load database class '$db_service'.");
-            throw new \foundry\core\exceptions\ServiceLoadException("Unable to load database class '$db_service'.");
+            throw new ServiceLoadException("Unable to load database class '$db_service'.");
         }
         $this->database = new $db_service($db_config);
     }

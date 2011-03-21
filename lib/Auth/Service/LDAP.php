@@ -1,6 +1,4 @@
 <?php
-namespace foundry\core\auth;
-
 /**
  * LDAP Authentication Service Implementation
  *
@@ -11,6 +9,11 @@ namespace foundry\core\auth;
  * @author John Roepke <john@justjohn.us>
  * @copyright 2010 John Roepke
  */
+
+namespace foundry\core\auth;
+
+use foundry\core\Service;
+use foundry\core\exceptions\ServiceConnectionException;
 
 /**
  * LDAP Authentication Service
@@ -101,7 +104,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
                              $this->ldap_attributes->managerDN . "," . $this->ldap_attributes->baseDN,
                              $this->ldap_attributes->managerPassword);
         if (!$result) {
-            throw new \foundry\core\exceptions\ServiceConnectionException("Unable to bind to the LDAP directory.");
+            throw new ServiceConnectionException("Unable to bind to the LDAP directory.");
         }
         return $result;
     }
@@ -113,7 +116,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
      * @throws ServiceConnectionException All required options are not present.
      */
     public function __construct($options) {
-        \foundry\core\Service::validate($options, self::$required_options);
+        Service::validate($options, self::$required_options);
         $ldap_attr = new LDAPAttributes($options);
         $this->ldap_attributes = $ldap_attr;
         $ldap_conn = ldap_connect($ldap_attr->connectionString);
@@ -125,7 +128,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
                 return;
             }
         }
-        throw new \foundry\core\exceptions\ServiceConnectionException("Unable to connect and bind to the LDAP directory.");
+        throw new ServiceConnectionException("Unable to connect and bind to the LDAP directory.");
     }
 
     /**
@@ -638,7 +641,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
  *
  * This class stores LDAP attributes and can also load them from an ini file if
  * one is provided. It converts all of the attributes to lowercase except for
- * managerMassword.
+ * managerPassword.
  *
  * @package   Auth
  * @author    John Roepke <john@justjohn.us>

@@ -1,19 +1,17 @@
 <?php
-namespace foundry\core;
-
 /**
- * The Service class provides basic configuration option validation during
- * service instantiation.
+ * The Service module provides basic configuration validation during service instantiation.
  *
  * Basic Usage:
  * <code>
+ * use foundry\core\Service;
  * class SomeService {
  *     public static $required_options = array("hostname",
  *                                             "username",
  *                                             "password");
  *     __construct($options) {
  *         // Validate that all the required options are present
- *         $valid = \foundry\core\Service::validate($options, self::$required_options);
+ *         $valid = Service::validate($options, self::$required_options);
  *         if (!$valid) {
                registerError("Unable to load SomeService: configuration options not set.");
  *         }
@@ -21,6 +19,11 @@ namespace foundry\core;
  * }
  * </code>
  */
+
+namespace foundry\core;
+
+use foundry\core\exceptions\ServiceValidationException;
+
 class Service {
     /**
      * Validate all required optoins are present in options.
@@ -30,11 +33,12 @@ class Service {
      */
     public static function validate($options, $required_options) {
         if (!is_array($options) || !is_array($required_options)) {
-            throw new \foundry\core\exceptions\ServiceValidationException("Passed options are not in expected format (array) got " . get_a($options, false) .
-                                                                          ", check that the options have been set");
+            throw new ServiceValidationException("Passed options are not in expected format (array) got "
+                                                 . get_a($options, false) . ", check that the options have been set");
         }
         if (empty($options) && !empty($required_options)) {
-            throw new \foundry\core\exceptions\ServiceValidationException("No options set, required: " . get_a($required_options, false));
+            throw new ServiceValidationException("No options set, required: "
+                                                 . get_a($required_options, false));
         }
         
         $option_keys = array_keys($options);
@@ -44,8 +48,9 @@ class Service {
          */
         $used_options = array_intersect($option_keys, $required_options);
         if(count($used_options) != count($required_options)) {
-            throw new \foundry\core\exceptions\ServiceValidationException("Not all required options are present, found " . get_a($option_keys, false)
-                                                                        . " required: " . get_a($required_options, false));
+            throw new ServiceValidationException("Not all required options are present, found "
+                                                 . get_a($option_keys, false) . " required: "
+                                                 . get_a($required_options, false));
         }
     }
 }

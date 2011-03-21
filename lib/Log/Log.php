@@ -1,7 +1,9 @@
 <?php
 namespace foundry\core\logging;
 
-\foundry\core\Core::register_class('foundry\core\logging\LogEntry', "Log/model/LogEntry.php");
+use \foundry\core\Core;
+
+Core::register_class('foundry\core\logging\LogEntry', "Log/model/LogEntry.php");
 
 /**
  * Write log entries.

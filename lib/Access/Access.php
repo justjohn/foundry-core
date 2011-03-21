@@ -1,11 +1,13 @@
 <?php
 namespace foundry\core\access;
-use \foundry\core\Core as Core;
+
+use foundry\core\Core;
+use foundry\core\Service;
+use foundry\core\exceptions\ServiceLoadException;
+use foundry\core\logging\Log;
 
 Core::requires('\foundry\core\auth\Auth');
 Core::requires('\foundry\core\logging\Log');
-
-use \foundry\core\logging\Log as Log;
 
 /**
  * Role Management.
@@ -66,7 +68,7 @@ class Access {
 
     public function __construct() {
         $config = Core::getConfig('\foundry\core\access\Access');
-        \foundry\core\Service::validate($config, self::$required_options);
+        Service::validate($config, self::$required_options);
         $access_service = $config["service"];
         $service_config = $config["service_config"];
         $this->auth_manager = Core::get('\foundry\core\auth\Auth');
@@ -76,11 +78,11 @@ class Access {
         $access_service = 'foundry\core\access\\'.$access_service;
         if (!class_exists($access_service)) {
             Log::error("Access::__construct", "Unable to load access class '$access_service'.");
-            throw new \foundry\core\exceptions\ServiceLoadException("Unable to load access class '$access_service'.");
+            throw new ServiceLoadException("Unable to load access class '$access_service'.");
         } else {
             $this->access_service = new $access_service($service_config);
             if (!$this->access_service instanceof AccessService) {
-                throw new \foundry\core\exceptions\ServiceLoadException("Access class invalid - '$access_service' does not implement AccessService.");
+                throw new ServiceLoadException("Access class invalid - '$access_service' does not implement AccessService.");
             }
         }
         

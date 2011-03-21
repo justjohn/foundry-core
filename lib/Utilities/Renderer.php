@@ -9,9 +9,9 @@
  
 namespace foundry\core\utilities;
 
-use \foundry\core\Core as Core;
-use \foundry\core\logging\Log as Log;
-use \foundry\core\Model as Model;
+use foundry\core\Core;
+use foundry\core\logging\Log;
+use foundry\core\Model;
 
 class Renderer {
 

@@ -1,6 +1,4 @@
 <?php
-namespace foundry\core\access;
-
 /**
  * Interface for Role management.
  *
@@ -8,6 +6,8 @@ namespace foundry\core\access;
  * @author    John Roepke <john@justjohn.us>
  * @copyright &copy; 2010 John Roepke
  */
+
+namespace foundry\core\access;
 
 /**
  * Interface for Role management.

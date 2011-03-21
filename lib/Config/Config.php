@@ -1,11 +1,11 @@
 <?php
 namespace foundry\core\config;
-use \foundry\core\Core as Core;
+
+use foundry\core\Core;
+use foundry\core\logging\Log;
 
 Core::requires('\foundry\core\logging\Log');
 Core::requires('\foundry\core\database\Database');
-
-use \foundry\core\logging\Log as Log;
 
 /**
  * Configuration Manager

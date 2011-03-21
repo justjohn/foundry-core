@@ -1,6 +1,9 @@
 <?php
 namespace foundry\core\database;
-use \foundry\core\Model;
+
+use foundry\core\Model;
+use foundry\core\Service;
+use foundry\core\exceptions\ServiceConnectionException;
 
 class Mysql extends \mysqli implements DatabaseService {
     public static $required_options = array("host",
@@ -9,14 +12,14 @@ class Mysql extends \mysqli implements DatabaseService {
                                             "db");
 
     public function __construct($options) {
-        \foundry\core\Service::validate($options, self::$required_options);
+        Service::validate($options, self::$required_options);
         @parent::__construct($options["host"],
                              $options["username"],
                              $options["password"],
                              $options["db"]);
 
         if (mysqli_connect_error()) {
-            throw new \foundry\core\exceptions\ServiceConnectionException("Unable to connect to the MySQL database.");
+            throw new ServiceConnectionException("Unable to connect to the MySQL database.");
         }
     }
 

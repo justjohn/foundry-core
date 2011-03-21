@@ -6,8 +6,8 @@
  * services from the Auth/Services directory.
  * 
  * Currently there are two available services:
- * 1. LDAPAuthService: Authenticates against an LDAP directory.
- * 2. CrowdAuthService: Authenticates against an <a href="http://www.atlassian.com/software/crowd/">Atlassian Crowd</a> service endpoint.
+ * 1. LDAP: Authenticates against an LDAP directory.
+ * 2. Crowd: Authenticates against an <a href="http://www.atlassian.com/software/crowd/">Atlassian Crowd</a> service endpoint.
  *
  * @package   foundry\core\auth
  * @category  foundry-core
@@ -16,8 +16,11 @@
  */
  
 namespace foundry\core\auth;
-use \foundry\core\Core as Core;
-use \foundry\core\logging\Log as Log;
+
+use foundry\core\Core;
+use foundry\core\logging\Log;
+use foundry\core\Service;
+use foundry\core\exceptions\ServiceLoadException;
 
 Core::requires('\foundry\core\logging\Log');
 
@@ -84,7 +87,7 @@ class Auth {
      */
     function __construct() {
         $config = Core::getConfig('\foundry\core\auth\Auth');
-        \foundry\core\Service::validate($config, self::$required_options);
+        Service::validate($config, self::$required_options);
         $auth_service = $config["service"];
         $auth_config = $config["service_config"];
         $admin_group = $config["admin_group"];
@@ -99,7 +102,7 @@ class Auth {
         $auth_service = 'foundry\core\auth\\'.$auth_service;
         if (!class_exists($auth_service)) {
             Log::error("Auth::__construct", "Unable to load auth class '$auth_service'.");
-            throw new \foundry\core\exceptions\ServiceLoadException("Unable to load auth class '$auth_service'.");
+            throw new ServiceLoadException("Unable to load auth class '$auth_service'.");
         } else {
             $this->auth_service = new $auth_service($auth_config);
         }

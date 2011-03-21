@@ -1,6 +1,7 @@
 <?php
 namespace foundry\core\database;
-use \foundry\core\Model as Model;
+
+use foundry\core\Model;
 
 /**
  * The database interface.

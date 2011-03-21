@@ -20,6 +20,9 @@
 
 namespace foundry\core\auth;
 
+use foundry\core\Service;
+use foundry\core\exceptions\ServiceConnectionException;
+
 /**
  * Crowd Authentication Service
  *
@@ -82,7 +85,7 @@ class Crowd implements AuthService, AuthServiceSSO {
      * @param array Options for connecting to the Crowd SOAP endpoint.
      * @throws ServiceValidationException All required options are not present.
      */
-    public function __construct($options) {
+    public function __construct(array $options) {
         Service::validate($options, self::$required_options);
         try {
             $access_exception = "Unable to connect to the Crowd SOAP endpoint. ".

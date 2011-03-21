@@ -1,10 +1,10 @@
 <?php
 namespace foundry\core\email;
-use \foundry\core\Core as Core;
+
+use \foundry\core\Core;
+use foundry\core\logging\Log;
 
 Core::requires('\foundry\core\logging\Log');
-
-use \foundry\core\logging\Log as Log;
 
 /**
  * Send emails.

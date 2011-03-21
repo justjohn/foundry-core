@@ -1,6 +1,8 @@
 <?php
 namespace foundry\core\access;
 
+use foundry\core\Service;
+
 /**
  * In-memory implementation of the role service.
  *
@@ -30,7 +32,7 @@ class InMemory implements AccessService {
      * @param array $options service options.
      */
     public function __construct($options) {
-        \foundry\core\Service::validate($options, self::$required_options);
+        Service::validate($options, self::$required_options);
         $this->options = $options;
         if ($this->options["cache"] == true) {
             // Load from session cache
