@@ -74,9 +74,12 @@
   </exec>
  </target>
 
- <target name="phpdoc" description="Generate API documentation using PHPDocumentor">
-  <exec executable="phpdoc">
+ <target name="phpdoc" description="Generate API documentation using PHPDoctor">
+  <!-- <exec executable="phpdoc">
    <arg line="-d ${source} -t ${basedir}/build/api" />
+  </exec> -->
+  <exec executable="phpdoctor">
+   <arg line="phpdoctor.ini" />
   </exec>
  </target>
 
