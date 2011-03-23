@@ -6,10 +6,13 @@
 
 /**
  * Print a textual representation of an array or object.
- * @param object $arr
+ *
+ * @param object $object The object or array to print output for.
+ * @param boolean $html_format Should the output be HTML formatted (surrounded
+ *        with <pre> tags and escaped). Defaults to true if not set.
  */
-function print_a($arr) {
-    print(get_a($arr));
+function print_a($object, $html_format=true) {
+    print(get_a($object, $html_format));
 }
 
 /**

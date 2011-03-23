@@ -5,9 +5,10 @@
  * This file contains the authentication API and code for loading authentication
  * services from the Auth/Services directory.
  * 
- * Currently there are two available services:
+ * Currently there are three available services:
  * 1. LDAP: Authenticates against an LDAP directory.
  * 2. Crowd: Authenticates against an <a href="http://www.atlassian.com/software/crowd/">Atlassian Crowd</a> service endpoint.
+ * 3. InMemory: Stores user's and group's in memory until the end of script execution. Primarily for testing other components.
  *
  * @package   foundry\core\auth
  * @category  foundry-core

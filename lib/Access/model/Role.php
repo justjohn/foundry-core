@@ -1,6 +1,6 @@
 <?php
 namespace foundry\core\access;
-use \foundry\core\Model as Model;
+use \foundry\core\Model;
 
 /**
  * A model for access roles.

@@ -1,10 +1,10 @@
 <?php
 namespace foundry\core\auth;
-use \foundry\core\Core as Core;
+use \foundry\core\Core;
 
 Core::configure('\foundry\core\auth\Auth', array(
     "admin_group" => "svn_administrators",
-    "service" => 'InMemoryAuthService',
+    "service" => 'InMemory',
     "service_config" => array(
         "cache"=>false
     )
@@ -13,7 +13,6 @@ Core::configure('\foundry\core\auth\Auth', array(
 Core::requires('\foundry\core\auth\Auth');
 
 require_once("AuthServiceTest.php");
-require_once("Auth/Service/InMemory.php");
 
 /**
  * Description of InMemoryAuthService

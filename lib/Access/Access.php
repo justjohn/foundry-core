@@ -1,4 +1,22 @@
 <?php
+/**
+ * Access/Role API and service loader.
+ * 
+ * This module contains access/role managment functionality. The access service
+ * stores role definitions.
+ * 
+ * A Role is made up of:
+ * <pre>Role {
+ *     key:         A short name for the role (e.g. administrators.)
+ *     description: A description of the role.
+ *     groups:      A list of groupnames associated with the role.
+ * }</pre>
+ * 
+ * Currently there is only one role service:
+ * InMemory: Stores roles in memory until the end of script execution.
+ * 
+ */
+
 namespace foundry\core\access;
 
 use foundry\core\Core;
