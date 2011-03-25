@@ -8,7 +8,7 @@ Core::configure('\foundry\core\auth\Auth', array(
     "admin_group" => "svn_administrators",
     "service" => 'LDAP',
     "service_config" => array(
-        "connectionString"      => "ldap://localhost",
+        "connectionString"      => "ldap://webfoundri.es",
         "baseDN"                => "dc=phpfoundry,dc=com",
         "managerDN"             => "cn=admin",
         "managerPassword"       => "r-vq398rEuj",

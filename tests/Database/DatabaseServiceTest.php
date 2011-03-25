@@ -63,7 +63,6 @@ abstract class DatabaseServiceTest extends \PHPUnit_Framework_TestCase {
     
     public function testLoadObjectsWithSort() {
         $data = $this->db_service->load_objects('\foundry\core\database\Data', $this->key, '', array('id' => array('<', 3)), array('value'=>'ASC'));
-        print_a($data, false);
         $this->assertEquals(3, count($data)); // 0,1,2
         $data_0 = array_shift($data); // value = $data_values[2]
         $this->assertEquals($data_0->getValue(), $this->data_values[2]);
