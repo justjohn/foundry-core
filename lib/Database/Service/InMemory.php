@@ -54,30 +54,9 @@ class InMemory {
             return false;
         }
         $data =  $this->data[$db_key];
-        $output = array();
-        if (count($data) > 0) {
-            foreach ($data as $object) {
-                $model = $this->convertToObject($object, $classname);
-                if ($this->matches_condition($model, $conditions)) {
-                    if ($keyfield !== "") {
-                        try {
-                            $key = $model->get($keyfield);
-                            if ($key !== "") {
-                                $output[$key] = $model;
-                            } else {
-                                $output[] = $model;
-                            }
-                        } catch (FieldDoesNotExistException $ex) {
-                            throw new FieldDoesNotExistException(
-                                    "Unable to find and key on the '$keyfield' field.");
-                        }
-                    } else {
-                        $output[] = $object;
-                    }
-                }
-            }
-        }
+        $output = $this->match_conditions($data, $conditions, $classname, $keyfield);
         $output = $this->sort_objects($output, $sort_rules);
+        $output = $this->limit_objects($output, $limits);
         return $output;
     }
     
@@ -154,9 +133,13 @@ class InMemory {
         if (!class_exists($classname)) {
             return false;
         }
-        $model = new $classname();
-        $conditions = $this->get_conditions($conditions, $model);
-        
+        $objects = $this->load_objects($classname, $db_key, "", $conditions);
+        if (count($objects) > 0) {
+            $output = array_shift($objects);
+            return $output;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -208,6 +191,60 @@ class InMemory {
                 }
             }
         }
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////
+    // Functions for handling model data
+    
+    private function limit_objects(array $array, array $limit) {
+        if (count($limit) == 0) return $array;
+        
+        if (count($limit) >= 2) {
+            $start = array_shift($limit);
+            $count = array_shift($limit);
+        } else {
+            $start = 0;
+            $count = array_shift($limit);
+        }
+        $output = array();
+        if (count($array) > 0) {
+            $i = 0;
+            foreach ($array as $key=>$obj) {
+                if ($i >= $start && $i < $start+$count) {
+                    $output[$key] = $obj;
+                }
+                $i++;
+            }
+        }
+        return $output;
+    }
+    
+    private function match_conditions(array $data, array $conditions, $classname, $keyfield) {
+        $output = array();
+        if (count($data) > 0) {
+            foreach ($data as $object) {
+                $model = $this->convertToObject($object, $classname);
+                if ($this->matches_condition($model, $conditions)) {
+                    if ($keyfield !== "") {
+                        try {
+                            $key = $model->get($keyfield);
+                            if ($key !== "") {
+                                $output[$key] = $model;
+                            } else {
+                                $output[] = $model;
+                            }
+                        } catch (FieldDoesNotExistException $ex) {
+                            throw new FieldDoesNotExistException(
+                                    "Unable to find and key on the '$keyfield' field.");
+                        }
+                    } else {
+                        $output[] = $object;
+                    }
+                }
+            }
+        }
+        return $output;
     }
     
     private function matches_condition(Model $model, array $conditions) {
@@ -273,8 +310,16 @@ class InMemory {
         return $sorted_output;
     }
     
+    /**
+     * An initialization vector for creating unique ids.
+     * @var int
+     */
     private $id_counter = 1;
     
+    /**
+     * Create a unique id for keying data with.
+     * @return int
+     */
     private function create_id() {
         $id = md5($this->id_counter . microtime());
         $this->id_counter++;

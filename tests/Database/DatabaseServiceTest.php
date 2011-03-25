@@ -37,6 +37,30 @@ abstract class DatabaseServiceTest extends \PHPUnit_Framework_TestCase {
         $this->db_service->delete_object($this->key, array());
     }
     
+    public function testLoadObjectsWithLimit() {
+        $data = $this->db_service->load_objects('\foundry\core\database\Data', $this->key, '', array(), array(), array(1));
+        $this->assertEquals(1, count($data));
+        $object = array_shift($data);
+        $this->assertEquals($object->getId(), 0);
+        
+        $data = $this->db_service->load_objects('\foundry\core\database\Data', $this->key, '', array(), array(), array(2, 1));
+        $this->assertEquals(1, count($data));
+        $object = array_shift($data);
+        $this->assertEquals($object->getId(), 2);
+        
+        $data = $this->db_service->load_objects('\foundry\core\database\Data', $this->key, '', array(), array(), array(6, 100));
+        $this->assertEquals(4, count($data));
+        $object = array_shift($data);
+        $this->assertEquals($object->getId(), 6);
+        
+        // Some invalid data
+        $data = $this->db_service->load_objects('\foundry\core\database\Data', $this->key, '', array(), array(), array(-100));
+        $this->assertEquals(0, count($data));
+        // Some invalid data
+        $data = $this->db_service->load_objects('\foundry\core\database\Data', $this->key, '', array(), array(), array(10000, 10000000));
+        $this->assertEquals(0, count($data));
+    }
+    
     public function testLoadObjectsWithSort() {
         $data = $this->db_service->load_objects('\foundry\core\database\Data', $this->key, '', array('id' => array('<', 3)), array('value'=>'ASC'));
         print_a($data, false);
