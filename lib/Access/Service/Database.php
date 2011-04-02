@@ -1,4 +1,13 @@
 <?php
+/**
+ * A database backed AccessService implementation.
+ * 
+ * @package   foundry\core\access
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ */
 namespace foundry\core\access;
 
 use foundry\core\Core;
@@ -10,9 +19,11 @@ Core::requires('\foundry\core\database\Database');
 /**
  * Database implementation of the access service.
  *
- * @package   Access
+ * @package   foundry\core\access
+ * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010 John Roepke
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 class Database implements AccessService {
     /**

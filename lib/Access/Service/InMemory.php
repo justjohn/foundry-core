@@ -1,4 +1,17 @@
 <?php
+/**
+ * An in-memory implementation of AccessService.
+ * 
+ * This implementation does not persist data across sessions and must be
+ * re-initialized at the start of every session. It's useful for testing and a static
+ * set of roles.
+ * 
+ * @package   foundry\core\access
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ */
 namespace foundry\core\access;
 
 use foundry\core\Service;
@@ -6,9 +19,11 @@ use foundry\core\Service;
 /**
  * In-memory implementation of the role service.
  *
- * @package   Role
+ * @package   foundry\core\access
+ * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010 John Roepke
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 class InMemory implements AccessService {
     /**

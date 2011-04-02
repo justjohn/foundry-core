@@ -15,7 +15,7 @@
  * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
  * @copyright &copy; 2010-2011 John Roepke
- * @license   http://phpfoundry.com/license/bsd Modified BSD license
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 namespace foundry\core\database;
 
@@ -32,6 +32,15 @@ Core::requires('\foundry\core\logging\Log');
  */
 require_once("Database/DatabaseService.php");
 
+/**
+ * The Database API.
+ * 
+ * @package   foundry\core\database
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ */
 class Database {
     /**
      * The options required to instantiate a database component.

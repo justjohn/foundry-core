@@ -3,8 +3,10 @@
  * Utility for rendering Models in different formats (XML, JSON).
  *
  * @package   foundry\core\utilities
+ * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010 John Roepke
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
  
 namespace foundry\core\utilities;
@@ -13,6 +15,15 @@ use foundry\core\Core;
 use foundry\core\logging\Log;
 use foundry\core\Model;
 
+/**
+ * Class for rendering Models into different formats (XML, JSON).
+ *
+ * @package   foundry\core\utilities
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ */
 class Renderer {
 
     static function asXML(Model $model) {

@@ -6,7 +6,7 @@
  * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
  * @copyright &copy; 2010-2011 John Roepke
- * @license   http://phpfoundry.com/license/bsd Modified BSD license
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 namespace foundry\core\database;
 
@@ -17,6 +17,12 @@ use foundry\core\Model;
  *
  * This interface treats all databases as object-based. For a table-based database
  * this is done by mapping object fields to table fields.
+ * 
+ * @package   foundry\core\database
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 interface DatabaseService {
     /**

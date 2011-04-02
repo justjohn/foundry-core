@@ -1,4 +1,13 @@
 <?php
+/**
+ * Handles log message processing.
+ * 
+ * @package   foundry\core\logging
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ */
 namespace foundry\core\logging;
 
 use \foundry\core\Core;
@@ -8,7 +17,11 @@ Core::register_class('foundry\core\logging\LogEntry', "Log/model/LogEntry.php");
 /**
  * Write log entries.
  *
- * @package modules
+ * @package   foundry\core\logging
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 class Log {
     const DEBUG = 1;

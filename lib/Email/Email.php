@@ -1,4 +1,13 @@
 <?php
+/**
+ * API for sending email via SMTP.
+ * 
+ * @package   foundry\core\email
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ */
 namespace foundry\core\email;
 
 use \foundry\core\Core;
@@ -17,7 +26,12 @@ require_once 'Mail/mime.php';
 
 /**
  * Send emails.
- * @package modules
+ * 
+ * @package   foundry\core\email
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 class Email {
     /**

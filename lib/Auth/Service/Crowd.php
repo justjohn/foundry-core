@@ -7,11 +7,13 @@
  *
  * This module contains code based on the Services_Atlassian_Crowd PEAR package
  * written by Luca Corbo (http://pear.php.net/packages/Services_Atlassian_Crowd)
- * licensed under the http://www.apache.org/licenses/LICENSE-2.0 Apache License
+ * and licensed under the http://www.apache.org/licenses/LICENSE-2.0 Apache License
  *
- * @package Auth
- * @author John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke, 2008 Infinite Campus Inc., 2008 Luca Corbo
+ * @package   foundry\core\auth
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @copyright &copy; 2010-2011 John Roepke, 2008 Infinite Campus Inc., 2008 Luca Corbo
  * @link      http://pear.php.net/packages/Services_Atlassian_Crowd
  * @link      http://www.atlassian.com/software/crowd
  * @link      http://confluence.atlassian.com/display/CROWD/SOAP+API

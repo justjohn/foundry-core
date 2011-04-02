@@ -12,9 +12,15 @@
  *     groups:      A list of groupnames associated with the role.
  * }</pre>
  * 
- * Currently there is only one role service:
- * InMemory: Stores roles in memory until the end of script execution.
+ * Currently there are two role services:
+ *  InMemory: Stores roles in memory until the end of script execution.
+ *  Database: Stores Roles in a database.
  * 
+ * @package   foundry\core\access
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 
 namespace foundry\core\access;
@@ -28,11 +34,13 @@ Core::requires('\foundry\core\auth\Auth');
 Core::requires('\foundry\core\logging\Log');
 
 /**
- * Role Management.
+ * Role Management API.
  *
- * @package   Role
+ * @package   foundry\core\access
+ * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010 John Roepke
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 
 // Register the role related model classes with the class loader.

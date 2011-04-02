@@ -1,7 +1,12 @@
 <?php
 /**
- * Common functions.
- * @package functions
+ * Common functions for core libraries.
+ * 
+ * @package   
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 
 /**

@@ -1,20 +1,23 @@
 <?php
+/**
+ * Authentication Service Interface
+ *
+ * @package   foundry\core\auth
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ */
 namespace foundry\core\auth;
 
 /**
  * Authentication Service Interface
  *
- * @package   Auth
+ * @package   foundry\core\auth
+ * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
- */
-
-/**
- * Authentication Service Interface
- *
- * @package   Auth
- * @author    John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
 */
 interface AuthService
 {

@@ -1,6 +1,4 @@
 <?php
-namespace foundry\core\auth;
-
 /**
  * In-memory Authentication Service Implementation
  *
@@ -8,18 +6,22 @@ namespace foundry\core\auth;
  * in-memory (temporary or session limited) service. Mainly used for
  * testing other classes that depend on an auth service.
  *
- * @package Auth
- * @author John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
+ * @package   foundry\core\auth
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
+namespace foundry\core\auth;
 
 /**
  * In-memory Authentication Service
  *
- * @package   Auth
+ * @package   foundry\core\auth
+ * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
- * @license   TBD
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 class InMemory {
 

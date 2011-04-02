@@ -18,12 +18,27 @@
  *     }
  * }
  * </code>
+ * 
+ * @package   foundry\core
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 
 namespace foundry\core;
 
 use foundry\core\exceptions\ServiceValidationException;
 
+/**
+ * The Service validator.
+ * 
+ * @package   foundry\core
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ */
 class Service {
     /**
      * Validate all required optoins are present in options.

@@ -1,16 +1,17 @@
 <?php
+namespace foundry\core\auth;
 /**
  * LDAP Authentication Service Implementation
  *
  * This file contains the logic required to authenticate against an LDAP or
  * ActiveDirectory endpoint.
  *
- * @package Auth
- * @author John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
+ * @package   foundry\core\auth
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
-
-namespace foundry\core\auth;
 
 use foundry\core\Service;
 use foundry\core\exceptions\ServiceConnectionException;
@@ -18,10 +19,11 @@ use foundry\core\exceptions\ServiceConnectionException;
 /**
  * LDAP Authentication Service
  *
- * @package   Auth
+ * @package   foundry\core\auth
+ * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
- * @license   TBD
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 class LDAP implements AuthService, AuthServiceSubgroups {
     /**

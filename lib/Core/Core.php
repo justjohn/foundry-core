@@ -1,8 +1,26 @@
 <?php
+/**
+ * Handles module loading and requiring of Core Library components.
+ * 
+ * @package   foundry\core
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ */
 namespace foundry\core;
 
 Core::provides('\foundry\core\Core');
 
+/**
+ * Manages loading and retrieving Core Library components.
+ * 
+ * @package   foundry\core
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ */
 class Core {
     public static $class_registry = array();
 

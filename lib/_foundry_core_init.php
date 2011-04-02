@@ -1,4 +1,14 @@
 <?php
+/**
+ * Initialize Core Library and register all available components.
+ * 
+ * @package   foundry\core
+ * @category  foundry-core
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ */
+ 
 namespace foundry\core;
 
 set_include_path(get_include_path() .

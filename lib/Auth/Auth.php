@@ -14,6 +14,7 @@
  * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
  * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
  
 namespace foundry\core\auth;
@@ -43,6 +44,7 @@ require_once("Auth/AuthServiceSubgroups.php");
  * @category  foundry-core
  * @author    John Roepke <john@justjohn.us>
  * @copyright &copy; 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  */
 class Auth {
     /**
