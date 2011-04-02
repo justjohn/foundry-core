@@ -2,14 +2,15 @@
 /**
  * Initialize Core Library and register all available components.
  * 
- * @package   foundry\core
  * @category  foundry-core
+ * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
  
-namespace foundry\core;
+namespace Foundry\Core;
 
 set_include_path(get_include_path() .
                  PATH_SEPARATOR . __DIR__ );
@@ -21,20 +22,20 @@ require_once("Functions/common.php");
 require_once("Core/Core.php");
 
 // Utilities
-Core::provides('\foundry\core\utilities\Renderer', 'Utilities/Renderer.php');
+Core::provides('\Foundry\Core\Utilities\Renderer', 'Utilities/Renderer.php');
 
 // Core functionality (pre-load)
-Core::provides('\foundry\core\Exceptions', 'Core/Exceptions.php',    true);
-Core::provides('\foundry\core\Service',    'Core/Service.php',       true);
-Core::provides('\foundry\core\Model',      'Core/Model.php',         true);
+Core::provides('\Foundry\Core\Exceptions', 'Core/Exceptions.php',    true);
+Core::provides('\Foundry\Core\Service',    'Core/Service.php',       true);
+Core::provides('\Foundry\Core\Model',      'Core/Model.php',         true);
 
 
 // Additional modules
-Core::provides('\foundry\core\access\Access',     'Access/Access.php');
-Core::provides('\foundry\core\auth\Auth',         'Auth/Auth.php');
-Core::provides('\foundry\core\config\Config',     'Config/Config.php');
-Core::provides('\foundry\core\database\Database', 'Database/Database.php');
-Core::provides('\foundry\core\email\Email',       'Email/Email.php');
-Core::provides('\foundry\core\logging\Log',       'Log/Log.php');
+Core::provides('\Foundry\Core\Access\Access',     'Access/Access.php');
+Core::provides('\Foundry\Core\Auth\Auth',         'Auth/Auth.php');
+Core::provides('\Foundry\Core\Config\Config',     'Config/Config.php');
+Core::provides('\Foundry\Core\Database\Database', 'Database/Database.php');
+Core::provides('\Foundry\Core\Email\Email',       'Email/Email.php');
+Core::provides('\Foundry\Core\Logging\Log',       'Log/Log.php');
 
 ?>

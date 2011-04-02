@@ -4,34 +4,36 @@
  * 
  * This file contains the configuration infrastructure for the application.
  *
- * @package   foundry\core\config
  * @category  foundry-core
+ * @package   Foundry\Core\Config
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
 
-namespace foundry\core\config;
+namespace Foundry\Core\Config;
 
-use foundry\core\Core;
-use foundry\core\logging\Log;
+use Foundry\Core\Core;
+use Foundry\Core\Logging\Log;
 
-Core::requires('\foundry\core\logging\Log');
-Core::requires('\foundry\core\database\Database');
+Core::requires('\Foundry\Core\Logging\Log');
+Core::requires('\Foundry\Core\Database\Database');
 
 // Register data model with the class loader.
-Core::register_class("foundry\core\config\Option", "Config/model/Option.php");
+Core::register_class("Foundry\Core\Config\Option", "Config/model/Option.php");
 
 /**
  * Configuration Manager
  *
  * Load configuration options from a database.
  * 
- * @package   foundry\core\config
  * @category  foundry-core
+ * @package   Foundry\Core\Config
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 class Config {
     /**
@@ -45,7 +47,7 @@ class Config {
      * @param Database $database
      */
     public function __construct() {
-       $this->database = Core::get('\foundry\core\database\Database');
+       $this->database = Core::get('\Foundry\Core\Database\Database');
     }
 
     /**
@@ -57,14 +59,14 @@ class Config {
      */
     public function getConfig($name='') {
         if ($name != '') {
-            $config = $this->database->load_object('\foundry\core\config\Option', "config_options", array("name"=>$name));
+            $config = $this->database->load_object('\Foundry\Core\Config\Option', "config_options", array("name"=>$name));
             if ($config !== false) {
                 return $config->getValue();
             } else {
                 return false;
             }
         }
-        $config_objs = $this->database->load_objects('\foundry\core\config\Option', "config_options", "name");
+        $config_objs = $this->database->load_objects('\Foundry\Core\Config\Option', "config_options", "name");
         $config = array();
         if ($config_objs === false) {
             die("unable to load configuration from database");

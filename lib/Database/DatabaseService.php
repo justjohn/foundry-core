@@ -2,15 +2,16 @@
 /**
  * The Database service interface.
  * 
- * @package   foundry\core\database
  * @category  foundry-core
+ * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
-namespace foundry\core\database;
+namespace Foundry\Core\Database;
 
-use foundry\core\Model;
+use Foundry\Core\Model;
 
 /**
  * The database interface.
@@ -18,11 +19,12 @@ use foundry\core\Model;
  * This interface treats all databases as object-based. For a table-based database
  * this is done by mapping object fields to table fields.
  * 
- * @package   foundry\core\database
  * @category  foundry-core
+ * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 interface DatabaseService {
     /**

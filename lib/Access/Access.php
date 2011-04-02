@@ -16,49 +16,47 @@
  *  InMemory: Stores roles in memory until the end of script execution.
  *  Database: Stores Roles in a database.
  * 
- * @package   foundry\core\access
+ * PHP version 5.3.0
+ * 
  * @category  foundry-core
+ * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
 
-namespace foundry\core\access;
+namespace Foundry\Core\Access;
 
-use foundry\core\Core;
-use foundry\core\Service;
-use foundry\core\exceptions\ServiceLoadException;
-use foundry\core\logging\Log;
+use Foundry\Core\Core;
+use Foundry\Core\Service;
+use Foundry\Core\Exceptions\ServiceLoadException;
+use Foundry\Core\Logging\Log;
 
-Core::requires('\foundry\core\auth\Auth');
-Core::requires('\foundry\core\logging\Log');
+Core::requires('\Foundry\Core\Auth\Auth');
+Core::requires('\Foundry\Core\Logging\Log');
 
-/**
- * Role Management API.
- *
- * @package   foundry\core\access
- * @category  foundry-core
- * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
- * @license   http://phpfoundry.com/license/bsd New BSD license
- */
 
 // Register the role related model classes with the class loader.
-Core::register_class("foundry\core\access\Role", "Access/model/Role.php");
+Core::register_class("Foundry\Core\Access\Role", "Access/model/Role.php");
 
 /**
  * Load the AccessService interface.
  */
-require_once("Access/AccessService.php");
+require_once "Access/AccessService.php";
 
 /**
- * Role Management.
+ * Role Management API.
  *
- * @package   Role
+ * @category  foundry-core
+ * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010 John Roepke
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
-class Access {
+class Access
+{
     /**
      * The configuration options required to initialize an Auth service.
      */
@@ -84,36 +82,40 @@ class Access {
      * The current access service.
      * @var AccessService
      */
-    private $access_service;
+    private $_access_service;
 
     /**
      * The authentication manager.
      * @var Auth
      */
-    private $auth_manager;
+    private $_auth_manager;
 
-    public function __construct() {
-        $config = Core::getConfig('\foundry\core\access\Access');
+    /**
+     * Create a Access Service.
+     */
+    public function __construct()
+    {
+        $config = Core::getConfig('\Foundry\Core\Access\Access');
         Service::validate($config, self::$required_options);
         $access_service = $config["service"];
         $service_config = $config["service_config"];
-        $this->auth_manager = Core::get('\foundry\core\auth\Auth');
+        $this->_auth_manager = Core::get('\Foundry\Core\Auth\Auth');
         
         // include service class
         include_once("Access/Service/$access_service.php");
-        $access_service = 'foundry\core\access\\'.$access_service;
+        $access_service = 'Foundry\Core\Access\\'.$access_service;
         if (!class_exists($access_service)) {
             Log::error("Access::__construct", "Unable to load access class '$access_service'.");
             throw new ServiceLoadException("Unable to load access class '$access_service'.");
         } else {
-            $this->access_service = new $access_service($service_config);
-            if (!$this->access_service instanceof AccessService) {
+            $this->_access_service = new $access_service($service_config);
+            if (!$this->_access_service instanceof AccessService) {
                 throw new ServiceLoadException("Access class invalid - '$access_service' does not implement AccessService.");
             }
         }
         
         // Special pre-defined roles
-        $this->addRole(new Role(Access::ADMIN, "Admin Role", array($this->auth_manager->getAdminGroup())));
+        $this->addRole(new Role(Access::ADMIN, "Admin Role", array($this->_auth_manager->getAdminGroup())));
         $this->addRole(new Role(Access::AUTHENTICATED, "Authenticated Role"));
         $this->addRole(new Role(Access::ANONYMOUS, "Anonymous Role (non-authenticated only)"));
         $this->addRole(new Role(Access::ALL, "Anonymous + Authenticated Role (allow access to everyone)"));
@@ -121,60 +123,74 @@ class Access {
 
     /**
      * Add a role definition.
+     * 
      * @param Role $role The role.
-     * @return boolean
+     * 
+     * @return boolean true on success, false on failure.
      */
-    public function addRole(Role $role) {
+    public function addRole(Role $role)
+    {
         Log::info("Access::addRole", "addRole('$role')");
-        $result = $this->access_service->addRole($role);
+        $result = $this->_access_service->addRole($role);
         return $result;
     }
 
     /**
      * Remove a role.
+     * 
      * @param string $role_key The role to remove.
-     * @return boolean
+     * 
+     * @return boolean true on success, false on failure.
      */
-    public function removeRole($role_key) {
+    public function removeRole($role_key)
+    {
         Log::info("Access::removeRole", "removeRole('$role_key')");
         $role_key = trim($role_key);
         if (empty($role_key)) return false;
-        $result = $this->access_service->removeRole($role_key);
+        $result = $this->_access_service->removeRole($role_key);
         return $result;
     }
 
     /**
      * Get a role.
+     * 
      * @param string $role_key The role to get.
-     * @return Role The role if found, false otherwise.
+     * 
+     * @return Role|boolean The role if found, false otherwise.
      */
-    public function getRole($role_key) {
+    public function getRole($role_key)
+    {
         Log::debug("Access::getRole", "getRole('$role_key')");
         $role_key = trim($role_key);
         if (empty($role_key)) return false;
-        $result = $this->access_service->getRole($role_key);
+        $result = $this->_access_service->getRole($role_key);
         return $result;
     }
 
     /**
      * Check is a user has a role.
-     * @param string $username The user to check.
+     * 
      * @param string $role_key The role to check.
-     * @return boolean
+     * @param string $username The user to check.
+     * 
+     * @return boolean true on success, false on failure.
      */
-    public function hasRole($role_key, $username = '') {
+    public function hasRole($role_key, $username = '')
+    {
         Log::debug("Access::hasRole", "hasRole('$username', '$role_key')");
         $username = trim($username);
         $role_key = trim($role_key);
         if (empty($role_key)) return false;
         if ($role_key == Access::ALL) return true;
         if (empty($username)) {
-            $username = $this->auth_manager->getUsername();
+            $username = $this->_auth_manager->getUsername();
         }
-        if ($role_key == Access::AUTHENTICATED && $this->auth_manager->isAuthenticated()) {
+        if ($role_key == Access::AUTHENTICATED &&
+                $this->_auth_manager->isAuthenticated()) {
             return true;
         }
-        if ($role_key == Access::ANONYMOUS && !$this->auth_manager->isAuthenticated()) {
+        if ($role_key == Access::ANONYMOUS &&
+                !$this->_auth_manager->isAuthenticated()) {
             return true;
         }
         $role = $this->getRole($role_key);
@@ -182,7 +198,7 @@ class Access {
             return false;
         }
         $role_groups = $role->getGroups();
-        $user_groups = $this->auth_manager->getUserGroups($username);
+        $user_groups = $this->_auth_manager->getUserGroups($username);
         $intersect = array_intersect($user_groups, $role_groups);
         return !empty($intersect);
     }

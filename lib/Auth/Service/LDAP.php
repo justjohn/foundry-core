@@ -1,29 +1,31 @@
 <?php
-namespace foundry\core\auth;
+namespace Foundry\Core\Auth;
 /**
  * LDAP Authentication Service Implementation
  *
  * This file contains the logic required to authenticate against an LDAP or
  * ActiveDirectory endpoint.
  *
- * @package   foundry\core\auth
  * @category  foundry-core
+ * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
 
-use foundry\core\Service;
-use foundry\core\exceptions\ServiceConnectionException;
+use Foundry\Core\Service;
+use Foundry\Core\Exceptions\ServiceConnectionException;
 
 /**
  * LDAP Authentication Service
  *
- * @package   foundry\core\auth
  * @category  foundry-core
+ * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 class LDAP implements AuthService, AuthServiceSubgroups {
     /**
@@ -645,10 +647,12 @@ class LDAP implements AuthService, AuthServiceSubgroups {
  * one is provided. It converts all of the attributes to lowercase except for
  * managerPassword.
  *
- * @package   Auth
+ * @category  foundry-core
+ * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
- * @license   TBD
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 
 class LDAPAttributes {

@@ -2,32 +2,27 @@
 /**
  * Exceptions used in Foundry Core components.
  * 
- * @package   foundry\core
  * @category  foundry-core
+ * @package   Foundry\Core\Exceptions
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
-namespace foundry\core\exceptions;
+namespace Foundry\Core\Exceptions;
 
-// Based on code from http://us2.php.net/exceptions by ask@nilpo.com
-
-interface IException
-{
-    /* Protected methods inherited from Exception class */
-    public function getMessage();                 // Exception message
-    public function getCode();                    // User-defined Exception code
-    public function getFile();                    // Source filename
-    public function getLine();                    // Source line
-    public function getTrace();                   // An array of the backtrace()
-    public function getTraceAsString();           // Formated string of trace
-
-    /* Overrideable methods inherited from Exception class */
-    public function __toString();                 // formated string for display
-    public function __construct($message = null, $code = 0);
-}
-
-abstract class CoreException extends \Exception implements IException
+/**
+ * A general CoreException class that provides a base for all Foundry Core
+ *  exceptions.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Exceptions
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since 1.0.0
+ */
+abstract class CoreException extends \Exception
 {
     protected $message = 'Unknown exception';     // Exception message
     private   $string;                            // Unknown
@@ -54,30 +49,79 @@ abstract class CoreException extends \Exception implements IException
 
 /**
  * An exception class for missing required options.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Exceptions
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since 1.0.0
  */
 class ServiceValidationException extends CoreException {}
 /**
  * An exception class for service connection errors.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Exceptions
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since 1.0.0
  */
 class ServiceConnectionException extends CoreException {}
 /**
  * An exception class for loading service class errors.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Exceptions
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since 1.0.0
  */
 class ServiceLoadException extends CoreException {}
 /**
  * An exception for calling methods that don't exist in data models.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Exceptions
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since 1.0.0
  */
 class MethodDoesNotExistException extends CoreException {}
 /**
  * An exception for creating model classes that don't exist.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Exceptions
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since 1.0.0
  */
 class ClassDoesNotExistException extends CoreException {}
 /**
  * An exception for calling fields that don't exist in data models.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Exceptions
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since 1.0.0
  */
 class FieldDoesNotExistException extends CoreException {}
 /**
  * An exception for classes unable to load model classes.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Exceptions
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since 1.0.0
  */
 class ModelDoesNotExistException extends CoreException {}
 ?>

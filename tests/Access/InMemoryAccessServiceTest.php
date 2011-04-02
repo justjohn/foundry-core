@@ -1,15 +1,15 @@
 <?php
-namespace foundry\core\access;
-use \foundry\core\Core as Core;
+namespace Foundry\Core\Access;
+use \Foundry\Core\Core as Core;
 
-Core::configure('\foundry\core\access\Access', array(
+Core::configure('\Foundry\Core\Access\Access', array(
     "service" => 'InMemory',
     "service_config" => array(
         "cache"=>false
     )
 ));
 
-Core::configure('\foundry\core\auth\Auth', array(
+Core::configure('\Foundry\Core\Auth\Auth', array(
     "admin_group" => "svn_administrators",
     "service" => 'InMemory',
     "service_config" => array(
@@ -17,13 +17,13 @@ Core::configure('\foundry\core\auth\Auth', array(
     )
 ));
 
-Core::requires('\foundry\core\access\Access');
+Core::requires('\Foundry\Core\Access\Access');
 
 require_once("AccessServiceTest.php");
 
 class InMemoryAccessServiceTest extends AccessServiceTest {
     public function  __construct() {
-        $access_service = Core::get('\foundry\core\access\Access');
+        $access_service = Core::get('\Foundry\Core\Access\Access');
         parent::__construct($access_service);
     }
 }

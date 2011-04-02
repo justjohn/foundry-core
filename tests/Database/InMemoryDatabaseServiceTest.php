@@ -1,21 +1,21 @@
 <?php
-namespace foundry\core\database;
-use \foundry\core\Core;
+namespace Foundry\Core\Database;
+use \Foundry\Core\Core;
 
-Core::configure('\foundry\core\database\Database', array(
+Core::configure('\Foundry\Core\Database\Database', array(
     "admin_group" => "svn_administrators",
     "service" => 'InMemory',
     "service_config" => array( )
 ));
 
-Core::requires('\foundry\core\database\Database');
+Core::requires('\Foundry\Core\Database\Database');
 
 require_once("DatabaseServiceTest.php");
 
 class InMemoryDatabaseServiceTest extends DatabaseServiceTest
 {
     public function  __construct() {
-        $db_service = Core::get('\foundry\core\database\Database');
+        $db_service = Core::get('\Foundry\Core\Database\Database');
         parent::__construct($db_service);
     }
 }

@@ -1,17 +1,17 @@
 <?php
-namespace foundry\core\access;
-use \foundry\core\Core as Core;
+namespace Foundry\Core\Access;
+use \Foundry\Core\Core as Core;
 
 require_once("AccessServiceTest.php");
 
-Core::configure('\foundry\core\access\Access', array(
+Core::configure('\Foundry\Core\Access\Access', array(
     "service" => 'InMemory',
     "service_config" => array(
         "cache"=>false
     )
 ));
 
-Core::configure('\foundry\core\auth\Auth', array(
+Core::configure('\Foundry\Core\Auth\Auth', array(
     "admin_group" => "svn_administrators",
     "service" => 'InMemory',
     "service_config" => array(
@@ -19,8 +19,8 @@ Core::configure('\foundry\core\auth\Auth', array(
     )
 ));
 
-Core::requires('\foundry\core\auth\Auth');
-Core::requires('\foundry\core\access\Access');
+Core::requires('\Foundry\Core\Auth\Auth');
+Core::requires('\Foundry\Core\Access\Access');
 
 /**
  * Test class for Access.
@@ -33,8 +33,8 @@ class AccessTest extends \PHPUnit_Framework_TestCase {
      * Sets up the test.
      */
     protected function setUp() {
-        $this->auth_manager = Core::get('\foundry\core\auth\Auth');
-        $this->access_manager = Core::get('\foundry\core\access\Access');
+        $this->auth_manager = Core::get('\Foundry\Core\Auth\Auth');
+        $this->access_manager = Core::get('\Foundry\Core\Access\Access');
 
         $this->addAuthTestData();
         $this->addAccessTestData();
@@ -50,17 +50,17 @@ class AccessTest extends \PHPUnit_Framework_TestCase {
     private $admin_group_desc = "admin group";
 
     private function addAuthTestData() {
-        $group1 = new \foundry\core\auth\Group();
+        $group1 = new \Foundry\Core\Auth\Group();
         $group1->setName($this->group1_name);
         $group1->setDescription($this->group1_desc);
         $this->auth_manager->addGroup($group1);
 
-        $group2 = new \foundry\core\auth\Group();
+        $group2 = new \Foundry\Core\Auth\Group();
         $group2->setName($this->group2_name);
         $group2->setDescription($this->group2_desc);
         $this->auth_manager->addGroup($group2);
 
-        $group3 = new \foundry\core\auth\Group();
+        $group3 = new \Foundry\Core\Auth\Group();
         $group3->setName($this->admin_group_name);
         $group3->setDescription($this->admin_group_desc);
         $this->auth_manager->addGroup($group3);

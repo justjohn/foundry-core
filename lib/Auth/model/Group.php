@@ -1,6 +1,6 @@
 <?php
-namespace foundry\core\auth;
-use \foundry\core\Model;
+namespace Foundry\Core\Auth;
+use \Foundry\Core\Model;
 
 /**
  * A model for user groups.
@@ -13,7 +13,7 @@ use \foundry\core\Model;
  *
  * @package DataModel
  */
-class Group extends \foundry\core\BaseModel {
+class Group extends \Foundry\Core\BaseModel {
 
     private $fields = array("name"=>Model::STR, "description"=>Model::STR, "users"=>Model::LST, "subgroups"=>Model::LST);
     private $key_field = "name";

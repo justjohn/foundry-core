@@ -6,24 +6,26 @@
  * re-initialized at the start of every session. It's useful for testing and a static
  * set of roles.
  * 
- * @package   foundry\core\access
  * @category  foundry-core
+ * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
-namespace foundry\core\access;
+namespace Foundry\Core\Access;
 
-use foundry\core\Service;
+use Foundry\Core\Service;
 
 /**
  * In-memory implementation of the role service.
  *
- * @package   foundry\core\access
  * @category  foundry-core
+ * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 class InMemory implements AccessService {
     /**

@@ -1,17 +1,31 @@
 <?php
-namespace foundry\core\database;
+/**
+ * A Mongo DB implementation of the DatabaseService.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Database
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
+ */
+namespace Foundry\Core\Database;
 
-use foundry\core\Model;
-use foundry\core\Service;
-use foundry\core\exceptions\ServiceConnectionException;
-use foundry\core\exceptions\ModelDoesNotExistException;
-use foundry\core\exceptions\FieldDoesNotExistException;
+use Foundry\Core\Model;
+use Foundry\Core\Service;
+use Foundry\Core\Exceptions\ServiceConnectionException;
+use Foundry\Core\Exceptions\ModelDoesNotExistException;
+use Foundry\Core\Exceptions\FieldDoesNotExistException;
 
 /**
- * The database interface.
- *
- * This interface treats all databases as object-based. For a table-based database
- * this is done by mapping object fields to table fields.
+ * The Mongo implementation of DatabaseService.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Database
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 class Mongo extends \Mongo implements DatabaseService {
     public static $required_options = array("host", "db");

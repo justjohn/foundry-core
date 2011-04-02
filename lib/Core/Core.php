@@ -2,30 +2,33 @@
 /**
  * Handles module loading and requiring of Core Library components.
  * 
- * @package   foundry\core
  * @category  foundry-core
+ * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
-namespace foundry\core;
+namespace Foundry\Core;
 
-Core::provides('\foundry\core\Core');
+Core::provides('\Foundry\Core\Core');
 
 /**
  * Manages loading and retrieving Core Library components.
  * 
- * @package   foundry\core
  * @category  foundry-core
+ * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 class Core {
     public static $class_registry = array();
 
     /**
      * Register the location of a class for the autoloader.
+     * 
      * @param string $class_name The name of the class.
      * @param string $class_file The location of the file containing the class.
      */
@@ -38,7 +41,7 @@ class Core {
      */
     static function registerAutoloader() {
         // Register autoloader
-        spl_autoload_register('\foundry\core\__autoload');
+        spl_autoload_register('\Foundry\Core\__autoload');
     }
 
     public static $included_modules = array();
@@ -47,6 +50,7 @@ class Core {
     
     /**
      * Register a module and provide it's location on disk.
+     * 
      * @param string $module The module name.
      * @param string $location The location on disk of the module.
      * @param boolean $load_now Immediatly load the module without requiring
@@ -65,6 +69,7 @@ class Core {
     
     /**
      * Mark a module as required and load it (if it isn.'t already loaded)
+     * 
      * @param string $module The module name.
      */
     static function requires($module) {
@@ -75,7 +80,7 @@ class Core {
                 $result = include_once(self::$provided_modules[$module]);
                 self::$included_modules[$module] = true;
                 if ($result === false) {
-                    throw new \foundry\core\exceptions\ServiceLoadException(
+                    throw new \Foundry\Core\Exceptions\ServiceLoadException(
                             "Unable to load module '$module': Check that '" .
                             self::$provided_modules[$module] .
                             "' is on the path.\n");
@@ -84,21 +89,21 @@ class Core {
                     return $result;
                 }
             } else {
-                throw new \foundry\core\exceptions\ServiceLoadException(
+                throw new \Foundry\Core\Exceptions\ServiceLoadException(
                     "Unable to load module '$module' since it hasn't been" .
                     "registered with the classloader");
             }
-        /* } catch (\foundry\core\exceptions\ServiceConnectionException $exception) {
+        /* } catch (\Foundry\Core\Exceptions\ServiceConnectionException $exception) {
             die("<b>$module</b>: Unable to connect to service. " .
                 "(<i>Exception details follow</i>)<br />\n<br />\n" .
                 $exception->getMessage());
 
-        } catch (\foundry\core\exceptions\ServiceValidationException $exception) {
+        } catch (\Foundry\Core\Exceptions\ServiceValidationException $exception) {
             die("<b>$module</b>: Module configuration does not contain all required options. " .
                 "(<i>Exception details follow</i>)<br />\n<br />\n" .
                 $exception->getMessage());
 
-        } catch (\foundry\core\exceptions\ServiceLoadException $exception) {
+        } catch (\Foundry\Core\Exceptions\ServiceLoadException $exception) {
             die("<b>$module</b>: Unable to load service. " .
                 "(<i>Exception details follow</i>)<br />\n<br />\n" .
                 $exception->getMessage() . "\n\n" . get_a(debug_backtrace()));
@@ -135,7 +140,9 @@ class Core {
 
 /**
  * Autoload classes from the models directory.
+ * 
  * @param string $class_name
+ * @since 1.0.0
  */
 function __autoload($class_name) {
     //print("autoloading $class_name<br />");

@@ -9,32 +9,35 @@
  * written by Luca Corbo (http://pear.php.net/packages/Services_Atlassian_Crowd)
  * and licensed under the http://www.apache.org/licenses/LICENSE-2.0 Apache License
  *
- * @package   foundry\core\auth
  * @category  foundry-core
+ * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @license   http://phpfoundry.com/license/bsd New BSD license
- * @copyright &copy; 2010-2011 John Roepke, 2008 Infinite Campus Inc., 2008 Luca Corbo
+ * @copyright 2010-2011 John Roepke, 2008 Infinite Campus Inc., 2008 Luca Corbo
+ * @version   1.0.0
  * @link      http://pear.php.net/packages/Services_Atlassian_Crowd
  * @link      http://www.atlassian.com/software/crowd
  * @link      http://confluence.atlassian.com/display/CROWD/SOAP+API
  * @link      http://confluence.atlassian.com/display/CROWDEXT/Integrate+Crowd+with+PHP
  */
 
-namespace foundry\core\auth;
+namespace Foundry\Core\Auth;
 
-use foundry\core\Service;
-use foundry\core\exceptions\ServiceConnectionException;
+use Foundry\Core\Service;
+use Foundry\Core\Exceptions\ServiceConnectionException;
 
 /**
  * Crowd Authentication Service
  *
- * @package   Auth
+ * @category  foundry-core
+ * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010 John Roepke, 2008 Infinite Campus Inc., 2008 Luca Corbo
  * @link      http://pear.php.net/packages/Services_Atlassian_Crowd
  * @link      http://www.atlassian.com/software/crowd
  * @link      http://confluence.atlassian.com/display/CROWD/SOAP+API
  * @link      http://confluence.atlassian.com/display/CROWDEXT/Integrate+Crowd+with+PHP
+ * @since     1.0.0
  */
 class Crowd implements AuthService, AuthServiceSSO {
 
@@ -685,10 +688,13 @@ class Crowd implements AuthService, AuthServiceSSO {
 /**
  * Crowd Service Exception Class
  *
- * @package   Auth
+ * @category  foundry-core
+ * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
- * @copyright 2010 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @copyright 2010-2011 John Roepke
+ * @since     1.0.0
  */
-class CrowdServiceException extends \foundry\core\exceptions\CoreException {}
+class CrowdServiceException extends \Foundry\Core\Exceptions\CoreException {}
 
 ?>

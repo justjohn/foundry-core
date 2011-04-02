@@ -2,23 +2,25 @@
 /**
  * Authentication Service Single Sign-On Support Interface
  *
- * @package   foundry\core\auth
  * @category  foundry-core
+ * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
-namespace foundry\core\auth;
+namespace Foundry\Core\Auth;
 
 
 /**
  * Authentication Service Single Sign-On Support Interface
  *
- * @package   foundry\core\auth
  * @category  foundry-core
+ * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
 */
 interface AuthServiceSSO
 {

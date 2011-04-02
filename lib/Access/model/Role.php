@@ -1,6 +1,6 @@
 <?php
-namespace foundry\core\access;
-use \foundry\core\Model;
+namespace Foundry\Core\Access;
+use \Foundry\Core\Model;
 
 /**
  * A model for access roles.
@@ -13,7 +13,7 @@ use \foundry\core\Model;
  *
  * @package DataModel
  */
-class Role extends \foundry\core\BaseModel {
+class Role extends \Foundry\Core\BaseModel {
 
     private $fields = array("key"=>Model::STR, "description"=>Model::STR, "groups"=>Model::LST);
     private $key_field = "key";

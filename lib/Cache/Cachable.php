@@ -2,13 +2,14 @@
 /**
  * This class defines a Cacheable object.
  *
- * @package   foundry\core\cache
  * @category  foundry-core
+ * @package   Foundry\Core\Cache
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
-namespace foundry\core\cache;
+namespace Foundry\Core\Cache;
 
 interface Cacheable {
     

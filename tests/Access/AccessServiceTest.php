@@ -1,5 +1,5 @@
 <?php
-namespace foundry\core\access;
+namespace Foundry\Core\Access;
 
 abstract class AccessServiceTest extends \PHPUnit_Framework_TestCase {
 

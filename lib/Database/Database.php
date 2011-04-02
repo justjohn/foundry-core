@@ -11,21 +11,22 @@
  * 3. InMemory: Stores data in memory until the end of script execution.
  *              The reference implementation; primarily for testing other components.
  * 
- * @package   foundry\core\database
  * @category  foundry-core
+ * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
-namespace foundry\core\database;
+namespace Foundry\Core\Database;
 
-use foundry\core\Core;
-use foundry\core\Model;
-use foundry\core\Service;
-use foundry\core\exceptions\ServiceLoadException;
-use foundry\core\logging\Log;
+use Foundry\Core\Core;
+use Foundry\Core\Model;
+use Foundry\Core\Service;
+use Foundry\Core\Exceptions\ServiceLoadException;
+use Foundry\Core\Logging\Log;
 
-Core::requires('\foundry\core\logging\Log');
+Core::requires('\Foundry\Core\Logging\Log');
 
 /**
  * Load the AuthService interface.
@@ -35,11 +36,12 @@ require_once("Database/DatabaseService.php");
 /**
  * The Database API.
  * 
- * @package   foundry\core\database
  * @category  foundry-core
+ * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 class Database {
     /**
@@ -60,13 +62,13 @@ class Database {
      * Create a Database component.
      */
     function __construct() {
-        $config = Core::getConfig('\foundry\core\database\Database');
+        $config = Core::getConfig('\Foundry\Core\Database\Database');
         Service::validate($config, self::$required_options);
         $db_service = $config["service"];
         $db_config = $config["service_config"];
         // include auth class
         include_once("Database/Service/$db_service.php");
-        $db_service = 'foundry\core\database\\'.$db_service;
+        $db_service = 'Foundry\Core\Database\\'.$db_service;
         if (!class_exists($db_service)) {
             Log::error("Database::__construct", "Unable to load database class '$db_service'.");
             throw new ServiceLoadException("Unable to load database class '$db_service'.");

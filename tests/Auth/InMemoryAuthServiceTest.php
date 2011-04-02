@@ -1,8 +1,8 @@
 <?php
-namespace foundry\core\auth;
-use \foundry\core\Core;
+namespace Foundry\Core\Auth;
+use \Foundry\Core\Core;
 
-Core::configure('\foundry\core\auth\Auth', array(
+Core::configure('\Foundry\Core\Auth\Auth', array(
     "admin_group" => "svn_administrators",
     "service" => 'InMemory',
     "service_config" => array(
@@ -10,7 +10,7 @@ Core::configure('\foundry\core\auth\Auth', array(
     )
 ));
 
-Core::requires('\foundry\core\auth\Auth');
+Core::requires('\Foundry\Core\Auth\Auth');
 
 require_once("AuthServiceTest.php");
 
@@ -22,7 +22,7 @@ require_once("AuthServiceTest.php");
 class InMemoryAuthServiceTest extends AuthServiceTest
 {
     public function  __construct() {
-        $auth_service = Core::get('\foundry\core\auth\Auth');
+        $auth_service = Core::get('\Foundry\Core\Auth\Auth');
         parent::__construct($auth_service);
     }
 }

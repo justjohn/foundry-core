@@ -1,6 +1,6 @@
 <?php
-namespace foundry\core\auth;
-use \foundry\core\Model;
+namespace Foundry\Core\Auth;
+use \Foundry\Core\Model;
 
 /**
  * A model for users.
@@ -13,7 +13,7 @@ use \foundry\core\Model;
  *
  * @package DataModel
  */
-class User extends \foundry\core\BaseModel {
+class User extends \Foundry\Core\BaseModel {
 
     private $fields = array("username"=>Model::STR,
                             "displayName"=>Model::STR,

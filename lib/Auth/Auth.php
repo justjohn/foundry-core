@@ -10,25 +10,26 @@
  * 2. Crowd: Authenticates against an <a href="http://www.atlassian.com/software/crowd/">Atlassian Crowd</a> service endpoint.
  * 3. InMemory: Stores user's and group's in memory until the end of script execution. Primarily for testing other components.
  *
- * @package   foundry\core\auth
  * @category  foundry-core
+ * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
  
-namespace foundry\core\auth;
+namespace Foundry\Core\Auth;
 
-use foundry\core\Core;
-use foundry\core\logging\Log;
-use foundry\core\Service;
-use foundry\core\exceptions\ServiceLoadException;
+use Foundry\Core\Core;
+use Foundry\Core\Logging\Log;
+use Foundry\Core\Service;
+use Foundry\Core\Exceptions\ServiceLoadException;
 
-Core::requires('\foundry\core\logging\Log');
+Core::requires('\Foundry\Core\Logging\Log');
 
 // Register the authentication related model classes with the class loader.
-Core::register_class('foundry\core\auth\User', "Auth/model/User.php");
-Core::register_class('foundry\core\auth\Group', "Auth/model/Group.php");
+Core::register_class('Foundry\Core\Auth\User', "Auth/model/User.php");
+Core::register_class('Foundry\Core\Auth\Group', "Auth/model/Group.php");
 
 /**
  * Load the AuthService interfaces.
@@ -40,11 +41,12 @@ require_once("Auth/AuthServiceSubgroups.php");
 /**
  * Authentication API and service loader.
  * 
- * @package   foundry\core\auth
  * @category  foundry-core
+ * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 class Auth {
     /**
@@ -89,7 +91,7 @@ class Auth {
      * Setup the auth manager.
      */
     function __construct() {
-        $config = Core::getConfig('\foundry\core\auth\Auth');
+        $config = Core::getConfig('\Foundry\Core\Auth\Auth');
         Service::validate($config, self::$required_options);
         $auth_service = $config["service"];
         $auth_config = $config["service_config"];
@@ -102,7 +104,7 @@ class Auth {
 
         // include auth class
         include_once("Auth/Service/$auth_service.php");
-        $auth_service = 'foundry\core\auth\\'.$auth_service;
+        $auth_service = 'Foundry\Core\Auth\\'.$auth_service;
         if (!class_exists($auth_service)) {
             Log::error("Auth::__construct", "Unable to load auth class '$auth_service'.");
             throw new ServiceLoadException("Unable to load auth class '$auth_service'.");
@@ -125,7 +127,7 @@ class Auth {
      */
     public function SSOSupport() {
         $implements = class_implements($this->auth_service);
-        return isset($implements['foundry\core\auth\AuthServiceSSO']);
+        return isset($implements['Foundry\Core\Auth\AuthServiceSSO']);
     }
 
     /**
@@ -134,7 +136,7 @@ class Auth {
      */
     public function subgroupSupport() {
         $implements = class_implements($this->auth_service);
-        return isset($implements['foundry\core\auth\AuthServiceSubgroups']);
+        return isset($implements['Foundry\Core\Auth\AuthServiceSubgroups']);
     }
 
     /**

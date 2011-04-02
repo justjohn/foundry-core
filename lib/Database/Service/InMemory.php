@@ -1,18 +1,32 @@
 <?php
 /**
  * An In-Memory imlementation of the Database interface.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Database
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
-namespace foundry\core\database;
+namespace Foundry\Core\Database;
 
-use foundry\core\Model;
-use foundry\core\exceptions\FieldDoesNotExistException;
-use foundry\core\exceptions\ClassDoesNotExistException;
+use Foundry\Core\Model;
+use Foundry\Core\Exceptions\FieldDoesNotExistException;
+use Foundry\Core\Exceptions\ClassDoesNotExistException;
 
 /**
  * The database interface.
  *
  * This interface treats all databases as object-based. For a table-based database
  * this is done by mapping object fields to table fields.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Database
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 class InMemory {
     /**
@@ -44,7 +58,7 @@ class InMemory {
      *                        false on failure.
      * @throws FieldDoesNotExistException if the key field does not exists in the model class.
      * @throws ClassDoesNotExistException if $classname is not a valid class or does
-     *                                    not implement \foundry\core\Model.
+     *                                    not implement \Foundry\Core\Model.
      */
     public function load_objects($classname, $db_key, $keyfield = "",
                                  array $conditions = array(),
@@ -68,7 +82,7 @@ class InMemory {
      * @return An instance of $classname with the data from $model that matches the
      *         fields in the instance.
      * @throws ClassDoesNotExistException if $classname is not a valid class or does
-     *                                    not implement \foundry\core\Model.
+     *                                    not implement \Foundry\Core\Model.
      */
     private function convertToObject(Model $model, $classname) {
         $object = $this->validateModelClass($classname);
@@ -88,12 +102,12 @@ class InMemory {
     
     /**
      * Validates that the given classname is a real class and that it implements
-     * \foundry\core\Model.
+     * \Foundry\Core\Model.
      *
      * @param string $classname The name of the class to check for validity.
      * @return Model A new instance of $classname.
      * @throws ClassDoesNotExistException if $classname is not a valid class or does
-     *                                    not implement \foundry\core\Model.
+     *                                    not implement \Foundry\Core\Model.
      * @see Model
      */
     private function validateModelClass($classname) {
@@ -102,7 +116,7 @@ class InMemory {
         }
         $object = new $classname();
         if (!($object instanceof Model)) {
-            throw new ClassDoesNotExistException("Unable to convert model to class '$classname': '$classname' does not inherit from \foundry\core\Model");
+            throw new ClassDoesNotExistException("Unable to convert model to class '$classname': '$classname' does not inherit from \Foundry\Core\Model");
         }
         return $object;
     }

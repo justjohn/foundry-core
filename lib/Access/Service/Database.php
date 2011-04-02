@@ -2,35 +2,40 @@
 /**
  * A database backed AccessService implementation.
  * 
- * @package   foundry\core\access
+ * PHP version 5.3.0
+ * 
  * @category  foundry-core
+ * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
-namespace foundry\core\access;
+namespace Foundry\Core\Access;
 
-use foundry\core\Core;
-use foundry\core\Service;
-use foundry\core\database\Database;
+use Foundry\Core\Core;
+use Foundry\Core\Service;
+use Foundry\Core\Database\Database;
 
-Core::requires('\foundry\core\database\Database');
+Core::requires('\Foundry\Core\Database\Database');
 
 /**
  * Database implementation of the access service.
  *
- * @package   foundry\core\access
  * @category  foundry-core
+ * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
-class Database implements AccessService {
+class Database implements AccessService
+{
     /**
      * The database access.
-     * @var \foundry\core\database\Database
+     * @var \Foundry\Core\Database\Database
      */
-    private $database;
+    private $_database;
     /**
      * Options required to instantiate a InMemoryRolesService.
      * @var array
@@ -40,54 +45,57 @@ class Database implements AccessService {
      * The service options.
      * @var array
      */
-    private $options;
+    private $_options;
     /**
      * The name of the database table.
      * @var string
      */
-    private $table_name = "access_roles";
+    private $_table_name = "access_roles";
     /**
      * The role cache.
      */
-    private $roles = array();
+    private $_roles = array();
     /**
      * Are all the roles in the cache.
      */
-    private $cache_all = false;
+    private $_cache_all = false;
 
     /**
      * Create an in-memory access service.
+     * 
      * @param array $options service options.
-     * @param \foundry\core\database\Database The database.
      */
-    public function __construct(array $options) {
+    public function __construct(array $options)
+    {
         Service::validate($options, self::$required_options);
-        $this->database = Core::get('\foundry\core\database\Database');
-        $this->options = $options;
+        $this->_database = Core::get('\Foundry\Core\Database\Database');
+        $this->_options = $options;
     }
 
     /**
      * Tear down the class.
      */
-    public function __destruct() {
+    public function __destruct()
+    {
     }
 
     /**
      * Add a role definition.
-     * @param string $role_key The name of the role.
-     * @param array $role_groups The groups assigned to the role.
-     * @return boolean
+     * 
+     * @param string $role The role to add.
+     * @return boolean true on success, false on failure.
      */
-    public function addRole(Role $role) {
+    public function addRole(Role $role)
+    {
         $role_key = $role->getKey();
         $role_groups = $role->getGroups();
         if (empty($role_key) || empty($role_groups) ||
-                isset($this->roles[$role_key])) return false;
+                isset($this->_roles[$role_key])) return false;
 
-        $result = $this->database->write_object($role, $this->table_name);
+        $result = $this->_database->write_object($role, $this->_table_name);
         if ($result) {
             // Add to cache
-            $this->roles[$role_key] = $role;
+            $this->_roles[$role_key] = $role;
         }
         
         return $result;
@@ -95,45 +103,51 @@ class Database implements AccessService {
 
     /**
      * Remove a role.
+     * 
      * @param string $role_key The role to remove.
      */
-    public function removeRole($role_key) {
+    public function removeRole($role_key)
+    {
         if (empty($role_key)) return false;
-        $result = $this->database->delete_object($this->table_name, array("key"=>$role_key));
-        if ($result && isset($this->roles[$role_key])) {
-            unset($this->roles[$role_key]);
+        $result = $this->_database->delete_object($this->_table_name, array("key"=>$role_key));
+        if ($result && isset($this->_roles[$role_key])) {
+            unset($this->_roles[$role_key]);
         }
         return $result;
     }
 
     /**
      * Get a role.
+     * 
      * @param string $role_key The role to get.
      * @return Role The role if found, false otherwise.
      */
-    public function getRole($role_key) {
-        if (isset($this->roles[$role_key])) {
-            return $this->roles[$role_key];
+    public function getRole($role_key)
+    {
+        if (isset($this->_roles[$role_key])) {
+            return $this->_roles[$role_key];
         }
-        $role = $this->database->load_object('\foundry\core\access\Role', $this->table_name, array("key"=>$role_key));
+        $role = $this->_database->load_object('\Foundry\Core\Access\Role', $this->_table_name, array("key"=>$role_key));
         if ($role !== false) {
-            $this->roles[$role_key] = $role;
+            $this->_roles[$role_key] = $role;
         } 
         return $role;
     }
     
     /**
      * Get all the roles.
+     * 
      * @return array An array of Role objects keyed by "key"
      */
-    public function getRoles() {
-        if ($this->cache_all) {
-            return $this->roles;
+    public function getRoles()
+    {
+        if ($this->_cache_all) {
+            return $this->_roles;
         }
-        $roles = $this->database->load_objects('\foundry\core\access\Role', $this->table_name, 'key');
+        $roles = $this->_database->load_objects('\Foundry\Core\Access\Role', $this->_table_name, 'key');
         if ($roles !== false) {
-            $this->roles = $roles;
-            $this->cache_all = true;
+            $this->_roles = $roles;
+            $this->_cache_all = true;
         }
         return $roles;
     }

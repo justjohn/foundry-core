@@ -1,10 +1,30 @@
 <?php
-namespace foundry\core\database;
+/**
+ * A MySQL based implementation of the Database Service.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Database
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
+ */
+namespace Foundry\Core\Database;
 
-use foundry\core\Model;
-use foundry\core\Service;
-use foundry\core\exceptions\ServiceConnectionException;
+use Foundry\Core\Model;
+use Foundry\Core\Service;
+use Foundry\Core\Exceptions\ServiceConnectionException;
 
+/**
+ * The MySQL implementation of DatabaseService.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Database
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
+ */
 class Mysql extends \mysqli implements DatabaseService {
     public static $required_options = array("host",
                                             "username",

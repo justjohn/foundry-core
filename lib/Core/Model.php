@@ -2,22 +2,24 @@
 /**
  * The data model interface used for defining objects in the Core Library.
  * 
- * @package   foundry\core
  * @category  foundry-core
+ * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
-namespace foundry\core;
+namespace Foundry\Core;
 
 /**
  * A database model class.
  * 
- * @package   foundry\core
  * @category  foundry-core
+ * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since 1.0.0
  */
 interface Model {
     const STR  = "string";
@@ -37,6 +39,7 @@ interface Model {
      * See the list of consts in the Model class.
      *
      * @param string $fieldname
+     * 
      * @return mixed false if the field doesn't exist, the field type as a string if it does exist.
      */
     function getFieldType($fieldname);
@@ -53,14 +56,17 @@ interface Model {
      * 
      * @param string $field The field to set.
      * @param object $data The data to set in the field.
-     * @throws \foundry\core\exceptions\FieldDoesNotExistException
+     * 
+     * @throws \Foundry\Core\Exceptions\FieldDoesNotExistException
      */
     function set($field, $data);
     
     /**
      * Get the value of a single field.
+     * 
      * @param string $field The name of the field to get.
-     * @throws \foundry\core\exceptions\FieldDoesNotExistException
+     * 
+     * @throws \Foundry\Core\Exceptions\FieldDoesNotExistException
      */
     public function get($field);
     
@@ -131,9 +137,11 @@ class BaseModel implements Model {
 
     /**
      * Handle undefined functions (primarily set/get calls).
+     * 
      * @param string $name The name of the function to handle.
      * @param array $arguments The function arguments.
-     * @throws \foundry\core\exceptions\MethodDoesNotExistException If the field being
+     * 
+     * @throws \Foundry\Core\Exceptions\MethodDoesNotExistException If the field being
      *         referenced by a set/get function does not exist.
      */
     function __call($name, $arguments) {
@@ -154,7 +162,7 @@ class BaseModel implements Model {
 
         // check field name
         if (!isset($this->fields[$field])) {
-            throw new \foundry\core\exceptions\MethodDoesNotExistException("Field $field does not exist.");
+            throw new \Foundry\Core\Exceptions\MethodDoesNotExistException("Field $field does not exist.");
         }
 
         if ($set) {
@@ -186,13 +194,14 @@ class BaseModel implements Model {
      * 
      * @param string $field The field to set.
      * @param object $data The data to set in the field.
-     * @throws \foundry\core\exceptions\FieldDoesNotExistException
+     * 
+     * @throws \Foundry\Core\Exceptions\FieldDoesNotExistException
      */
     public function set($field, $data) {
         $field = strtolower($field);
         // check field name
         if (!isset($this->fields[$field])) {
-            throw new \foundry\core\exceptions\FieldDoesNotExistException("Field $field does not exist.");
+            throw new \Foundry\Core\Exceptions\FieldDoesNotExistException("Field $field does not exist.");
         }
         // Cast data to the appropriate type
         switch ($this->fields[$field]) {
@@ -214,14 +223,16 @@ class BaseModel implements Model {
     
     /**
      * Get the value of a single field.
+     * 
      * @param string $field The name of the field to get.
-     * @throws \foundry\core\exceptions\FieldDoesNotExistException
+     * 
+     * @throws \Foundry\Core\Exceptions\FieldDoesNotExistException
      */
     public function get($field) {
         $field = strtolower($field);
         // check field name
         if (!isset($this->fields[$field])) {
-            throw new \foundry\core\exceptions\FieldDoesNotExistException("Field $field does not exist.");
+            throw new \Foundry\Core\Exceptions\FieldDoesNotExistException("Field $field does not exist.");
         }
 
         return $this->data[$field];
@@ -238,18 +249,18 @@ class BaseModel implements Model {
      * Get the model as JSON.
      */
     public function asJSON() {
-        Core::requires('\foundry\core\utilities\Renderer');
+        Core::requires('\Foundry\Core\Utilities\Renderer');
         
-        return \foundry\core\utilities\Renderer::asJSON($this);
+        return \Foundry\Core\Utilities\Renderer::asJSON($this);
     }
 
     /**
      * Get the model as XML.
      */
     public function asXML() {
-        Core::requires('\foundry\core\utilities\Renderer');
+        Core::requires('\Foundry\Core\Utilities\Renderer');
         
-        return \foundry\core\utilities\Renderer::asXML($this);
+        return \Foundry\Core\Utilities\Renderer::asXML($this);
     }
 
     /**
@@ -266,6 +277,7 @@ class BaseModel implements Model {
      * See the list of consts in the Model class.
      *
      * @param string $fieldname
+     * 
      * @return mixed false if the field doesn't exist, the field type as a string if it does exist.
      */
     public function getFieldType($fieldname) {

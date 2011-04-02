@@ -1,5 +1,5 @@
 <?php
-namespace foundry\core\auth;
+namespace Foundry\Core\Auth;
 
 abstract class AuthServiceTest extends \PHPUnit_Framework_TestCase {
 

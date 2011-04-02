@@ -1,6 +1,6 @@
 <?php
-namespace foundry\core\logging;
-use \foundry\core\Model;
+namespace Foundry\Core\Logging;
+use \Foundry\Core\Model;
 
 /**
  * A model for log entries.
@@ -13,7 +13,7 @@ use \foundry\core\Model;
  *
  * @package DataModel
  */
-class LogEntry extends \foundry\core\BaseModel {
+class LogEntry extends \Foundry\Core\BaseModel {
 
     private $fields = array("level"=>Model::STR,
                             "action"=>Model::STR,

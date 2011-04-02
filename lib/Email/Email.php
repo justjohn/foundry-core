@@ -2,18 +2,19 @@
 /**
  * API for sending email via SMTP.
  * 
- * @package   foundry\core\email
  * @category  foundry-core
+ * @package   Foundry\Core\Email
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
-namespace foundry\core\email;
+namespace Foundry\Core\Email;
 
-use \foundry\core\Core;
-use foundry\core\logging\Log;
+use \Foundry\Core\Core;
+use Foundry\Core\Logging\Log;
 
-Core::requires('\foundry\core\logging\Log');
+Core::requires('\Foundry\Core\Logging\Log');
 
 /**
  * Send emails.
@@ -27,11 +28,12 @@ require_once 'Mail/mime.php';
 /**
  * Send emails.
  * 
- * @package   foundry\core\email
  * @category  foundry-core
+ * @package   Foundry\Core\Email
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 class Email {
     /**
@@ -46,7 +48,7 @@ class Email {
     private $email;
 
     public function  __construct() {
-        $options = Core::getConfig('\foundry\core\email\Email');
+        $options = Core::getConfig('\Foundry\Core\Email\Email');
         $this->email = $options['email'];
         $this->prefix = $options['prefix'];
 

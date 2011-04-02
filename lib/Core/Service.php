@@ -4,7 +4,7 @@
  *
  * Basic Usage:
  * <code>
- * use foundry\core\Service;
+ * use Foundry\Core\Service;
  * class SomeService {
  *     public static $required_options = array("hostname",
  *                                             "username",
@@ -19,25 +19,27 @@
  * }
  * </code>
  * 
- * @package   foundry\core
  * @category  foundry-core
+ * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
  */
 
-namespace foundry\core;
+namespace Foundry\Core;
 
-use foundry\core\exceptions\ServiceValidationException;
+use Foundry\Core\Exceptions\ServiceValidationException;
 
 /**
  * The Service validator.
  * 
- * @package   foundry\core
  * @category  foundry-core
+ * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
- * @copyright &copy; 2010-2011 John Roepke
+ * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 class Service {
     /**

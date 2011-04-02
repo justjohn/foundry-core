@@ -1,6 +1,6 @@
 <?php
-namespace foundry\core\config;
-use \foundry\core\Model;
+namespace Foundry\Core\Config;
+use \Foundry\Core\Model;
 
 /**
  * A model for config options.
@@ -13,7 +13,7 @@ use \foundry\core\Model;
  *
  * @package DataModel
  */
-class Option extends \foundry\core\BaseModel {
+class Option extends \Foundry\Core\BaseModel {
 
     private $fields = array("name"=>Model::STR, "value"=>Model::STR, "id"=>Model::INT);
     private $key_field = "id";
