@@ -11,6 +11,8 @@
  */
 namespace Foundry\Core;
 
+use \Foundry\Core\Exceptions\ServiceLoadException;
+
 Core::provides('\Foundry\Core\Core');
 
 /**
@@ -78,57 +80,73 @@ class Core {
      * Mark a module as required and load it (if it isn.'t already loaded)
      * 
      * @param string $component_name The module name.
+     * 
+     * @return mixed A loaded instance of the component if it is configured to
+     *               instantiate on load, true if not.
+     * 
+     * @throws ServiceLoadException if the component doesn't exists or can't be loaded.
      */
     static function requires($component_name) {
         if (isset(self::$included_components[$component_name])) {
-            return self::$module_instance[$component_name];
+            return self::$component_instance[$component_name];
         }
         
         if (isset(self::$provided_components[$component_name])) {
             $result = include_once(self::$provided_components[$component_name]);
             self::$included_components[$component_name] = true;
             if ($result === false) {
-                throw new \Foundry\Core\Exceptions\ServiceLoadException(
+                throw new ServiceLoadException(
                         "Unable to load module '$component_name': Check that '" .
                         self::$provided_components[$component_name] .
                         "' is on the path.\n");
             } else {
                 if (self::$should_load_instance[$component_name]) {
                     $instance = new $component_name();
-                    self::$module_instance[$component_name] = $instance;
+                    self::$component_instance[$component_name] = $instance;
                     return $instance;
                 } else {
                     // Don't need to load an instance.
-                    self::$module_instance[$component_name] = 1;
+                    self::$component_instance[$component_name] = 1;
                     return true;
                 }
             }
         } else {
-            throw new \Foundry\Core\Exceptions\ServiceLoadException(
+            throw new ServiceLoadException(
                 "Unable to load module '$component_name' since it hasn't been" .
                 "registered with the classloader");
         }
     }
     
-    public static $module_config = array();
+    public static $component_config = array();
     
     /**
-     * Provide configuration information for a module.
+     * Provide configuration information for a component.
+     * 
+     * @param string $component_name The name of the component to store configuration options for.
+     * @param array $configuration The configuration options to store.
      */
     static function configure($component_name, $configuration) {
         if (empty($component_name) || empty($configuration)) return;
-        self::$module_config[$component_name] = $configuration;
+        self::$component_config[$component_name] = $configuration;
     }
     
+    /**
+     * Get the previously set configuration parameters for a component.
+     *
+     * @param string $component_name The name of the component to get configuration for.
+     * 
+     * @return array|boolean The array of configuration parameters or false if none
+     *         have been provided.
+     */
     static function getConfig($component_name) {
-        if (isset(self::$module_config[$component_name])) {
-            return self::$module_config[$component_name];
+        if (isset(self::$component_config[$component_name])) {
+            return self::$component_config[$component_name];
         } else {
             return false;
         }
     }
     
-    public static $module_instance = array();
+    public static $component_instance = array();
     
     /**
      * Get a previously loaded instance of a component.
@@ -140,8 +158,8 @@ class Core {
      *         component doesn't exist or hasn't been required yet.
      */
     static function get($component_name) {
-        if (isset(self::$module_instance[$component_name])) {
-            return self::$module_instance[$component_name]; 
+        if (isset(self::$component_instance[$component_name])) {
+            return self::$component_instance[$component_name]; 
         }
         return false;
     }
