@@ -308,14 +308,10 @@ class Auth {
         if (isset($this->auth_cache["user_groups"][$user]))
                 return $this->auth_cache["user_groups"][$user];
 
-        if ($this->is_authenticated) {
-            $groups = $this->auth_service->getUserGroups($user);
-            ksort($groups);
-            $this->auth_cache["user_groups"][$user] = $groups;
-            return $groups;
-        } else {
-            return array();
-        }
+        $groups = $this->auth_service->getUserGroups($user);
+        ksort($groups);
+        $this->auth_cache["user_groups"][$user] = $groups;
+        return $groups;
     }
 
     /**

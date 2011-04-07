@@ -168,7 +168,7 @@ class Access
     }
 
     /**
-     * Check is a user has a role.
+     * Check if a user has a role.
      * 
      * @param string $role_key The role to check.
      * @param string $username The user to check.
