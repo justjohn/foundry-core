@@ -17,6 +17,7 @@ function print_a($object, $html_format=true) {
 
 /**
  * Get a textual representation of an array or object.
+ *
  * @param object|array $object The object or array to get output for.
  * @param boolean $html_format Should the output be HTML formatted (surrounded
  *        with <pre> tags). Defaults to true if not set.
@@ -39,6 +40,19 @@ function get_a($object, $html_format = true) {
     return $content;
 }
 
+/**
+ * A case-insensitive array sort.
+ *
+ * @param array $array The array to sort.
+ * @return a sorted array.
+ */
+function cksort(&$array) {
+    return uksort($array, "cmp");
+}
+
+function cmp($a, $b) {
+    return strcasecmp($a, $b);
+}
 
 // Store system errors
 $system_errors = array();
