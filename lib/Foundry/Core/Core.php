@@ -37,77 +37,77 @@ class Core {
     }
 
     /**
-     * Register the model autoloader.
+     * Register the component autoloader.
      */
     static function registerAutoloader() {
         // Register autoloader
         spl_autoload_register('\Foundry\Core\__autoload');
     }
 
-    public static $included_modules = array();
-    public static $provided_modules = array();
-    public static $required_modules = array();
+    public static $included_components = array();
+    public static $provided_components = array();
+    public static $required_components = array();
+    public static $should_load_instance = array();
     
     /**
-     * Register a module and provide it's location on disk.
+     * Register a component and provide it's location on disk.
      * 
-     * @param string $module The module name.
-     * @param string $location The location on disk of the module.
-     * @param boolean $load_now Immediatly load the module without requiring
-     *                          it to be required first. (default = false)
+     * @param string $component_name The component class name (including namespace).
+     * @param string $file_location The location on disk of the component.
+     * @param boolean $instantiate_on_load Should an instance of the class with the
+     *        same name as the component be created when the component is loaded.
+     * @param boolean $load_immediately Immediatly load the component without a
+     *        Core::requires(...) first.
      */
-    static function provides($module, $location=false, $load_now=false) {
-        self::$provided_modules[$module] = $location;
-        if ($location === false) {
+    static function provides($component_name,
+                             $file_location = false,
+                             $instantiate_on_load = true,
+                             $load_immediately = false) {
+        self::$provided_components[$component_name] = $file_location;
+        self::$should_load_instance[$component_name] = $instantiate_on_load;
+        if ($file_location === false) {
             // Used to register a provided class after it's already been included
-            self::$included_modules[$module] = true;
+            self::$included_components[$component_name] = true;
         }
-        if ($load_now) {
-            Core::requires($module);
+        if ($load_immediately) {
+            Core::requires($component_name);
         }
     }
     
     /**
      * Mark a module as required and load it (if it isn.'t already loaded)
      * 
-     * @param string $module The module name.
+     * @param string $component_name The module name.
      */
-    static function requires($module) {
-        if (isset(self::$included_modules[$module])) return self::$module_instance[$module];
+    static function requires($component_name) {
+        if (isset(self::$included_components[$component_name])) {
+            return self::$module_instance[$component_name];
+        }
         
-        //try {
-            if (isset(self::$provided_modules[$module])) {
-                $result = include_once(self::$provided_modules[$module]);
-                self::$included_modules[$module] = true;
-                if ($result === false) {
-                    throw new \Foundry\Core\Exceptions\ServiceLoadException(
-                            "Unable to load module '$module': Check that '" .
-                            self::$provided_modules[$module] .
-                            "' is on the path.\n");
-                } else {
-                    self::$module_instance[$module] = $result;
-                    return $result;
-                }
-            } else {
+        if (isset(self::$provided_components[$component_name])) {
+            $result = include_once(self::$provided_components[$component_name]);
+            self::$included_components[$component_name] = true;
+            if ($result === false) {
                 throw new \Foundry\Core\Exceptions\ServiceLoadException(
-                    "Unable to load module '$module' since it hasn't been" .
-                    "registered with the classloader");
+                        "Unable to load module '$component_name': Check that '" .
+                        self::$provided_components[$component_name] .
+                        "' is on the path.\n");
+            } else {
+                if (self::$should_load_instance[$component_name]) {
+                    $instance = new $component_name();
+                    self::$module_instance[$component_name] = $instance;
+                    return $instance;
+                } else {
+                    // Don't need to load an instance.
+                    self::$module_instance[$component_name] = 1;
+                    return true;
+                }
             }
-        /* } catch (\Foundry\Core\Exceptions\ServiceConnectionException $exception) {
-            die("<b>$module</b>: Unable to connect to service. " .
-                "(<i>Exception details follow</i>)<br />\n<br />\n" .
-                $exception->getMessage());
-
-        } catch (\Foundry\Core\Exceptions\ServiceValidationException $exception) {
-            die("<b>$module</b>: Module configuration does not contain all required options. " .
-                "(<i>Exception details follow</i>)<br />\n<br />\n" .
-                $exception->getMessage());
-
-        } catch (\Foundry\Core\Exceptions\ServiceLoadException $exception) {
-            die("<b>$module</b>: Unable to load service. " .
-                "(<i>Exception details follow</i>)<br />\n<br />\n" .
-                $exception->getMessage() . "\n\n" . get_a(debug_backtrace()));
-        } */
+        } else {
+            throw new \Foundry\Core\Exceptions\ServiceLoadException(
+                "Unable to load module '$component_name' since it hasn't been" .
+                "registered with the classloader");
+        }
     }
     
     public static $module_config = array();
@@ -115,14 +115,14 @@ class Core {
     /**
      * Provide configuration information for a module.
      */
-    static function configure($module, $configuration) {
-        if (empty($module) || empty($configuration)) return;
-        self::$module_config[$module] = $configuration;
+    static function configure($component_name, $configuration) {
+        if (empty($component_name) || empty($configuration)) return;
+        self::$module_config[$component_name] = $configuration;
     }
     
-    static function getConfig($module) {
-        if (isset(self::$module_config[$module])) {
-            return self::$module_config[$module];
+    static function getConfig($component_name) {
+        if (isset(self::$module_config[$component_name])) {
+            return self::$module_config[$component_name];
         } else {
             return false;
         }
@@ -130,19 +130,30 @@ class Core {
     
     public static $module_instance = array();
     
-    static function get($module) {
-        if (isset(self::$module_instance[$module])) {
-            return self::$module_instance[$module]; 
+    /**
+     * Get a previously loaded instance of a component.
+     *
+     * @param string $component_name The name of the component to get a previously
+     *        loaded instance of.
+     * 
+     * @return mixed The previously loded instance of the class or false if the
+     *         component doesn't exist or hasn't been required yet.
+     */
+    static function get($component_name) {
+        if (isset(self::$module_instance[$component_name])) {
+            return self::$module_instance[$component_name]; 
         }
         return false;
     }
 }
 
 /**
- * Autoload classes from the models directory.
+ * Autoload classes first from the models directory, then if that fails follow the
+ * psr-0 autoloader guidelines.
  * 
  * @param string $class_name
  * @since 1.0.0
+ * @link http://groups.google.com/group/php-standards/web/psr-0-final-proposal
  */
 function __autoload($class_name) {
     //print("autoloading $class_name<br />");
@@ -150,7 +161,18 @@ function __autoload($class_name) {
         require_once(Core::$class_registry[$class_name]);
         return true;
     }
-    return false;
+    $class_name = ltrim($class_name, '\\');
+    $fileName  = '';
+    $namespace = '';
+    if ($lastNsPos = strripos($class_name, '\\')) {
+        $namespace = substr($class_name, 0, $lastNsPos);
+        $class_name = substr($class_name, $lastNsPos + 1);
+        $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+    }
+    $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
+    $result = @require $fileName;
+    
+    return $result !== false;
 }
 
 Core::registerAutoloader();

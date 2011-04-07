@@ -204,5 +204,4 @@ class Access
     }
 }
 
-return new Access();
 ?>

@@ -617,5 +617,4 @@ class Auth {
     }
 }
 
-return new Auth();
 ?>

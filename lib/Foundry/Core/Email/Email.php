@@ -117,5 +117,4 @@ class Email {
     }
 }
 
-return new Email();
 ?>

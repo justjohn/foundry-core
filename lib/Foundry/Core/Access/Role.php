@@ -11,6 +11,7 @@
  */
 namespace Foundry\Core\Access;
 use \Foundry\Core\Model;
+use \Foundry\Core\BaseModel;
 
 /**
  * Role Object.
@@ -22,7 +23,7 @@ use \Foundry\Core\Model;
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @since     1.0.0
  */
-class Role extends \Foundry\Core\BaseModel {
+class Role extends BaseModel {
 
     private $fields = array("key"=>Model::STR, "description"=>Model::STR, "groups"=>Model::LST);
     private $key_field = "key";

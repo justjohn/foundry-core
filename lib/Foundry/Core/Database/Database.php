@@ -173,5 +173,4 @@ class Database {
     }
 }
 
-return new Database();
 ?>

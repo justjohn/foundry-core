@@ -12,6 +12,7 @@
 namespace Foundry\Core\Logging;
 
 use \Foundry\Core\Model;
+use \Foundry\Core\BaseModel;
 
 /**
  * Log messages.
@@ -23,7 +24,7 @@ use \Foundry\Core\Model;
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @since     1.0.0
  */
-class LogEntry extends \Foundry\Core\BaseModel {
+class LogEntry extends BaseModel {
 
     private $fields = array("level"=>Model::STR,
                             "action"=>Model::STR,
