@@ -1,17 +1,27 @@
 <?php
+/**
+ * Log messages.
+ * 
+ * @category  foundry-core
+ * @package   Foundry\Core\Logging
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @version   1.0.0
+ */
 namespace Foundry\Core\Logging;
+
 use \Foundry\Core\Model;
 
 /**
- * A model for log entries.
+ * Log messages.
  *
- * @package DataModel
- */
-
-/**
- * A model class for log entries.
- *
- * @package DataModel
+ * @category  foundry-core
+ * @package   Foundry\Core\Logging
+ * @author    John Roepke <john@justjohn.us>
+ * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
+ * @since     1.0.0
  */
 class LogEntry extends \Foundry\Core\BaseModel {
 

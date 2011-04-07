@@ -21,7 +21,7 @@ Core::requires('\Foundry\Core\Logging\Log');
 Core::requires('\Foundry\Core\Database\Database');
 
 // Register data model with the class loader.
-Core::register_class("Foundry\Core\Config\Option", "Config/model/Option.php");
+Core::register_class("Foundry\Core\Config\Option", "Config/Option.php");
 
 /**
  * Configuration Manager

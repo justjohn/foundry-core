@@ -38,7 +38,7 @@ Core::requires('\Foundry\Core\Logging\Log');
 
 
 // Register the role related model classes with the class loader.
-Core::register_class("Foundry\Core\Access\Role", "Access/model/Role.php");
+Core::register_class("Foundry\Core\Access\Role", "Access/Role.php");
 
 /**
  * Load the AccessService interface.

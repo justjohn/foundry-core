@@ -28,8 +28,8 @@ use Foundry\Core\Exceptions\ServiceLoadException;
 Core::requires('\Foundry\Core\Logging\Log');
 
 // Register the authentication related model classes with the class loader.
-Core::register_class('Foundry\Core\Auth\User', "Auth/model/User.php");
-Core::register_class('Foundry\Core\Auth\Group', "Auth/model/Group.php");
+Core::register_class('Foundry\Core\Auth\User', "Auth/User.php");
+Core::register_class('Foundry\Core\Auth\Group', "Auth/Group.php");
 
 /**
  * Load the AuthService interfaces.
