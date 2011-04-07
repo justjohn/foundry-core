@@ -34,9 +34,9 @@ Core::register_class('Foundry\Core\Auth\Group', "Auth/Group.php");
 /**
  * Load the AuthService interfaces.
  */
-require_once("Auth/AuthService.php");
-require_once("Auth/AuthServiceSSO.php");
-require_once("Auth/AuthServiceSubgroups.php");
+require_once("Foundry/Core/Auth/AuthService.php");
+require_once("Foundry/Core/Auth/AuthServiceSSO.php");
+require_once("Foundry/Core/Auth/AuthServiceSubgroups.php");
 
 /**
  * Authentication API and service loader.
@@ -103,7 +103,7 @@ class Auth {
         } */
 
         // include auth class
-        include_once("Auth/Service/$auth_service.php");
+        include_once("Foundry/Core/Auth/Service/$auth_service.php");
         $auth_service = 'Foundry\Core\Auth\\'.$auth_service;
         if (!class_exists($auth_service)) {
             Log::error("Auth::__construct", "Unable to load auth class '$auth_service'.");

@@ -38,12 +38,12 @@ Core::requires('\Foundry\Core\Logging\Log');
 
 
 // Register the role related model classes with the class loader.
-Core::register_class("Foundry\Core\Access\Role", "Access/Role.php");
+Core::register_class("Foundry\Core\Access\Role", "Foundry/Core/Access/Role.php");
 
 /**
  * Load the AccessService interface.
  */
-require_once "Access/AccessService.php";
+require_once "Foundry/Core/Access/AccessService.php";
 
 /**
  * Role Management API.
@@ -102,7 +102,7 @@ class Access
         $this->_auth_manager = Core::get('\Foundry\Core\Auth\Auth');
         
         // include service class
-        include_once("Access/Service/$access_service.php");
+        include_once("Foundry/Core/Access/Service/$access_service.php");
         $access_service = 'Foundry\Core\Access\\'.$access_service;
         if (!class_exists($access_service)) {
             Log::error("Access::__construct", "Unable to load access class '$access_service'.");

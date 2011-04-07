@@ -31,7 +31,7 @@ Core::requires('\Foundry\Core\Logging\Log');
 /**
  * Load the AuthService interface.
  */
-require_once("Database/DatabaseService.php");
+require_once("Foundry/Core/Database/DatabaseService.php");
 
 /**
  * The Database API.
@@ -67,7 +67,7 @@ class Database {
         $db_service = $config["service"];
         $db_config = $config["service_config"];
         // include auth class
-        include_once("Database/Service/$db_service.php");
+        include_once("Foundry/Core/Database/Service/$db_service.php");
         $db_service = 'Foundry\Core\Database\\'.$db_service;
         if (!class_exists($db_service)) {
             Log::error("Database::__construct", "Unable to load database class '$db_service'.");

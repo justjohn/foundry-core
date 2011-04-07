@@ -13,7 +13,7 @@ namespace Foundry\Core\Logging;
 
 use \Foundry\Core\Core;
 
-Core::register_class('Foundry\Core\Logging\LogEntry', "Log/LogEntry.php");
+Core::register_class('Foundry\Core\Logging\LogEntry', "Foundry/Core/Log/LogEntry.php");
 
 /**
  * Write log entries.
