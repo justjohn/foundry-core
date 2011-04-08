@@ -174,21 +174,21 @@ class Core {
  * @link http://groups.google.com/group/php-standards/web/psr-0-final-proposal
  */
 function __autoload($class_name) {
-    //print("autoloading $class_name<br />");
     if (isset(Core::$class_registry[$class_name])) {
         require_once(Core::$class_registry[$class_name]);
         return true;
     }
     $class_name = ltrim($class_name, '\\');
-    $fileName  = '';
+    $file_name  = '';
     $namespace = '';
     if ($lastNsPos = strripos($class_name, '\\')) {
         $namespace = substr($class_name, 0, $lastNsPos);
         $class_name = substr($class_name, $lastNsPos + 1);
-        $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+        $file_name  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
     }
-    $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
-    $result = @require $fileName;
+    $file_name .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
+
+    $result = @include $file_name;
     
     return $result !== false;
 }
