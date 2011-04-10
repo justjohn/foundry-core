@@ -18,7 +18,7 @@ set_include_path(get_include_path() .
 // Load common functions for debugging
 require_once("Foundry/Core/Functions/common.php");
 
-// Load functions for registering and loading modules.
+// Load Core component and autoloader.
 require_once("Foundry/Core/Core.php");
 
 // Utilities
@@ -35,6 +35,6 @@ Core::provides('\Foundry\Core\Auth\Auth',         'Foundry/Core/Auth/Auth.php');
 Core::provides('\Foundry\Core\Config\Config',     'Foundry/Core/Config/Config.php');
 Core::provides('\Foundry\Core\Database\Database', 'Foundry/Core/Database/Database.php');
 Core::provides('\Foundry\Core\Email\Email',       'Foundry/Core/Email/Email.php');
-Core::provides('\Foundry\Core\Logging\Log',       'Foundry/Core/Log/Log.php', false);
+Core::provides('\Foundry\Core\Logging\Log',       'Foundry/Core/Logging/Log.php', false);
 
 ?>

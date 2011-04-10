@@ -20,9 +20,6 @@ use Foundry\Core\Logging\Log;
 Core::requires('\Foundry\Core\Logging\Log');
 Core::requires('\Foundry\Core\Database\Database');
 
-// Register data model with the class loader.
-Core::register_class("Foundry\Core\Config\Option", "Config/Option.php");
-
 /**
  * Configuration Manager
  *
@@ -37,10 +34,15 @@ Core::register_class("Foundry\Core\Config\Option", "Config/Option.php");
  */
 class Config {
     /**
+     * Thec configuration table.
+     * @var string
+     */
+    private $config_table = "config_options";
+    /**
      * Database access.
      * @var Database
      */
-    var $database;
+    private $database;
 
     /**
      * Setup the configuration manager.
@@ -59,14 +61,14 @@ class Config {
      */
     public function getConfig($name='') {
         if ($name != '') {
-            $config = $this->database->load_object('\Foundry\Core\Config\Option', "config_options", array("name"=>$name));
+            $config = $this->database->load_object('\Foundry\Core\Config\Option', $this->config_table, array("name"=>$name));
             if ($config !== false) {
                 return $config->getValue();
             } else {
                 return false;
             }
         }
-        $config_objs = $this->database->load_objects('\Foundry\Core\Config\Option', "config_options", "name");
+        $config_objs = $this->database->load_objects('\Foundry\Core\Config\Option', $this->config_table, "name");
         $config = array();
         if ($config_objs === false) {
             die("unable to load configuration from database");
@@ -92,9 +94,9 @@ class Config {
         $config->setValue(trim($value));
         $cur_config = $this->getConfig($name);
         if ($cur_config === false) {
-            $this->database->write_object($config, "config_options");
+            $this->database->write_object($config, $this->config_table);
         } else {
-            $this->database->update_object($config, "config_options", array("name"=>$name), array("value"));
+            $this->database->update_object($config, $this->config_table, array("name"=>$name), array("value"));
         }
     }
 }

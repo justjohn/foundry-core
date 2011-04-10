@@ -3,16 +3,17 @@
  * A Mongo DB implementation of the DatabaseService.
  * 
  * @category  foundry-core
- * @package   Foundry\Core\Database
+ * @package   Foundry\Core\Database\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @version   1.0.0
  */
-namespace Foundry\Core\Database;
+namespace Foundry\Core\Database\Service;
 
 use Foundry\Core\Model;
 use Foundry\Core\Service;
+use Foundry\Core\Database\DatabaseService;
 use Foundry\Core\Exceptions\ServiceConnectionException;
 use Foundry\Core\Exceptions\ModelDoesNotExistException;
 use Foundry\Core\Exceptions\FieldDoesNotExistException;
@@ -21,7 +22,7 @@ use Foundry\Core\Exceptions\FieldDoesNotExistException;
  * The Mongo implementation of DatabaseService.
  * 
  * @category  foundry-core
- * @package   Foundry\Core\Database
+ * @package   Foundry\Core\Database\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
@@ -172,7 +173,9 @@ class Mongo extends \Mongo implements DatabaseService {
                 $obj = new $classname();
                 foreach ($fields as $field => $type) {
                     try {
-                        $obj->set($field, $record[$field]);
+                        if (isset($record[$field])) {
+                            $obj->set($field, $record[$field]);
+                        }
                     } catch (FieldDoesNotExistException $exception) {
                         // Field doesn't exist
                         throw FieldDoesNotExistException("Field $field doesn't exist in $classname");

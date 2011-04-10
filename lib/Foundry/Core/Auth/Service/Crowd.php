@@ -10,7 +10,7 @@
  * and licensed under the http://www.apache.org/licenses/LICENSE-2.0 Apache License
  *
  * @category  foundry-core
- * @package   Foundry\Core\Auth
+ * @package   Foundry\Core\Auth\Service
  * @author    John Roepke <john@justjohn.us>
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @copyright 2010-2011 John Roepke, 2008 Infinite Campus Inc., 2008 Luca Corbo
@@ -21,16 +21,18 @@
  * @link      http://confluence.atlassian.com/display/CROWDEXT/Integrate+Crowd+with+PHP
  */
 
-namespace Foundry\Core\Auth;
+namespace Foundry\Core\Auth\Service;
 
-use Foundry\Core\Service;
-use Foundry\Core\Exceptions\ServiceConnectionException;
+use \Foundry\Core\Service;
+use \Foundry\Core\Exceptions\ServiceConnectionException;
+use \Foundry\Core\Auth\AuthService;
+use \Foundry\Core\Auth\AuthServiceSSO;
 
 /**
  * Crowd Authentication Service
  *
  * @category  foundry-core
- * @package   Foundry\Core\Auth
+ * @package   Foundry\Core\Auth\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010 John Roepke, 2008 Infinite Campus Inc., 2008 Luca Corbo
  * @link      http://pear.php.net/packages/Services_Atlassian_Crowd

@@ -3,15 +3,16 @@
  * An In-Memory imlementation of the Database interface.
  * 
  * @category  foundry-core
- * @package   Foundry\Core\Database
+ * @package   Foundry\Core\Database\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @version   1.0.0
  */
-namespace Foundry\Core\Database;
+namespace Foundry\Core\Database\Service;
 
 use Foundry\Core\Model;
+use Foundry\Core\Database\DatabaseService;
 use Foundry\Core\Exceptions\FieldDoesNotExistException;
 use Foundry\Core\Exceptions\ClassDoesNotExistException;
 
@@ -22,13 +23,13 @@ use Foundry\Core\Exceptions\ClassDoesNotExistException;
  * this is done by mapping object fields to table fields.
  * 
  * @category  foundry-core
- * @package   Foundry\Core\Database
+ * @package   Foundry\Core\Database\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @since     1.0.0
  */
-class InMemory {
+class InMemory implements DatabaseService {
     /**
      * The data stored in this in-memory database.
      * The format is:

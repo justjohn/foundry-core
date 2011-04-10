@@ -7,19 +7,19 @@
  * testing other classes that depend on an auth service.
  *
  * @category  foundry-core
- * @package   Foundry\Core\Auth
+ * @package   Foundry\Core\Auth\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @version   1.0.0
  */
-namespace Foundry\Core\Auth;
+namespace Foundry\Core\Auth\Service;
 
 /**
  * In-memory Authentication Service
  *
  * @category  foundry-core
- * @package   Foundry\Core\Auth
+ * @package   Foundry\Core\Auth\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license

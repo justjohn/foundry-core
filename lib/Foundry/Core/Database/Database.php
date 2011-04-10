@@ -29,11 +29,6 @@ use Foundry\Core\Logging\Log;
 Core::requires('\Foundry\Core\Logging\Log');
 
 /**
- * Load the AuthService interface.
- */
-require_once("Foundry/Core/Database/DatabaseService.php");
-
-/**
  * The Database API.
  * 
  * @category  foundry-core
@@ -43,14 +38,13 @@ require_once("Foundry/Core/Database/DatabaseService.php");
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @since     1.0.0
  */
-class Database {
+class Database
+{
     /**
      * The options required to instantiate a database component.
      * @var array
      */
     public static $required_options = array("service", "service_config");
-
-    const KEY_FIELD = "id";
 
     /**
      * The database service.
@@ -60,15 +54,14 @@ class Database {
     
     /**
      * Create a Database component.
+     * 
+     * @param array $config The database configuration.
      */
-    function __construct() {
-        $config = Core::getConfig('\Foundry\Core\Database\Database');
+    function __construct(array $config)
+    {
         Service::validate($config, self::$required_options);
         $db_service = $config["service"];
         $db_config = $config["service_config"];
-        // include auth class
-        include_once("Foundry/Core/Database/Service/$db_service.php");
-        $db_service = 'Foundry\Core\Database\\'.$db_service;
         if (!class_exists($db_service)) {
             Log::error("Database::__construct", "Unable to load database class '$db_service'.");
             throw new ServiceLoadException("Unable to load database class '$db_service'.");
@@ -92,10 +85,12 @@ class Database {
      * @param array  $limits     An array with limit conditions either in the form:
      *                              array("count")  or
      *                              array("start", "count")
+     * 
      * @return object|boolean An array of $classname instances keyed by the $key field (if set),
      *                        false on failure.
      */
-    public function load_objects($classname, $db_key, $key = "", array $conditions = array(), array $sort_rules = array(), array $limits = array()) {
+    public function load_objects($classname, $db_key, $key = "", array $conditions = array(), array $sort_rules = array(), array $limits = array())
+    {
         return $this->database->load_objects($classname, $db_key, $key, $conditions, $sort_rules, $limits);
     }
 
@@ -110,7 +105,8 @@ class Database {
      *                              )
      * @return integer|boolean The count on success, false on failure.
      */
-    public function count_objects($db_key, array $conditions = array()) {
+    public function count_objects($db_key, array $conditions = array())
+    {
         return $this->database->count_objects($db_key, $conditions);
     }
 
@@ -124,9 +120,11 @@ class Database {
      *                                  field => value  OR
      *                                  field => array(operator, value)
      *                              )
+     * 
      * @return object An instance of $classname on success, false on failure.
      */
-    public function load_object($classname, $db_key, array $conditions = array(), array $sort_rules = array()) {
+    public function load_object($classname, $db_key, array $conditions = array(), array $sort_rules = array())
+    {
         return $this->database->load_object($classname, $db_key, $conditions, $sort_rules);
     }
 
@@ -135,9 +133,11 @@ class Database {
      *
      * @param Model $object The object with the data to write into the database.
      * @param string $db_key The name of the table in the database.
-     * @return boolean true on success, false on failure.
+     * 
+     * @return boolean Returns true on success, false on failure.
      */
-    public function write_object(Model $object, $db_key) {
+    public function write_object(Model $object, $db_key)
+    {
         return $this->database->write_object($object, $db_key);
     }
 
@@ -152,8 +152,11 @@ class Database {
      *                                  field => array(operator, value)
      *                              )
      * @param array  $updatefields An array of fields to update in each object.
+     * 
+     * @return boolean Returns true on success, false on failure.
      */
-    public function update_object(Model $object, $db_key, array $conditions, array $updatefields) {
+    public function update_object(Model $object, $db_key, array $conditions, array $updatefields)
+    {
         return $this->database->update_object($object, $db_key, $conditions, $updatefields);
     }
 
@@ -166,9 +169,11 @@ class Database {
      *                                  field => value  OR
      *                                  field => array(operator, value)
      *                              )
-     * @return boolean true on success, false on failure.
+     * 
+     * @return boolean Returns true on success, false on failure.
      */
-    public function delete_object($db_key, array $conditions) {
+    public function delete_object($db_key, array $conditions)
+    {
         return $this->database->delete_object($db_key, $conditions);
     }
 }

@@ -36,15 +36,6 @@ use Foundry\Core\Logging\Log;
 Core::requires('\Foundry\Core\Auth\Auth');
 Core::requires('\Foundry\Core\Logging\Log');
 
-
-// Register the role related model classes with the class loader.
-Core::register_class("Foundry\Core\Access\Role", "Foundry/Core/Access/Role.php");
-
-/**
- * Load the AccessService interface.
- */
-require_once "Foundry/Core/Access/AccessService.php";
-
 /**
  * Role Management API.
  *
@@ -92,10 +83,11 @@ class Access
 
     /**
      * Create a Access Service.
+     * 
+     * @param array $config The access configuration.
      */
-    public function __construct()
+    public function __construct(array $config)
     {
-        $config = Core::getConfig('\Foundry\Core\Access\Access');
         Service::validate($config, self::$required_options);
         $access_service = $config["service"];
         $service_config = $config["service_config"];

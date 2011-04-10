@@ -27,17 +27,6 @@ use Foundry\Core\Exceptions\ServiceLoadException;
 
 Core::requires('\Foundry\Core\Logging\Log');
 
-// Register the authentication related model classes with the class loader.
-Core::register_class('Foundry\Core\Auth\User', "Auth/User.php");
-Core::register_class('Foundry\Core\Auth\Group', "Auth/Group.php");
-
-/**
- * Load the AuthService interfaces.
- */
-require_once("Foundry/Core/Auth/AuthService.php");
-require_once("Foundry/Core/Auth/AuthServiceSSO.php");
-require_once("Foundry/Core/Auth/AuthServiceSubgroups.php");
-
 /**
  * Authentication API and service loader.
  * 
@@ -48,7 +37,8 @@ require_once("Foundry/Core/Auth/AuthServiceSubgroups.php");
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @since     1.0.0
  */
-class Auth {
+class Auth
+{
     /**
      * The configuration options required to initialize an Auth service.
      */
@@ -89,22 +79,17 @@ class Auth {
 
     /**
      * Setup the auth manager.
+     * 
+     * @param array $config The auth configuration.
      */
-    function __construct() {
-        $config = Core::getConfig('\Foundry\Core\Auth\Auth');
+    function __construct(array $config)
+    {
         Service::validate($config, self::$required_options);
         $auth_service = $config["service"];
         $auth_config = $config["service_config"];
         $admin_group = $config["admin_group"];
 
-        // Load the authentication cache.
-        /* if (isset($_SESSION["auth_cache"])) {
-            $this->auth_cache = $_SESSION["auth_cache"];
-        } */
-
         // include auth class
-        include_once("Foundry/Core/Auth/Service/$auth_service.php");
-        $auth_service = 'Foundry\Core\Auth\\'.$auth_service;
         if (!class_exists($auth_service)) {
             Log::error("Auth::__construct", "Unable to load auth class '$auth_service'.");
             throw new ServiceLoadException("Unable to load auth class '$auth_service'.");
@@ -115,17 +100,11 @@ class Auth {
     }
 
     /**
-     * Save the authentication cache.
-     */
-    public function __destruct() {
-        // $_SESSION["auth_cache"] = $this->auth_cache;
-    }
-
-    /**
      * Check for SSO support.
      * @return boolean
      */
-    public function SSOSupport() {
+    public function SSOSupport()
+    {
         $implements = class_implements($this->auth_service);
         return isset($implements['Foundry\Core\Auth\AuthServiceSSO']);
     }
@@ -134,7 +113,8 @@ class Auth {
      * Check for subgroup support.
      * @return boolean
      */
-    public function subgroupSupport() {
+    public function subgroupSupport()
+    {
         $implements = class_implements($this->auth_service);
         return isset($implements['Foundry\Core\Auth\AuthServiceSubgroups']);
     }
@@ -146,7 +126,8 @@ class Auth {
      * @param string $password
      * @return boolean
      */
-    public function authenticate($username, $password) {
+    public function authenticate($username, $password)
+    {
         $this->is_authenticated = false;
         if ($this->auth_service->authenticate($username, $password)) {
             $this->is_authenticated = true;
@@ -161,7 +142,8 @@ class Auth {
      * Mark a user as authenticated.
      * @param string $username The user to mark as authenticated.
      */
-    public function upauth($username) {
+    public function upauth($username)
+    {
         $this->is_authenticated = true;
         $this->user = $username;
     }
@@ -174,7 +156,8 @@ class Auth {
      * @return boolean True if the username/password successfully authenticate,
      *                 false if they do not.
      */
-    public function verify($username, $password) {
+    public function verify($username, $password)
+    {
         return $this->auth_service->authenticate($username, $password);
     }
 
@@ -182,7 +165,8 @@ class Auth {
      * Is there a user currently authenticated.
      * @return boolean
      */
-    public function isAuthenticated() {
+    public function isAuthenticated()
+    {
         return $this->is_authenticated;
     }
 
@@ -190,7 +174,8 @@ class Auth {
      * Get the currently logged in user's username or false when no one is logged in.
      * @return string|boolean The username or false if there isn't an authenticated user.
      */
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->isAuthenticated()?$this->user:false;
     }
 
@@ -200,7 +185,8 @@ class Auth {
      * @param string $password The new user's password.
      * @return boolean true on sucess, false on failure.
      */
-    public function addUser($user, $password) {
+    public function addUser($user, $password)
+    {
         Log::info("Auth::addUser", "addUser('$user', '$password')");
         $result = $this->auth_service->addUser($user, $password);
         if ($result) {
@@ -216,7 +202,8 @@ class Auth {
      * @param User $user The parameters of the user to update.
      * @return boolean true on sucess, false on failure.
      */
-    public function updateUser($user) {
+    public function updateUser(User $user)
+    {
         Log::info("Auth::updateUser", "updateUser('$user)");
         $result = $this->auth_service->updateUser($user);
         if ($result) {
@@ -232,7 +219,8 @@ class Auth {
      * @param string $username The username to delete.
      * @return boolean true on sucess, false on failure.
      */
-    public function deleteUser($username) {
+    public function deleteUser($username)
+    {
         Log::info("Auth::deleteUser", "deleteUser('$username')");
         if (empty($username)) return false;
         $result = $this->auth_service->deleteUser($username);
@@ -251,7 +239,8 @@ class Auth {
      * @return User|boolean The user's information if the user exists, false if the
      *                      user can't be found.
      */
-    public function getUser($username = '') {
+    public function getUser($username = '')
+    {
         $username = trim($username);
         if (empty($username)) $username = $this->user;
         if (empty($username)) return false;
@@ -270,7 +259,8 @@ class Auth {
      * @param string $username The username to check.
      * @return boolean true if the user exists, false if not.
      */
-    public function userExists($username) {
+    public function userExists($username)
+    {
         if (empty($username)) return false;
         if (isset($this->auth_cache["user"][$username])) {
             return true;
@@ -284,7 +274,8 @@ class Auth {
      *
      * @return array An array of User objects keyed by username.
      */
-    public function getUsers() {
+    public function getUsers()
+    {
         if (isset($this->auth_cache["users"])) {
             return $this->auth_cache["users"];
         }
@@ -302,7 +293,8 @@ class Auth {
      *               can't be found or the $user parameter is blank and there is no
      *               logged in user, an empty array is returned.
      */
-    public function getUserGroups($user='') {
+    public function getUserGroups($user='')
+    {
         if ($user == '') $user = $this->user;
         if ($user == '') return array();
         if (isset($this->auth_cache["user_groups"][$user]))
@@ -319,7 +311,8 @@ class Auth {
      * @param string $groupname The name of the group.
      * @return Group|boolean
      */
-    public function getGroup($groupname) {
+    public function getGroup($groupname)
+    {
         // Check local cache
         if (isset($this->auth_cache["group"][$groupname]))
             return $this->auth_cache["group"][$groupname];
@@ -334,7 +327,8 @@ class Auth {
      * @param string $groupname The name of the group.
      * @return boolean
      */
-    public function groupExists($groupname) {
+    public function groupExists($groupname)
+    {
         return ($this->getGroup($groupname) !== false);
     }
 
@@ -345,7 +339,8 @@ class Auth {
      * @param array $groups The groups already checked (to prevent infinite recursion)
      * @return array An array of usernames keyed by username.
      */
-    public function getGroupMembership($group, &$members = array(), &$groups = array()) {
+    public function getGroupMembership($group, &$members = array(), &$groups = array())
+    {
         $groupname = $group->getName();
         $groups[$groupname] = $groupname;
         $users = $group->getUsers();
@@ -375,7 +370,8 @@ class Auth {
      * @param string $groupname The name of the group to check.
      * @return boolean True if the user is in the group, false if not.
      */
-    public function userInGroup($username, $groupname) {
+    public function userInGroup($username, $groupname)
+    {
         if ($this->getUser($username) === false) return false;
         $group = $this->getGroup($groupname);
         if ($group === false) return false;
@@ -388,7 +384,8 @@ class Auth {
      * @param boolean $flatten Include users from subgroups in group membership (if supported). Defaults to false.
      * @return array
      */
-    public function getGroups($flatten = false) {
+    public function getGroups($flatten = false)
+    {
         if (isset($this->auth_cache["groups"][$flatten])) {
             return $this->auth_cache["groups"][$flatten];
         } else {
@@ -413,7 +410,8 @@ class Auth {
      * Get a list of all the groups.
      * @return array
      */
-    public function getGroupNames() {
+    public function getGroupNames()
+    {
         if (isset($this->auth_cache["groupnames"]))
                 return $this->auth_cache["groupnames"];
 
@@ -429,7 +427,8 @@ class Auth {
      * @param Group $group The group to add.
      * @return boolean
      */
-    public function addGroup($group) {
+    public function addGroup($group)
+    {
         Log::info("Auth::addGroup", "addGroup('$group')");
         $result = $this->auth_service->addGroup($group);
         // Invalidate groups cache
@@ -447,7 +446,8 @@ class Auth {
      * @param string $groupname The name of the group to delete.
      * @return boolean true on success, false on failure.
      */
-    public function deleteGroup($groupname) {
+    public function deleteGroup($groupname)
+    {
         Log::info("Auth::deleteGroup", "deleteGroup('$groupname')");
         $result = $this->auth_service->deleteGroup($groupname);
         // Invalidate groups cache
@@ -465,7 +465,8 @@ class Auth {
      * @param string $groupname The name of the group.
      * @return boolean true on success, false on failure.
      */
-    public function addUserToGroup($username, $groupname) {
+    public function addUserToGroup($username, $groupname)
+    {
         Log::info("Auth::addUserToGroup", "addUserToGroup('$username', '$groupname')");
         $result = $this->auth_service->addUserToGroup($username, $groupname);
         if ($result) {
@@ -483,7 +484,8 @@ class Auth {
      * @param string $groupname The name of the group.
      * @return boolean true on success, false on failure.
      */
-    public function addSubgroupToGroup($subgroupname, $groupname) {
+    public function addSubgroupToGroup($subgroupname, $groupname)
+    {
         Log::info("Auth::addSubgroupToGroup", "addSubgroupToGroup('$subgroupname', '$groupname')");
         $result = $this->auth_service->addSubgroupToGroup($subgroupname, $groupname);
         if ($result) {
@@ -501,7 +503,8 @@ class Auth {
      * @param string $groupname The name of the group.
      * @return boolean true on success, false on failure.
      */
-    public function removeUserFromGroup($username, $groupname) {
+    public function removeUserFromGroup($username, $groupname)
+    {
         Log::info("Auth::removeUserFromGroup", "removeUserFromGroup('$username', '$groupname')");
         $result = $this->auth_service->removeUserFromGroup($username, $groupname);
         if ($result) {
@@ -519,7 +522,8 @@ class Auth {
      * @param string $groupname The name of the group.
      * @return boolean true on success, false on failure.
      */
-    public function removeSubgroupFromGroup($subgroupname, $groupname) {
+    public function removeSubgroupFromGroup($subgroupname, $groupname)
+    {
         Log::info("Auth::removeSubgroupFromGroup", "removeSubgroupFromGroup('$subgroupname', '$groupname')");
         $result = $this->auth_service->removeSubgroupFromGroup($subgroupname, $groupname);
         if ($result) {
@@ -537,7 +541,8 @@ class Auth {
      * Is the current user a site admin.
      * @return boolean
      */
-    public function isAdmin() {
+    public function isAdmin()
+    {
         if ($this->admin_group == "") {
             return false;
         }
@@ -549,7 +554,8 @@ class Auth {
      * Get the site admin group.
      * @return string
      */
-    public function getAdminGroup() {
+    public function getAdminGroup()
+    {
         return $this->admin_group;
     }
 
@@ -558,7 +564,8 @@ class Auth {
      * @param string $username
      * @param string $password
      */
-    public function changePassword($username, $password) {
+    public function changePassword($username, $password)
+    {
         Log::info("Auth::changePassword", "changePassword('$username', '********')");
         return $this->auth_service->changePassword($username, $password);
     }
@@ -568,7 +575,8 @@ class Auth {
      *
      * @return boolean True if logged into a SSO, false if not.
      */
-    public function checkSSO() {
+    public function checkSSO()
+    {
         $user = $this->auth_service->checkSSO();
         if ($user === false) {
             return false;
@@ -582,7 +590,8 @@ class Auth {
     /**
      * Logout of the SSO system.
      */
-    public function logoutSSO() {
+    public function logoutSSO()
+    {
         if ($this->SSOSupport()) {
             return $this->auth_service->logoutSSO();
         }
@@ -594,7 +603,8 @@ class Auth {
      * @param string $auth_token
      * @return boolean
      */
-    public function authSSO($auth_token) {
+    public function authSSO($auth_token)
+    {
         if ($this->SSOSupport()) {
             return $this->auth_service->authSSO($auth_token);
         } else {
@@ -608,7 +618,8 @@ class Auth {
      *
      * @return AuthService
      */
-    public function getAuthService() {
+    public function getAuthService()
+    {
         return $this->auth_service;
     }
 }

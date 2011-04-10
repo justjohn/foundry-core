@@ -101,7 +101,9 @@ class Core {
                         "' is on the path.\n");
             } else {
                 if (self::$should_load_instance[$component_name]) {
-                    $instance = new $component_name();
+                    // Load configuration and pass to instance
+                    $config = self::getConfig($component_name);
+                    $instance = new $component_name($config);
                     self::$component_instance[$component_name] = $instance;
                     return $instance;
                 } else {
@@ -188,7 +190,7 @@ function __autoload($class_name) {
     }
     $file_name .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
 
-    $result = @include $file_name;
+    $result = include $file_name;
     
     return $result !== false;
 }

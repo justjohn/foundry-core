@@ -1,5 +1,5 @@
 <?php
-namespace Foundry\Core\Auth;
+namespace Foundry\Core\Auth\Service;
 /**
  * LDAP Authentication Service Implementation
  *
@@ -7,21 +7,23 @@ namespace Foundry\Core\Auth;
  * ActiveDirectory endpoint.
  *
  * @category  foundry-core
- * @package   Foundry\Core\Auth
+ * @package   Foundry\Core\Auth\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @version   1.0.0
  */
 
-use Foundry\Core\Service;
-use Foundry\Core\Exceptions\ServiceConnectionException;
+use \Foundry\Core\Service;
+use \Foundry\Core\Exceptions\ServiceConnectionException;
+use \Foundry\Core\Auth\AuthService;
+use \Foundry\Core\Auth\AuthServiceSubgroups;
 
 /**
  * LDAP Authentication Service
  *
  * @category  foundry-core
- * @package   Foundry\Core\Auth
+ * @package   Foundry\Core\Auth\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license

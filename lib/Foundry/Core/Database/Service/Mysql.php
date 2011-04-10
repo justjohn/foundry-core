@@ -3,23 +3,24 @@
  * A MySQL based implementation of the Database Service.
  * 
  * @category  foundry-core
- * @package   Foundry\Core\Database
+ * @package   Foundry\Core\Database\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @version   1.0.0
  */
-namespace Foundry\Core\Database;
+namespace Foundry\Core\Database\Service;
 
 use Foundry\Core\Model;
 use Foundry\Core\Service;
+use Foundry\Core\Database\DatabaseService;
 use Foundry\Core\Exceptions\ServiceConnectionException;
 
 /**
  * The MySQL implementation of DatabaseService.
  * 
  * @category  foundry-core
- * @package   Foundry\Core\Database
+ * @package   Foundry\Core\Database\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
