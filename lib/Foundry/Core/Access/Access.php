@@ -18,7 +18,7 @@
  * 
  * PHP version 5.3.0
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -48,7 +48,7 @@ require_once "Foundry/Core/Access/AccessService.php";
 /**
  * Role Management API.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

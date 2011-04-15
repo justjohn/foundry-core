@@ -2,7 +2,7 @@
 /**
  * Log messages.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Logging
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -17,7 +17,7 @@ use \Foundry\Core\BaseModel;
 /**
  * Log messages.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Logging
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

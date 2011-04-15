@@ -2,7 +2,7 @@
 /**
  * This class defines a Cacheable object.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Cache
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

@@ -2,7 +2,7 @@
 /**
  * Roles.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -16,7 +16,7 @@ use \Foundry\Core\BaseModel;
 /**
  * Role Object.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

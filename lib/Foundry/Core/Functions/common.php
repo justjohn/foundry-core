@@ -2,7 +2,7 @@
 /**
  * Common functions for core libraries.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

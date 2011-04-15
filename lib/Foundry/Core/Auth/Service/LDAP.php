@@ -1,12 +1,11 @@
 <?php
-namespace Foundry\Core\Auth;
 /**
  * LDAP Authentication Service Implementation
  *
  * This file contains the logic required to authenticate against an LDAP or
  * ActiveDirectory endpoint.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -14,13 +13,15 @@ namespace Foundry\Core\Auth;
  * @version   1.0.0
  */
 
+namespace Foundry\Core\Auth;
+
 use Foundry\Core\Service;
 use Foundry\Core\Exceptions\ServiceConnectionException;
 
 /**
  * LDAP Authentication Service
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -115,7 +116,9 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Connect and bind to the LDAP directory.
+     *
      * @param array|string An array of LDAP options or the filename for an ini file.
+     *
      * @throws ServiceValidationException All required options are not present.
      * @throws ServiceConnectionException All required options are not present.
      */
@@ -137,8 +140,10 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Add a user to the LDAP directory.
+     *
      * @param User $user The details of the user to add.
      * @param string $password The user's password.
+     *
      * @return boolean true on sucess, false on failure.
      */
     public function addUser($user, $password) {
@@ -184,7 +189,9 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Update a user.
+     *
      * @param User $user The attributes of the user to update.
+     *
      * @return boolean true on sucess, false on failure.
      */
     public function updateUser($user) {
@@ -221,7 +228,9 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Add a group to the LDAP Directory.
+     *
      * @param Group $group The group to add.
+     *
      * @return boolean true on sucess, false on failure.
      */
     public function addGroup($group) {
@@ -255,7 +264,9 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Delete a user from the LDAP directory.
+     *
      * @param string $username The username to delete.
+     *
      * @return boolean true on success, false on failure
      */
     public function deleteUser($username) {
@@ -267,7 +278,9 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Delete a group from the LDAP directory.
+     *
      * @param string $groupname The name of the group to delete.
+     *
      * @return boolean true on success, false on failure.
      */
     public function deleteGroup($groupname) {
@@ -278,8 +291,10 @@ class LDAP implements AuthService, AuthServiceSubgroups {
     }
     /**
      * Authenticate a user.
+     *
      * @param string $user The username to authenticate.
      * @param string $password The user password.
+     *
      * @return boolean true on success, false on failure.
      */
     public function authenticate($user, $password) {
@@ -304,8 +319,10 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Change a user password.
+     *
      * @param string $username
      * @param string $password
+     *
      * @return boolean True on success, false on failure.
      */
     function  changePassword($username, $password) {
@@ -323,7 +340,9 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Get a Group.
+     *
      * @param string $groupname The name of the group.
+     *
      * @return Group|boolean false A Group object or false if a group with the given group name doesn't exist.
      */
     public function getGroup($groupname) {
@@ -331,53 +350,18 @@ class LDAP implements AuthService, AuthServiceSubgroups {
         $attributes = $this->ldap_attributes;
         $search = "(" . $attributes->groupNameAttr . "=" . $groupname . ")";
         $entry = $attributes->groupDN . "," . $attributes->baseDN;
-        $group_results = ldap_search($this->ldap_conn, $entry, $search);
-        if ($group_results !== false) {
-            $entries = ldap_get_entries($this->ldap_conn, $group_results);
-            if ($entries["count"] > 0) {
-                foreach($entries as $entry) {
-                    if (is_array($entry)) {
-                        $name = isset($entry[$attributes->groupNameAttr])?$entry[$attributes->groupNameAttr][0]:"Unnamed Group";
-                        $description = isset($entry[$attributes->groupDescAttr])?$entry[$attributes->groupDescAttr][0]:"";
-                        // Get Users
-                        $users = array();
-                        $subgroups = array();
-                        $users_list = $entry[$attributes->groupMemberAttr];
-                        for ($i=0;$i<$users_list["count"];$i++) {
-                            $user = $users_list[$i];
-                            if ($user != "") {
-                                if (strpos($user, $attributes->userDN.",".$attributes->baseDN) !== false) {
-                                    $user = str_replace(",".$attributes->userDN.",".$attributes->baseDN, "", $user);
-                                    $user = str_replace($attributes->groupNameAttr."=", "", $user);
-                                    if ($this->userExists($user)) {
-                                        $users[$user] = $user;
-                                    }
-                                }
-                                if (strpos($user, $attributes->groupDN.",".$attributes->baseDN) !== false) {
-                                    $user = str_replace(",".$attributes->groupDN.",".$attributes->baseDN, "", $user);
-                                    $user = str_replace($attributes->groupNameAttr."=", "", $user);
-                                    $subgroups[$user] = $user;
-                                }
-                            }
-                        }
-                        if ($name == $groupname) {
-                            $group = new Group();
-                            $group->setName($name);
-                            $group->setDescription($description);
-                            $group->setSubgroups($subgroups);
-                            $group->setUsers($users);
-                            return $group;
-                        }
-                    }
-                }
-            }
+        $group_results = $this->getGroups($search);
+        if (isset($group_results[$goupname])) {
+            return $group_results[$goupname];
+        } else {
+            return false;
         }
-        return false;
     }
 
     
     /**
      * Returns an array of Group names keyed by group name.
+     *
      * @return array an group names (strings) keyed by group names.
      */
     public function getGroupNames() {
@@ -392,12 +376,15 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Returns an array of Groups keyed by group name.
+     *
      * @return array an array of Group objects.
      */
-    public function getGroups() {
+    public function getGroups($search = "") {
         $groups = array();
         $attributes = $this->ldap_attributes;
-        $search = "(objectclass=" . $attributes->groupObjectClass . ")";
+        if (empty($search)) {
+            $search = "(objectclass=" . $attributes->groupObjectClass . ")";
+        }
         $entry = $attributes->groupDN . "," . $attributes->baseDN;
         $group_results = ldap_search($this->ldap_conn, $entry, $search);
 
@@ -444,6 +431,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
     
     /**
      * Returns an array of Users keyed by username.
+     *
      * @return array an array of Users.
      */
     public function getUsers() {
@@ -478,7 +466,9 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Get a user by username.
+     *
      * @param string $username The username to get.
+     *
      * @return boolean|User false if the user doesn't exist, a User object otherwise.
      */
     public function getUser($username) {
@@ -509,6 +499,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
     
     /**
      * Check to see if a user exists in the LDAP directory.
+     *
      * @param string $username The username to check.
      */
     public function userExists($username) {
@@ -527,7 +518,9 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Check to see if a group exists.
+     *
      * @param string $groupname The group name to check.
+     *
      * @return boolean
      */
     public function groupExists($groupname) {
@@ -546,7 +539,9 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Get an array of groups the given user is a member of.
+     *
      * @param string $user
+     *
      * @return array
      */
     public function getUserGroups($user) {
@@ -574,6 +569,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
 
     /**
      * Add a user to a group.
+     *
      * @param string $username The username to add to the group.
      * @param string $groupname The name of the group to add the user to.
      */
@@ -592,6 +588,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
     }
     /**
      * Add a subgroup to a group.
+     *
      * @param string $subgroupname The name of the subgroup to add to the group.
      * @param string $groupname The name of the group to add the user to.
      */
@@ -610,6 +607,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
     }
     /**
      * Remove a user from a group.
+     *
      * @param string $username The username to remove from the group.
      * @param string $groupname The name of the group to remove the user from.
      */
@@ -625,6 +623,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
     }
     /**
      * Remove a subgroup from a group.
+     *
      * @param string $subgroupname The name of the subgroup to remove from the group.
      * @param string $groupname The name of the group to remove the subgroup from.
      */
@@ -647,7 +646,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
  * one is provided. It converts all of the attributes to lowercase except for
  * managerPassword.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -744,6 +743,7 @@ class LDAPAttributes {
 
     /**
      * Load LDAP attributes from an array or filename.
+     *
      * @param array|string $options If options is an array, load the options from the array. If it's a string, treat it as a filename.
      */
     public function __construct($options) {

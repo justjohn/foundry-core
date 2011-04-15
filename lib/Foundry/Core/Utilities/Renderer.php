@@ -2,7 +2,7 @@
 /**
  * Utility for rendering Models in different formats (XML, JSON).
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Utilities
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -19,7 +19,7 @@ use Foundry\Core\Model;
 /**
  * Class for rendering Models into different formats (XML, JSON).
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Utilities
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

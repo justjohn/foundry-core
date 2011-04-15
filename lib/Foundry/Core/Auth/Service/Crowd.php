@@ -9,7 +9,7 @@
  * written by Luca Corbo (http://pear.php.net/packages/Services_Atlassian_Crowd)
  * and licensed under the http://www.apache.org/licenses/LICENSE-2.0 Apache License
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @license   http://phpfoundry.com/license/bsd New BSD license
@@ -29,7 +29,7 @@ use Foundry\Core\Exceptions\ServiceConnectionException;
 /**
  * Crowd Authentication Service
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010 John Roepke, 2008 Infinite Campus Inc., 2008 Luca Corbo
@@ -688,7 +688,7 @@ class Crowd implements AuthService, AuthServiceSSO {
 /**
  * Crowd Service Exception Class
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @license   http://phpfoundry.com/license/bsd New BSD license

@@ -19,7 +19,7 @@
  * }
  * </code>
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -34,7 +34,7 @@ use Foundry\Core\Exceptions\ServiceValidationException;
 /**
  * The Service validator.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

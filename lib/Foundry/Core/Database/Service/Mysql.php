@@ -2,7 +2,7 @@
 /**
  * A MySQL based implementation of the Database Service.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -18,7 +18,7 @@ use Foundry\Core\Exceptions\ServiceConnectionException;
 /**
  * The MySQL implementation of DatabaseService.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

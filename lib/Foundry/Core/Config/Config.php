@@ -4,7 +4,7 @@
  * 
  * This file contains the configuration infrastructure for the application.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Config
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -28,7 +28,7 @@ Core::register_class("Foundry\Core\Config\Option", "Config/Option.php");
  *
  * Load configuration options from a database.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Config
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

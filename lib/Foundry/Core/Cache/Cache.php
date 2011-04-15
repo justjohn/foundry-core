@@ -4,7 +4,7 @@
  * 
  * This file contains the cache API and code for loading cache services.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Cache
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -30,7 +30,7 @@ require_once("Cache/CacheService.php");
 /**
  * Cache API and service loader.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Cache
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

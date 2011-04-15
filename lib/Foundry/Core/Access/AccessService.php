@@ -4,7 +4,7 @@
  *
  * PHP version 5.3.0
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -17,7 +17,7 @@ namespace Foundry\Core\Access;
 /**
  * Interface for Role management.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

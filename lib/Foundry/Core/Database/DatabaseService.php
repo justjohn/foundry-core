@@ -2,7 +2,7 @@
 /**
  * The Database service interface.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -19,7 +19,7 @@ use Foundry\Core\Model;
  * This interface treats all databases as object-based. For a table-based database
  * this is done by mapping object fields to table fields.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

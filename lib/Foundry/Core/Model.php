@@ -2,7 +2,7 @@
 /**
  * The data model interface used for defining objects in the Core Library.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -14,7 +14,7 @@ namespace Foundry\Core;
 /**
  * A database model class.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
