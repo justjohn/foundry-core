@@ -1,6 +1,8 @@
 <?php
 /**
  * Atlassian Crowd Authentication Service Implementation
+ * 
+ * PHP version 5.3.0
  *
  * This file contains the logic required to authenticate against an Atlassian
  * Crowd SOAP endpoint.
@@ -12,8 +14,8 @@
  * @category  Foundry-Core
  * @package   Foundry\Core\Auth\Service
  * @author    John Roepke <john@justjohn.us>
- * @license   http://phpfoundry.com/license/bsd New BSD license
  * @copyright 2010-2011 John Roepke, 2008 Infinite Campus Inc., 2008 Luca Corbo
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  * @version   1.0.0
  * @link      http://pear.php.net/packages/Services_Atlassian_Crowd
  * @link      http://www.atlassian.com/software/crowd
@@ -90,6 +92,7 @@ class Crowd implements AuthService, AuthServiceSSO {
      * Connect to a Crowd SOAP endpoint.
      *
      * @param array Options for connecting to the Crowd SOAP endpoint.
+     * 
      * @throws ServiceValidationException All required options are not present.
      */
     public function __construct(array $options) {
@@ -122,8 +125,10 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Authenticate a user.
+     * 
      * @param string $user
      * @param string $password
+     * 
      * @return boolean
      */
     public function authenticate($username, $password) {
@@ -163,9 +168,12 @@ class Crowd implements AuthService, AuthServiceSSO {
     }
 
     /**
-     * Change a user password.
-     * @param string $user
-     * @param string $password
+     * Change a user's password.
+     * 
+     * @param string $user The user to change password.
+     * @param string $password The new password.
+     * 
+     * @return boolean Returns true on success, false on failure.
      */
     public function changePassword($username, $password) {
         try {
@@ -179,8 +187,10 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Check to see if a group exists.
+     * 
      * @param string $groupname The group name to check.
-     * @return boolean
+     * 
+     * @return boolean Returns true if the group exists, false if not.
      */
     public function groupExists($groupname) {
         return ($this->getGroup($groupname) instanceOf Group);
@@ -188,8 +198,10 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Check to see if a user exists.
+     * 
      * @param string $username The username to check.
-     * @return boolean
+     * 
+     * @return boolean Returns true if the user exists, false if not.
      */
     public function userExists($username) {
         return ($this->getUser($username) instanceOf User);
@@ -233,9 +245,12 @@ class Crowd implements AuthService, AuthServiceSSO {
     }
 
     /**
-     * Get a user's information as an array.
-     * @param string $username
-     * @return array
+     * Get a user object.
+     * 
+     * @param string $username The username of the user to get.
+     * 
+     * @return User|booean Returns false if the user doesn't exists or a
+     *                     User object if it does.
      */
     public function getUser($username) {
         if ($username == '') {
@@ -265,8 +280,10 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Update a user.
+     * 
      * @param User $user The attributes of the user to update.
-     * @return boolean true on sucess, false on failure.
+     * 
+     * @return boolean Returns true on sucess, false on failure.
      */
     public function updateUser($user) {
         try {
@@ -317,9 +334,11 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Add a user.
+     * 
      * @param User $user The details of the user to add.
      * @param string $password The user's password.
-     * @return boolean true on sucess, false on failure.
+     * 
+     * @return boolean Retruns true on sucess, false on failure.
      */
     public function addUser($user, $password) {
         try {
@@ -343,7 +362,9 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Delete a user.
+     * 
      * @param string $username The username to delete.
+     * 
      * @return boolean true on success, false on failure
      */
     public function deleteUser($username) {
@@ -380,6 +401,7 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Returns an array of all the groups keyed by group name.
+     * 
      * @return array|boolean
      */
     public function getGroups() {
@@ -402,8 +424,11 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Get a group's members.
-     * @param array $groupname
-     * @return array
+     * 
+     * @param array $groupname The name of the group to get.
+     * 
+     * @return Group|boolean Returns false if the user doesn't exists;
+     *                       a Group object if it does.
      */
     public function getGroup($groupname) {
         if ($groupname == '') {
@@ -437,8 +462,10 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Add a group.
+     * 
      * @param Group $group The group to add.
-     * @return boolean true on sucess, false on failure.
+     * 
+     * @return boolean Returns true on sucess, false on failure.
      */
     public function addGroup($group) {
         try {
@@ -458,8 +485,10 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Delete a group.
+     * 
      * @param string $groupname The name of the group to delete.
-     * @return boolean true on success, false on failure.
+     * 
+     * @return boolean Returns true on success, false on failure.
      */
     public function deleteGroup($groupname) {
         try {
@@ -473,8 +502,11 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Get an array of groups the given user is a member of.
-     * @param string $username
-     * @return array
+     * 
+     * @param string $username The username to get membership for.
+     * 
+     * @return array Returns an array of group names that the provided user
+     *               is a member of.
      */
     public function getUserGroups($username) {
         if ($username == '') {
@@ -503,8 +535,11 @@ class Crowd implements AuthService, AuthServiceSSO {
     
     /**
      * Add a user to a group.
+     * 
      * @param string $username The username to add to the group.
      * @param string $groupname The name of the group to add the user to.
+     * 
+     * @return boolean Returns true on success, false on failure.
      */
     public function addUserToGroup($username, $groupname) {
         try {
@@ -517,8 +552,11 @@ class Crowd implements AuthService, AuthServiceSSO {
 
     /**
      * Remove a user from a group.
+     * 
      * @param string $username The username to remove from the group.
      * @param string $groupname The name of the group to remove the user from.
+     * 
+     * @return boolean Returns true on success, false on failure.
      */
     public function removeUserFromGroup($username, $groupname) {
         try {
@@ -546,7 +584,8 @@ class Crowd implements AuthService, AuthServiceSSO {
     
     /**
      * Check for a single sign on token.
-     * @return boolean True if logged into a SSO, false if not.
+     * 
+     * @return boolean Returns true if logged in via Crowd SSO, false if not.
      */
     public function checkSSO() {
         if (isset($_COOKIE['crowd_token_key'])) {
@@ -564,7 +603,7 @@ class Crowd implements AuthService, AuthServiceSSO {
     }
 
     /**
-     * Logout of the SSO system.
+     * Logout of Crowd's SSO.
      */
     public function logoutSSO() {
         if (isset($_COOKIE['crowd_token_key'])) {
@@ -579,12 +618,13 @@ class Crowd implements AuthService, AuthServiceSSO {
     }
 
     /**
-     *  Calls a remote method
+     *  Calls a remote method via Crowd's SOAP API.
      *
      * @param string $method The remote method to call
      * @param mixed  $args   The parameters to use with remote method
      *
      * @return object | true
+     * 
      * @throws CrowdServiceException if there is an error communicating
      *                                            with the Crowd security server.
      *
@@ -691,10 +731,10 @@ class Crowd implements AuthService, AuthServiceSSO {
  * Crowd Service Exception Class
  *
  * @category  Foundry-Core
- * @package   Foundry\Core\Auth
+ * @package   Foundry\Core\Auth\Service
  * @author    John Roepke <john@justjohn.us>
- * @license   http://phpfoundry.com/license/bsd New BSD license
  * @copyright 2010-2011 John Roepke
+ * @license   http://phpfoundry.com/license/bsd New BSD license
  * @since     1.0.0
  */
 class CrowdServiceException extends \Foundry\Core\Exceptions\CoreException {}
