@@ -19,6 +19,8 @@ use \Foundry\Core\Service;
 use \Foundry\Core\Exceptions\ServiceConnectionException;
 use \Foundry\Core\Auth\AuthService;
 use \Foundry\Core\Auth\AuthServiceSubgroups;
+use \Foundry\Core\Auth\Group;
+use \Foundry\Core\Auth\User;
 
 /**
  * LDAP Authentication Service

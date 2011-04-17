@@ -29,6 +29,8 @@ use \Foundry\Core\Service;
 use \Foundry\Core\Exceptions\ServiceConnectionException;
 use \Foundry\Core\Auth\AuthService;
 use \Foundry\Core\Auth\AuthServiceSSO;
+use \Foundry\Core\Auth\Group;
+use \Foundry\Core\Auth\User;
 
 /**
  * Crowd Authentication Service
