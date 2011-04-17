@@ -4,7 +4,7 @@ use \Foundry\Core\Core;
 
 Core::configure('\Foundry\Core\Auth\Auth', array(
     "admin_group" => "svn_administrators",
-    "service" => 'InMemory',
+    "service" => 'Foundry\Core\Auth\Service\InMemory',
     "service_config" => array(
         "cache"=>false
     )

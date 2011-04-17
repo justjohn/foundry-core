@@ -1,7 +1,8 @@
 <?php
 namespace Foundry\Core\Database;
-use \Foundry\Core\Model;
-use \Foundry\Core\BaseModel;
+
+use Foundry\Core\Model;
+use Foundry\Core\BaseModel;
 
 abstract class DatabaseServiceTest extends \PHPUnit_Framework_TestCase {
     /**

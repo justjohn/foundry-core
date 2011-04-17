@@ -11,11 +11,13 @@
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @version   1.0.0
  */
-namespace Foundry\Core\Access;
+namespace Foundry\Core\Access\Service;
 
 use Foundry\Core\Core;
 use Foundry\Core\Service;
 use Foundry\Core\Database\Database;
+use Foundry\Core\Access\AccessService;
+use Foundry\Core\Access\Role;
 
 Core::requires('\Foundry\Core\Database\Database');
 
@@ -33,7 +35,7 @@ class Database implements AccessService
 {
     /**
      * The database access.
-     * @var \Foundry\Core\Database\Database
+     * @var Foundry\Core\Database\Database
      */
     private $_database;
     /**
@@ -70,13 +72,6 @@ class Database implements AccessService
         Service::validate($options, self::$required_options);
         $this->_database = Core::get('\Foundry\Core\Database\Database');
         $this->_options = $options;
-    }
-
-    /**
-     * Tear down the class.
-     */
-    public function __destruct()
-    {
     }
 
     /**

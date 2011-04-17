@@ -94,8 +94,6 @@ class Access
         $this->_auth_manager = Core::get('\Foundry\Core\Auth\Auth');
         
         // include service class
-        include_once("Foundry/Core/Access/Service/$access_service.php");
-        $access_service = 'Foundry\Core\Access\\'.$access_service;
         if (!class_exists($access_service)) {
             Log::error("Access::__construct", "Unable to load access class '$access_service'.");
             throw new ServiceLoadException("Unable to load access class '$access_service'.");

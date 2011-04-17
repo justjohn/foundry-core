@@ -13,9 +13,11 @@
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @version   1.0.0
  */
-namespace Foundry\Core\Access;
+namespace Foundry\Core\Access\Service;
 
 use Foundry\Core\Service;
+use Foundry\Core\Access\AccessService;
+use Foundry\Core\Access\Role;
 
 /**
  * In-memory implementation of the role service.

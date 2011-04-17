@@ -1,10 +1,11 @@
 <?php
 namespace Foundry\Core\Database;
-use \Foundry\Core\Core;
+
+use Foundry\Core\Core;
 
 Core::configure('\Foundry\Core\Database\Database', array(
     "admin_group" => "svn_administrators",
-    "service" => 'InMemory',
+    "service" => 'Foundry\Core\Database\Service\InMemory',
     "service_config" => array( )
 ));
 

@@ -91,7 +91,6 @@ class Auth
         $auth_service = $config["service"];
         $auth_config = $config["service_config"];
         $admin_group = $config["admin_group"];
-
         // include auth class
         if (!class_exists($auth_service)) {
             Log::error("Auth::__construct", "Unable to load auth class '$auth_service'.");
