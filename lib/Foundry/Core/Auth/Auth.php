@@ -7,15 +7,18 @@
  * 
  * Currently there are three available services:
  * 1. LDAP: Authenticates against an LDAP directory.
- * 2. Crowd: Authenticates against an <a href="http://www.atlassian.com/software/crowd/">Atlassian Crowd</a> service endpoint.
- * 3. InMemory: Stores user's and group's in memory until the end of script execution. Primarily for testing other components.
+ * 2. Crowd: Authenticates against an Atlassian Crowd service endpoint.
+ * 3. InMemory: Stores users and groups in memory until the end of script execution.
+ *              Primarily for testing other components.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
  * @license   http://phpfoundry.com/license/bsd New BSD license
  * @version   1.0.0
+ *
+ * @link http://www.atlassian.com/software/crowd/ Atlassian Crowd
  */
  
 namespace Foundry\Core\Auth;
@@ -30,7 +33,7 @@ Core::requires('\Foundry\Core\Logging\Log');
 /**
  * Authentication API and service loader.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -101,6 +104,7 @@ class Auth
 
     /**
      * Check for SSO support.
+     *
      * @return boolean
      */
     public function SSOSupport()
@@ -111,6 +115,7 @@ class Auth
 
     /**
      * Check for subgroup support.
+     *
      * @return boolean
      */
     public function subgroupSupport()
@@ -122,9 +127,10 @@ class Auth
     /**
      * Authenticate a user.
      *
-     * @param string $username
-     * @param string $password
-     * @return boolean
+     * @param string $username The username.
+     * @param string $password The password.
+     *
+     * @return boolean True if the username and password are valid, false if not.
      */
     public function authenticate($username, $password)
     {
@@ -140,6 +146,7 @@ class Auth
 
     /**
      * Mark a user as authenticated.
+     *
      * @param string $username The user to mark as authenticated.
      */
     public function upauth($username)
@@ -153,6 +160,7 @@ class Auth
      *
      * @param string $username The username to check.
      * @param string $password The password to verify is correct.
+     *
      * @return boolean True if the username/password successfully authenticate,
      *                 false if they do not.
      */
@@ -163,6 +171,7 @@ class Auth
 
     /**
      * Is there a user currently authenticated.
+     *
      * @return boolean
      */
     public function isAuthenticated()
@@ -172,6 +181,7 @@ class Auth
 
     /**
      * Get the currently logged in user's username or false when no one is logged in.
+     *
      * @return string|boolean The username or false if there isn't an authenticated user.
      */
     public function getUsername()
@@ -181,8 +191,10 @@ class Auth
 
     /**
      * Add a new user to the configured authentication service.
+     *
      * @param User $user The details of the user to add.
      * @param string $password The new user's password.
+     *
      * @return boolean true on sucess, false on failure.
      */
     public function addUser($user, $password)
@@ -199,7 +211,9 @@ class Auth
 
     /**
      * Update a user in the configured authentication service.
+     *
      * @param User $user The parameters of the user to update.
+     *
      * @return boolean true on sucess, false on failure.
      */
     public function updateUser(User $user)
@@ -215,8 +229,10 @@ class Auth
     }
 
     /**
-     * Delete a user from the configured authentication service..
+     * Delete a user from the configured authentication service.
+     *
      * @param string $username The username to delete.
+     *
      * @return boolean true on sucess, false on failure.
      */
     public function deleteUser($username)
@@ -234,8 +250,10 @@ class Auth
 
     /**
      * Get a user's information from the authentication service.
+     *
      * @param string $username The username to lookup, defaults to the current user
      *                         if left blank.
+     *
      * @return User|boolean The user's information if the user exists, false if the
      *                      user can't be found.
      */
@@ -256,7 +274,9 @@ class Auth
 
     /**
      * Check to see if a username exists.
+     *
      * @param string $username The username to check.
+     *
      * @return boolean true if the user exists, false if not.
      */
     public function userExists($username)
@@ -288,7 +308,9 @@ class Auth
 
     /**
      * Get a list of groups the current user is a member of.
+     *
      * @param string $user The user to get groups for; if blank the current user is used.
+     *
      * @return array An array of the groups that the user is a member of. If the user
      *               can't be found or the $user parameter is blank and there is no
      *               logged in user, an empty array is returned.
@@ -308,7 +330,9 @@ class Auth
 
     /**
      * Get a group's information.
+     *
      * @param string $groupname The name of the group.
+     *
      * @return Group|boolean
      */
     public function getGroup($groupname)
@@ -324,7 +348,9 @@ class Auth
 
     /**
      * Check if a group exists.
+     *
      * @param string $groupname The name of the group.
+     *
      * @return boolean
      */
     public function groupExists($groupname)
@@ -334,9 +360,11 @@ class Auth
 
     /**
      * Get a group's membership (including subgroups if supported)
+     *
      * @param Group $group The group to get members from.
      * @param array $members The array of members to add group members to.
      * @param array $groups The groups already checked (to prevent infinite recursion)
+     *
      * @return array An array of usernames keyed by username.
      */
     public function getGroupMembership($group, &$members = array(), &$groups = array())
@@ -366,8 +394,10 @@ class Auth
     
     /**
      * Check if a user is a member of the group or any of it's subgroups.
+     *
      * @param string $username The username to check.
      * @param string $groupname The name of the group to check.
+     *
      * @return boolean True if the user is in the group, false if not.
      */
     public function userInGroup($username, $groupname)
@@ -381,7 +411,10 @@ class Auth
     
     /**
      * Get a list of all the groups.
-     * @param boolean $flatten Include users from subgroups in group membership (if supported). Defaults to false.
+     *
+     * @param boolean $flatten Include users from subgroups in group membership
+     *                         (if supported). Defaults to false.
+     *
      * @return array
      */
     public function getGroups($flatten = false)
@@ -408,6 +441,7 @@ class Auth
 
     /**
      * Get a list of all the groups.
+     *
      * @return array
      */
     public function getGroupNames()
@@ -425,6 +459,7 @@ class Auth
      * Create a new group.
      *
      * @param Group $group The group to add.
+     *
      * @return boolean
      */
     public function addGroup($group)
@@ -444,6 +479,7 @@ class Auth
      * Delete a group.
      *
      * @param string $groupname The name of the group to delete.
+     *
      * @return boolean true on success, false on failure.
      */
     public function deleteGroup($groupname)
@@ -463,6 +499,7 @@ class Auth
      *
      * @param string $username The name of the user to add.
      * @param string $groupname The name of the group.
+     *
      * @return boolean true on success, false on failure.
      */
     public function addUserToGroup($username, $groupname)
@@ -482,6 +519,7 @@ class Auth
      *
      * @param string $subgroupname The name of the sub-group to add.
      * @param string $groupname The name of the group.
+     *
      * @return boolean true on success, false on failure.
      */
     public function addSubgroupToGroup($subgroupname, $groupname)
@@ -501,6 +539,7 @@ class Auth
      *
      * @param string $username The name of the user to remove.
      * @param string $groupname The name of the group.
+     *
      * @return boolean true on success, false on failure.
      */
     public function removeUserFromGroup($username, $groupname)
@@ -520,6 +559,7 @@ class Auth
      *
      * @param string $subgroupname The name of the sub-group to remove.
      * @param string $groupname The name of the group.
+     *
      * @return boolean true on success, false on failure.
      */
     public function removeSubgroupFromGroup($subgroupname, $groupname)
@@ -539,6 +579,7 @@ class Auth
 
     /**
      * Is the current user a site admin.
+     *
      * @return boolean
      */
     public function isAdmin()
@@ -552,6 +593,7 @@ class Auth
 
     /**
      * Get the site admin group.
+     *
      * @return string
      */
     public function getAdminGroup()
@@ -561,6 +603,7 @@ class Auth
 
     /**
      * Change a user password.
+     * 
      * @param string $username
      * @param string $password
      */

@@ -11,7 +11,7 @@
  * 3. InMemory: Stores data in memory until the end of script execution.
  *              The reference implementation; primarily for testing other components.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -31,7 +31,7 @@ Core::requires('\Foundry\Core\Logging\Log');
 /**
  * The Database API.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

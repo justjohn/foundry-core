@@ -2,7 +2,7 @@
 /**
  * API for sending email via SMTP.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Email
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -28,7 +28,7 @@ require_once 'Mail/mime.php';
 /**
  * Send emails.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Email
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

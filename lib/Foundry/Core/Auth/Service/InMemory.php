@@ -6,7 +6,7 @@
  * in-memory (temporary or session limited) service. Mainly used for
  * testing other classes that depend on an auth service.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -18,7 +18,7 @@ namespace Foundry\Core\Auth\Service;
 /**
  * In-memory Authentication Service
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth\Service
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

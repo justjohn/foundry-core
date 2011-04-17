@@ -2,7 +2,7 @@
 /**
  * Exceptions used in Foundry Core components.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Exceptions
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -15,7 +15,7 @@ namespace Foundry\Core\Exceptions;
  * A general CoreException class that provides a base for all Foundry Core
  *  exceptions.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Exceptions
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -50,7 +50,7 @@ abstract class CoreException extends \Exception
 /**
  * An exception class for missing required options.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Exceptions
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -61,7 +61,7 @@ class ServiceValidationException extends CoreException {}
 /**
  * An exception class for service connection errors.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Exceptions
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -72,7 +72,7 @@ class ServiceConnectionException extends CoreException {}
 /**
  * An exception class for loading service class errors.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Exceptions
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -83,7 +83,7 @@ class ServiceLoadException extends CoreException {}
 /**
  * An exception for calling methods that don't exist in data models.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Exceptions
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -94,7 +94,7 @@ class MethodDoesNotExistException extends CoreException {}
 /**
  * An exception for creating model classes that don't exist.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Exceptions
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -105,7 +105,7 @@ class ClassDoesNotExistException extends CoreException {}
 /**
  * An exception for calling fields that don't exist in data models.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Exceptions
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -116,7 +116,7 @@ class FieldDoesNotExistException extends CoreException {}
 /**
  * An exception for classes unable to load model classes.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Exceptions
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

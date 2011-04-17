@@ -2,7 +2,7 @@
 /**
  * Authentication Service Interface
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -14,7 +14,7 @@ namespace Foundry\Core\Auth;
 /**
  * Authentication Service Interface
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Auth
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

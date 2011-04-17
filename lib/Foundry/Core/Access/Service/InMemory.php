@@ -6,7 +6,7 @@
  * re-initialized at the start of every session. It's useful for testing and a static
  * set of roles.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -20,7 +20,7 @@ use Foundry\Core\Service;
 /**
  * In-memory implementation of the role service.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

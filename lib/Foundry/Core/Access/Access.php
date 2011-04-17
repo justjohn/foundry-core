@@ -18,7 +18,7 @@
  * 
  * PHP version 5.3.0
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -39,7 +39,7 @@ Core::requires('\Foundry\Core\Logging\Log');
 /**
  * Role Management API.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Access
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

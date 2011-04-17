@@ -2,7 +2,7 @@
 /**
  * Configuration Options.
  *
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Config
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -16,7 +16,7 @@ use \Foundry\Core\Model;
 /**
  * Configuration Options.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core\Config
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke

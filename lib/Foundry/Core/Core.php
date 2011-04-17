@@ -2,7 +2,7 @@
 /**
  * Handles module loading and requiring of Core Library components.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
@@ -18,7 +18,7 @@ Core::provides('\Foundry\Core\Core');
 /**
  * Manages loading and retrieving Core Library components.
  * 
- * @category  foundry-core
+ * @category  Foundry-Core
  * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
  * @copyright 2010-2011 John Roepke
