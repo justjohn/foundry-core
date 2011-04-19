@@ -354,9 +354,9 @@ class LDAP implements AuthService, AuthServiceSubgroups {
         $attributes = $this->ldap_attributes;
         $search = "(" . $attributes->groupNameAttr . "=" . $groupname . ")";
         $entry = $attributes->groupDN . "," . $attributes->baseDN;
-        $group_results = $this->getGroups($search);
-        if (isset($group_results[$goupname])) {
-            return $group_results[$goupname];
+        $groups = $this->getGroups($search);
+        if (isset($groups[$groupname])) {
+            return $groups[$groupname];
         } else {
             return false;
         }
@@ -391,7 +391,6 @@ class LDAP implements AuthService, AuthServiceSubgroups {
         }
         $entry = $attributes->groupDN . "," . $attributes->baseDN;
         $group_results = ldap_search($this->ldap_conn, $entry, $search);
-
         if ($group_results !== false) {
             $entries = ldap_get_entries($this->ldap_conn, $group_results);
             if ($entries["count"] > 0) {
