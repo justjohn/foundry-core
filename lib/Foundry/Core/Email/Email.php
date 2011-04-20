@@ -56,6 +56,10 @@ class Email {
         $port = $options['port'];
         $username = $options['username'];
         $password = $options['password'];
+        $ssl = $options['ssl'];
+        if ($ssl) {
+            $host = "ssl://$host";
+        }
 
         $mail_options = array('host' => $host, 'port' => $port);
         if ($username != '') {
