@@ -25,7 +25,6 @@ require_once("Foundry/Core/Core.php");
 Core::provides('\Foundry\Core\Utilities\Renderer', 'Foundry/Core/Utilities/Renderer.php', false);
 
 // Core functionality (pre-load)
-Core::provides('\Foundry\Core\Exceptions', 'Foundry/Core/Exceptions.php', false,    true);
 Core::provides('\Foundry\Core\Service',    'Foundry/Core/Service.php',    false,    true);
 Core::provides('\Foundry\Core\Model',      'Foundry/Core/Model.php',      false,    true);
 
