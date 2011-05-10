@@ -45,5 +45,5 @@ Include 'INSTALL_PATH/lib/_foundry_core_init.php' and consult the documentation 
 License
 -------
 
-The foundry core framework is licenced under the new BSD License. See the LICENSE file for details.
+The foundry core framework is licensed under the new BSD License. See the LICENSE file for details.
 
