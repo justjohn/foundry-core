@@ -28,6 +28,7 @@ Core::provides('\Foundry\Core\Utilities\Renderer', 'Foundry/Core/Utilities/Rende
 Core::provides('\Foundry\Core\Exceptions', 'Foundry/Core/Exceptions.php', false,    true);
 Core::provides('\Foundry\Core\Service',    'Foundry/Core/Service.php',    false,    true);
 Core::provides('\Foundry\Core\Model',      'Foundry/Core/Model.php',      false,    true);
+Core::provides('\Foundry\Core\BaseModel',  'Foundry/Core/BaseModel.php',  false,    true);
 
 // Additional modules
 Core::provides('\Foundry\Core\Access\Access',     'Foundry/Core/Access/Access.php');
