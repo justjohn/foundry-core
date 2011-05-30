@@ -49,7 +49,7 @@ class Mongo extends \Mongo implements DatabaseService {
             $this->db = parent::selectDB($options["db"]);
             
         } catch (\MongoConnectionException $exception) {
-            throw new ServiceConnectionException("Unable to connect to MongoDB.");
+            throw new ServiceConnectionException("Unable to connect to MongoDB." . $exception->getMessage());
         }
     }
 
