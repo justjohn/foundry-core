@@ -94,7 +94,6 @@ class Log {
         }
     }
 }
-
 Log::$log_function = function(LogEntry $log_entry) {
     error_log($log_entry);
 };

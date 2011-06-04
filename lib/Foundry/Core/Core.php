@@ -90,7 +90,6 @@ class Core {
         if (isset(self::$included_components[$component_name])) {
             return self::$component_instance[$component_name];
         }
-        
         if (isset(self::$provided_components[$component_name])) {
             $result = include_once(self::$provided_components[$component_name]);
             self::$included_components[$component_name] = true;
