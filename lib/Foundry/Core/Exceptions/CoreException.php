@@ -39,8 +39,10 @@ abstract class CoreException extends \Exception
 
     public function __toString()
     {
-        return get_class($this) . " '{$this->message}' in {$this->file}({$this->line})\n"
-                                . "{$this->getTraceAsString()}";
+        return "<pre>" .
+                  get_class($this) . ": {$this->message}\n{$this->file}({$this->line})\n\n"
+                                   . "{$this->getTraceAsString()}"
+             . "</pre>";
     }
 }
 ?>

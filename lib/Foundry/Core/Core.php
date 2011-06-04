@@ -190,9 +190,12 @@ function __autoload($class_name) {
     }
     $file_name .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
 
-    $result = include $file_name;
-    
-    return $result !== false;
+    if (file_exists($file_name)) {
+        $result = include $file_name;
+        return $result !== false;
+    } else {
+        return false;
+    }
 }
 
 Core::registerAutoloader();

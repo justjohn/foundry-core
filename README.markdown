@@ -9,6 +9,7 @@ The Foundry Core libraries are an on-demand framework that provides infrastructu
 For example, you can configure and load a Mongo database connection with the following snippets:
 
 configuration.php
+
     <?php
     // Provide configuration for the database
     Core::configure('\foundry\core\database\Database',
@@ -23,6 +24,7 @@ configuration.php
     ?>
 
 index.php
+
     <?php
     require_once('configuration.php');
     
