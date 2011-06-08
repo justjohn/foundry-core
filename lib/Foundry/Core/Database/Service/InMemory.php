@@ -68,6 +68,7 @@ class InMemory implements DatabaseService {
         if (!class_exists($classname)) {
             return false;
         }
+        if (!isset($this->data[$db_key])) $this->data[$db_key] = array();
         $data =  $this->data[$db_key];
         $output = $this->match_conditions($data, $conditions, $classname, $keyfield);
         $output = $this->sort_objects($output, $sort_rules);
@@ -131,6 +132,7 @@ class InMemory implements DatabaseService {
      * @return integer|boolean The count on success, false on failure.
      */
     public function count_objects($db_key, array $conditions = array()) {
+        if (!isset($this->data[$db_key])) $this->data[$db_key] = array();
         return count($this->data[$db_key]);
     }
 
@@ -166,6 +168,7 @@ class InMemory implements DatabaseService {
      */
     public function write_object(Model $object, $db_key) {
         $new_id = $this->create_id();
+        if (!isset($this->data[$db_key])) $this->data[$db_key] = array();
         $this->data[$db_key][$new_id] = $object;
         return true;
     }
@@ -181,10 +184,23 @@ class InMemory implements DatabaseService {
      */
     public function update_object(Model $object, $db_key,
                                   array $conditions, array $updatefields) {
+        if (!isset($this->data[$db_key])) $this->data[$db_key] = array();
         $objects = $this->data[$db_key];
         if (count($objects) > 0) {
-            foreach ($objects as $obj) {
-                
+            foreach ($objects as $key=>$obj) {
+                $match = true;
+                foreach ($conditions as $field=>$value) {
+                    if ($obj->get($field) != $value) {
+                        $match = false;
+                        break;
+                    }
+                }
+                if ($match) {
+                    foreach ($updatefields as $field) {
+                        $obj->set($field, $object->get($field));
+                    }
+                    $this->data[$key] = $obj;
+                }
             }
         }
     }
@@ -197,6 +213,7 @@ class InMemory implements DatabaseService {
      * @return boolean true on success, false on failure.
      */
     public function delete_object($db_key, array $conditions) {
+        if (!isset($this->data[$db_key])) $this->data[$db_key] = array();
         $data = $this->data[$db_key];
         $to_delete = array();
         if (count($data) > 0) {
