@@ -11,7 +11,8 @@
  */
 namespace Foundry\Core;
 
-use \Foundry\Core\Exceptions\ServiceLoadException;
+use Foundry\Core\Exceptions\ServiceLoadException;
+use Foundry\Core\Utilities\File;
 
 Core::provides('\Foundry\Core\Core');
 
@@ -188,9 +189,12 @@ function __autoload($class_name) {
         $file_name  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
     }
     $file_name .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
-
-    $result = @include $file_name;
-    return $result !== false;
+    if (File::file_exists($file_name)) {
+        $result = include $file_name;
+        return $result !== false;
+    } else {
+        return false;
+    }
 }
 
 Core::registerAutoloader();

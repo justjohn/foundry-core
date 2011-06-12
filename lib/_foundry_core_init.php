@@ -19,6 +19,7 @@ set_include_path(get_include_path() .
 require_once("Foundry/Core/Functions/common.php");
 
 // Load Core component and autoloader.
+require_once("Foundry/Core/Utilities/File.php");
 require_once("Foundry/Core/Core.php");
 
 // Utilities
