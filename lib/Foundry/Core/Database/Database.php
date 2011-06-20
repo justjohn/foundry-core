@@ -78,8 +78,23 @@ class Database
      * @param array  $conditions The conditions for the database query in an array of the format:
      *                              array(
      *                                  field => value  OR
-     *                                  field => array(operator, value)
+     *                                  field => array(operator, value),
+     *                                  'or' => See below
+     *                                  ...
      *                              )
+     *                            Where operator is '<' ,'>', '!=' or '='. If an operator is not
+     *                            provided it is assumed to be '='.
+     * 
+     *                              array(
+     *                                  'or' => array(
+     *                                      array( conditions ),
+     *                                      array( conditions ),
+     *                                      ...
+     *                                  )
+     *                              )
+     *                            If the field is 'or' and value is an array, value will
+     *                            be treated as a set of conditinos for the 'or'.
+     * 
      * @param array  $sort_rules An array of sorting rules in the form:
      *                             array("field" => "DESC"/"ASC", ...)
      * @param array  $limits     An array with limit conditions either in the form:

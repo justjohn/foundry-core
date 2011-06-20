@@ -59,29 +59,38 @@ class Mongo extends \Mongo implements DatabaseService {
      *
      * @param array $rules
      */
-    private function get_conditions(array $rules, Model $obj=NULL) {
+    private function get_conditions(array $rules,
+                                    Model $obj=NULL) {
         $condition = array();
         if (count($rules) > 0) {
             // Build where caluse
             foreach($rules as $key=>$value) {
                 $key = strtolower($key);
-                $op = "";
-                if (is_array($value)) {
-                    $op = $value[0];
-                    $value = $value[1];
-                }
-                if ($obj !== NULL) {
-                    $type = $obj->getFieldType($key);
-                    if ($type == Model::INT) $value = intval($value);
-                }
-                if (empty($op)) {
-                    $condition[$key] = $value;
+                if ($key == 'or') {
+                    $condition['$or'] = array();
+                    foreach($value as $cond) {
+                        $condition['$or'][] = $this->get_conditions($cond);
+                    }
                 } else {
-                    if ($op == '>') $op = '$gt';
-                    else if ($op == '<') $op = '$lt';
-                    else if ($op == '!=') $op = '$ne';
-                    if (!isset($condition[$key])) $condition[$key] = array();
-                    $condition[$key][$op] = $value;
+                    $op = "";
+                    if (is_array($value)) {
+                        $op = $value[0];
+                        $value = $value[1];
+                    }
+                    if ($obj !== NULL) {
+                        $type = $obj->getFieldType($key);
+                        if ($type == Model::INT) $value = intval($value);
+                    }
+                    if (empty($op)) {
+                        $condition[$key] = $value;
+                    } else {
+                        if ($op == '>') $op = '$gt';
+                        else if ($op == '<') $op = '$lt';
+                        else if ($op == '!=') $op = '$ne';
+
+                        if (!isset($condition[$key])) $condition[$key] = array();
+                        $condition[$key][$op] = $value;
+                    }
                 }
             }
         }
@@ -295,6 +304,7 @@ class Mongo extends \Mongo implements DatabaseService {
      * @return boolean true on success, false on failure.
      */
     public function delete_object($collection_name, array $conditions) {
+        if (empty($collection_name)) return false;
         $collection = $this->db->selectCollection($collection_name);
         $condition = $this->get_conditions($conditions);
         try {
