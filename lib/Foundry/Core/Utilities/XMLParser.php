@@ -32,7 +32,7 @@ class XMLParser {
   private $pointer;
 
   /**
-   * $domObj = new xmlToArrayParser($xml);
+   * $domObj = new XMLParser($xml);
    *
    * @param Str $xml file/string
    */
