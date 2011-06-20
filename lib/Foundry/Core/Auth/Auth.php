@@ -66,6 +66,21 @@ class Auth
      * @var string
      */
     private $user;
+    /**
+     * The password hashing salt.
+     * @var string
+     */
+    private $salt;
+    /**
+     * The algorithm to hash password with.
+     * @var string
+     */
+    private $hash_algorithm = "sha256";
+    /**
+     * The number of times to hash the password.
+     * @var string
+     */
+    private $hash_rounds = 200;
 
     /**
      * Cache authentication results locally.
@@ -90,7 +105,10 @@ class Auth
         Service::validate($config, self::$required_options);
         $auth_service = $config["service"];
         $auth_config = $config["service_config"];
-        $admin_group = $config["admin_group"];
+        $this->admin_group = $config["admin_group"];
+        if (isset($config["hash_algorithm"])) $this->hash_algorithm = $config["hash_algorithm"];
+        if (isset($config["hash_rounds"])) $this->hash_rounds = $config["hash_rounds"];
+
         // include auth class
         if (!class_exists($auth_service)) {
             Log::error("Auth::__construct", "Unable to load auth class '$auth_service'.");
@@ -98,7 +116,6 @@ class Auth
         } else {
             $this->auth_service = new $auth_service($auth_config);
         }
-        $this->admin_group = $admin_group;
     }
 
     /**
@@ -663,6 +680,22 @@ class Auth
     public function getAuthService()
     {
         return $this->auth_service;
+    }
+
+    /**
+     * Salt and hash a password with multiple rounds of hashing.
+     *
+     * @param $password The password string to hash.
+     *
+     * @return Returns a hashed and salted version of the password.
+     */
+    public function hashPassword($password)
+    {
+        $hash = $password;
+        for ($i=0;$i<200;$i++) {
+            $hash = hash($this->salt . $hash, "sha256");
+        }
+        return $hash;
     }
 }
 

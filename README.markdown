@@ -29,9 +29,12 @@ index.php
     require_once('configuration.php');
     
     // Require the database library
-    Core::requires('\foundry\core\database\Database');
+    // This loads and caches a database object for later use in the framework.
+    $database = Core::requires('\foundry\core\database\Database');
     
-    // Get the loaded module
+    // snip...
+
+    // You can also get the same loaded module later on with
     $database = Core::get('\foundry\core\database\Database');
     ?>
 
