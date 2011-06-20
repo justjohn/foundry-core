@@ -219,12 +219,22 @@ class BaseModel implements Model {
     }
     
     /**
-     * Get all the fields in the object.
+     * Get all the fields in the object except (optinally) the index field.
      *
-     * @return array An array of field names.
+     * @param boolean $include_index Whether to include the model index
+     *                               field in the returned fields.
+     * 
+     * @return array An array of field types keyed by field name.
      */
-    public function getFields() {
-        return $this->fields;
+    public function getFields($include_index = true) {
+        if ($include_index) {
+            return $this->fields;
+        } else {
+            return array_diff_key(
+                $this->fields,
+                array("id" => "id")
+            );
+        }
     }
 
     /**
@@ -233,7 +243,8 @@ class BaseModel implements Model {
      *
      * @param string $fieldname
      * 
-     * @return mixed false if the field doesn't exist, the field type as a string if it does exist.
+     * @return mixed false if the field doesn't exist, the field type
+     *               as a string if it does exist.
      */
     public function getFieldType($fieldname) {
         if (isset($this->fields[$fieldname])) {
