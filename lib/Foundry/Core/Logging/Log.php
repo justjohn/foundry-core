@@ -32,12 +32,12 @@ class Log {
     /**
      * The minimum level to log.
      */
-    private static $level = self::WARN;
+    private static $level = self::INFO;
     
     public static $log_function;
     public static $user_function;
 
-    function __construct($level = self::WARN,
+    function __construct($level = self::INFO,
                          \Closure $log_function = NULL,
                          \Closure $user_function = NULL ) {
         self::$level = $level;

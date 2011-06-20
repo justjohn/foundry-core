@@ -31,9 +31,15 @@ class BaseModel implements Model {
      * @var array
      */
     private $data = array();
+    /**
+     * Does this model allow custom fields.
+     * @var boolean
+     */
+    private $expandable = false;
 
-    function __construct(array $fields, $key_field) {
+    function __construct(array $fields, $key_field, $expandable=false) {
         $this->key_field = strtolower($key_field);
+        $this->expandable = $expandable;
 
         if (!empty($fields)) {
             foreach ($fields as $field_orig=>$type) {
