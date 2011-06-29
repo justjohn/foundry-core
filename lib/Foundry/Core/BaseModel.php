@@ -11,11 +11,18 @@
  */
 namespace Foundry\Core;
 
+use Foundry\Core\Exceptions\MethodDoesNotExistException;
+use Foundry\Core\Exceptions\FieldDoesNotExistException;
+use Foundry\Core\Exceptions\FieldNameNotValidException;
+
 /**
  * A base implementation of the Model that overrides _call to provide dynamic
  * access to set/get methods.
  */
 class BaseModel implements Model {
+    /** Fields reserved because methods get... exist in the Model class. */
+    public static $reserved_fields = array("fields", "fieldtype", "keyfield");
+    
     /**
      * The key field.
      * @var string
@@ -39,6 +46,9 @@ class BaseModel implements Model {
             foreach ($fields as $field_orig=>$type) {
                 // get cannonical field name (lowercase)
                 $field = strtolower($field_orig);
+                if (in_array($field, self::$reserved_fields))
+                        throw new FieldNameNotValidException("Field name $field is a reserved name.");
+                
                 $this->fields[$field] = $type;
                 switch ($type) {
                     case Model::BOOL:
@@ -66,7 +76,7 @@ class BaseModel implements Model {
      * @param string $name The name of the function to handle.
      * @param array $arguments The function arguments.
      * 
-     * @throws \Foundry\Core\Exceptions\MethodDoesNotExistException If the field being
+     * @throws MethodDoesNotExistException If the field being
      *         referenced by a set/get function does not exist.
      */
     function __call($name, $arguments) {
@@ -87,7 +97,7 @@ class BaseModel implements Model {
 
         // check field name
         if (!isset($this->fields[$field])) {
-            throw new \Foundry\Core\Exceptions\MethodDoesNotExistException("Field $field does not exist.");
+            throw new MethodDoesNotExistException("Field $field does not exist.");
         }
 
         if ($set) {
@@ -120,13 +130,13 @@ class BaseModel implements Model {
      * @param string $field The field to set.
      * @param object $data The data to set in the field.
      * 
-     * @throws \Foundry\Core\Exceptions\FieldDoesNotExistException
+     * @throws FieldDoesNotExistException
      */
     public function set($field, $data) {
         $field = strtolower($field);
         // check field name
         if (!isset($this->fields[$field])) {
-            throw new \Foundry\Core\Exceptions\FieldDoesNotExistException("Field $field does not exist.");
+            throw new FieldDoesNotExistException("Field $field does not exist.");
         }
         // Cast data to the appropriate type
         switch ($this->fields[$field]) {

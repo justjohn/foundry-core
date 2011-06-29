@@ -26,7 +26,7 @@ interface Model {
     const INT  = "int";
     const LST  = "list";
     const BOOL = "boolean";
-
+    
     /**
      * Get all the fields in the database.
      * 
