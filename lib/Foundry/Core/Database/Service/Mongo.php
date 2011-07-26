@@ -145,7 +145,7 @@ class Mongo extends \Mongo implements DatabaseService {
 
         $obj = new $classname();
         $fields = $obj->getFields();
-        if (count($fields) == 0) return false;
+        if (count($fields) == 0 && !$obj->isExpandable()) return false;
 
         $objects = array();
         $collection = $this->db->selectCollection($collection_name);
@@ -180,14 +180,22 @@ class Mongo extends \Mongo implements DatabaseService {
                 if ($i++ < $start) continue;
                 
                 $obj = new $classname();
-                foreach ($fields as $field => $type) {
-                    try {
-                        if (isset($record[$field])) {
-                            $obj->set($field, $record[$field]);
+                if ($obj->isExpandable()) {
+                    foreach ($record as $field => $value) {
+                        if ($field != "_id") {
+                            $obj->set($field, $value);
                         }
-                    } catch (FieldDoesNotExistException $exception) {
-                        // Field doesn't exist
-                        throw FieldDoesNotExistException("Field $field doesn't exist in $classname");
+                    }
+                } else {
+                    foreach ($fields as $field => $type) {
+                        try {
+                            if (isset($record[$field])) {
+                                $obj->set($field, $record[$field]);
+                            }
+                        } catch (FieldDoesNotExistException $exception) {
+                            // Field doesn't exist
+                            throw FieldDoesNotExistException("Field $field doesn't exist in $classname");
+                        }
                     }
                 }
                 if (!empty($key)) {

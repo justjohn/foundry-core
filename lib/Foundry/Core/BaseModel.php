@@ -102,7 +102,7 @@ class BaseModel implements Model {
         $field = strtolower($matches[1]);
 
         // check field name
-        if (!isset($this->fields[$field])) {
+        if (!isset($this->fields[$field]) && !$this->expandable) {
             throw new MethodDoesNotExistException("Field $field does not exist.");
         }
 
@@ -114,6 +114,9 @@ class BaseModel implements Model {
             $this->set($field, $data);
             
         } else {
+            if (!isset($this->data[$field])) {
+                $this->data[$field] = "";
+            }
             return $this->data[$field];
         }
     }
@@ -141,9 +144,10 @@ class BaseModel implements Model {
     public function set($field, $data) {
         $field = strtolower($field);
         // check field name
-        if (!isset($this->fields[$field])) {
+        if (!isset($this->fields[$field]) && !$this->expandable) {
             throw new FieldDoesNotExistException("Field $field does not exist.");
         }
+        if (!isset($this->fields[$field])) $this->fields[$field] = Model::STR;
         // Cast data to the appropriate type
         switch ($this->fields[$field]) {
             case Model::BOOL:
@@ -172,8 +176,12 @@ class BaseModel implements Model {
     public function get($field) {
         $field = strtolower($field);
         // check field name
-        if (!isset($this->fields[$field])) {
+        if (!isset($this->fields[$field]) && !$this->expandable) {
             throw new \Foundry\Core\Exceptions\FieldDoesNotExistException("Field $field does not exist.");
+        }
+        
+        if (!isset($this->data[$field])) {
+            $this->data[$field] = '';
         }
 
         return $this->data[$field];
@@ -277,6 +285,10 @@ class BaseModel implements Model {
      */
     public function getKeyField() {
         return $this->key_field;
+    }
+    
+    public function isExpandable() {
+        return $this->expandable;
     }
 }
 
