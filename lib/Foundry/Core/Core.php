@@ -1,7 +1,7 @@
 <?php
 /**
- * Handles module loading and requiring of Core Library components.
- * 
+ * Handles class loading and requiring of Core Library components.
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
@@ -18,7 +18,7 @@ Core::provides('\Foundry\Core\Core');
 
 /**
  * Manages loading and retrieving Core Library components.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
@@ -31,7 +31,7 @@ class Core {
 
     /**
      * Register the location of a class for the autoloader.
-     * 
+     *
      * @param string $class_name The name of the class.
      * @param string $class_file The location of the file containing the class.
      */
@@ -51,10 +51,10 @@ class Core {
     public static $provided_components = array();
     public static $required_components = array();
     public static $should_load_instance = array();
-    
+
     /**
      * Register a component and provide it's location on disk.
-     * 
+     *
      * @param string $component_name The component class name (including namespace).
      * @param string $file_location The location on disk of the component.
      * @param boolean $instantiate_on_load Should an instance of the class with the
@@ -66,6 +66,14 @@ class Core {
                              $file_location = false,
                              $instantiate_on_load = true,
                              $load_immediately = false) {
+
+        // Strip variant from the component name since it's not relevant in the context of
+        // providing a component. This is an edge case since a well-defined component won't do this.
+        if (strpos($component_name, "::") !== false) {
+            $variant_name = "";
+            list($component_name, $variant_name) = explode("::", $component_name);
+        }
+
         self::$provided_components[$component_name] = $file_location;
         self::$should_load_instance[$component_name] = $instantiate_on_load;
         if ($file_location === false) {
@@ -76,24 +84,29 @@ class Core {
             Core::requires($component_name);
         }
     }
-    
+
     /**
      * Mark a module as required and load it (if it isn.'t already loaded)
-     * 
-     * @param string $component_name The module name.
-     * 
+     *
+     * @param string $full_component_name The module name optionally including a variant.
+     *
      * @return mixed A loaded instance of the component if it is configured to
      *               instantiate on load, true if not.
-     * 
+     *
      * @throws ServiceLoadException if the component doesn't exists or can't be loaded.
      */
-    static function requires($component_name) {
-        if (isset(self::$included_components[$component_name])) {
-            return self::$component_instance[$component_name];
+    static function requires($full_component_name) {
+        $component_name = $full_component_name;
+        $variant_name = "";
+        if (strpos($component_name, "::") !== false) {
+            list($component_name, $variant_name) = explode("::", $full_component_name);
+        }
+        if (isset(self::$included_components[$full_component_name])) {
+            return self::$component_instance[$full_component_name];
         }
         if (isset(self::$provided_components[$component_name])) {
             $result = include_once(self::$provided_components[$component_name]);
-            self::$included_components[$component_name] = true;
+            self::$included_components[$full_component_name] = true;
             if ($result === false) {
                 throw new ServiceLoadException(
                         "Unable to load module '$component_name': Check that '" .
@@ -102,13 +115,13 @@ class Core {
             } else {
                 if (self::$should_load_instance[$component_name]) {
                     // Load configuration and pass to instance
-                    $config = self::getConfig($component_name);
+                    $config = self::getConfig($full_component_name);
                     $instance = new $component_name($config);
-                    self::$component_instance[$component_name] = $instance;
+                    self::$component_instance[$full_component_name] = $instance;
                     return $instance;
                 } else {
                     // Don't need to load an instance.
-                    self::$component_instance[$component_name] = 1;
+                    self::$component_instance[$full_component_name] = 1;
                     return true;
                 }
             }
@@ -118,50 +131,50 @@ class Core {
                 "registered with the classloader");
         }
     }
-    
+
     public static $component_config = array();
-    
+
     /**
      * Provide configuration information for a component.
-     * 
-     * @param string $component_name The name of the component to store configuration options for.
+     *
+     * @param string $full_component_name The name of the component to store configuration options.
      * @param array $configuration The configuration options to store.
      */
-    static function configure($component_name, $configuration) {
-        if (empty($component_name) || empty($configuration)) return;
-        self::$component_config[$component_name] = $configuration;
+    static function configure($full_component_name, $configuration) {
+        if (empty($full_component_name) || empty($configuration)) return;
+        self::$component_config[$full_component_name] = $configuration;
     }
-    
+
     /**
      * Get the previously set configuration parameters for a component.
      *
-     * @param string $component_name The name of the component to get configuration for.
-     * 
+     * @param string $full_component_name The name of the component to get configuration for.
+     *
      * @return array|boolean The array of configuration parameters or false if none
      *         have been provided.
      */
-    static function getConfig($component_name) {
-        if (isset(self::$component_config[$component_name])) {
-            return self::$component_config[$component_name];
+    static function getConfig($full_component_name) {
+        if (isset(self::$component_config[$full_component_name])) {
+            return self::$component_config[$full_component_name];
         } else {
             return false;
         }
     }
-    
+
     public static $component_instance = array();
-    
+
     /**
      * Get a previously loaded instance of a component.
      *
-     * @param string $component_name The name of the component to get a previously
-     *        loaded instance of.
-     * 
+     * @param string $full_component_name The name of the component to get from previously loaded
+     *                                    compoenents.
+     *
      * @return mixed The previously loded instance of the class or false if the
      *         component doesn't exist or hasn't been required yet.
      */
-    static function get($component_name) {
-        if (isset(self::$component_instance[$component_name])) {
-            return self::$component_instance[$component_name]; 
+    static function get($full_component_name) {
+        if (isset(self::$component_instance[$full_component_name])) {
+            return self::$component_instance[$full_component_name];
         }
         return false;
     }
@@ -170,7 +183,7 @@ class Core {
 /**
  * Autoload classes first from the models directory, then if that fails follow the
  * psr-0 autoloader guidelines.
- * 
+ *
  * @param string $class_name
  * @since 1.0.0
  * @link http://groups.google.com/group/php-standards/web/psr-0-final-proposal
