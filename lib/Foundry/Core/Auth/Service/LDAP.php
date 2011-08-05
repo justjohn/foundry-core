@@ -408,9 +408,7 @@ class LDAP implements AuthService, AuthServiceSubgroups {
                                 if (strpos($user, $attributes->userDN.",".$attributes->baseDN) !== false) {
                                     $user = str_replace(",".$attributes->userDN.",".$attributes->baseDN, "", $user);
                                     $user = str_replace($attributes->groupNameAttr."=", "", $user);
-                                    if ($this->userExists($user)) {
-                                        $users[$user] = $user;
-                                    }
+                                    if (!empty($user)) $users[$user] = $user;
                                 }
                                 if (strpos($user, $attributes->groupDN.",".$attributes->baseDN) !== false) {
                                     $user = str_replace(",".$attributes->groupDN.",".$attributes->baseDN, "", $user);
