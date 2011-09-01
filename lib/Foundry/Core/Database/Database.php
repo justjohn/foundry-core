@@ -1,16 +1,16 @@
 <?php
 /**
  * Database API and service loader.
- * 
+ *
  * This component contains the database API and code for loading database
  * services from the Database/Services directory.
- * 
+ *
  * Currently there are three available services:
  * 1. Mysql: Load data from a MySQL database.
  * 2. Mongo: Load data from a MongoDB database.
  * 3. InMemory: Stores data in memory until the end of script execution.
  *              The reference implementation; primarily for testing other components.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
@@ -30,7 +30,7 @@ Core::requires('\Foundry\Core\Logging\Log');
 
 /**
  * The Database API.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
@@ -51,10 +51,10 @@ class Database
      * @var DatabaseService
      */
     private $database;
-    
+
     /**
      * Create a Database component.
-     * 
+     *
      * @param array $config The database configuration.
      */
     function __construct(array $config)
@@ -68,7 +68,7 @@ class Database
         }
         $this->database = new $db_service($db_config);
     }
-    
+
     /**
      * Load objects from a table in the database.
      *
@@ -79,14 +79,20 @@ class Database
      *                              array(
      *                                  field => value  OR
      *                                  field => array(operator, value),
+     *                                  field => array(array(operator, value), //Multiple conditions
+     *                                                 array(operator, value)) //for the same field.
      *                                  'or' => See below
      *                                  ...
      *                              )
      *                            Where operator is '<' ,'>', '!=' or '='. If an operator is not
      *                            provided it is assumed to be '='.
-     * 
+     *
+     *                            Handling 'or' conditions:
+     *                              Using the folowing syntax you can build queries that match any
+     *                              of the given conditions.
+     *
      *                              array(
-     *                                  'or' => array(
+     *                                  'or/and' => array(
      *                                      array( conditions ),
      *                                      array( conditions ),
      *                                      ...
@@ -94,13 +100,13 @@ class Database
      *                              )
      *                            If the field is 'or' and value is an array, value will
      *                            be treated as a set of conditinos for the 'or'.
-     * 
+     *
      * @param array  $sort_rules An array of sorting rules in the form:
      *                             array("field" => "DESC"/"ASC", ...)
      * @param array  $limits     An array with limit conditions either in the form:
      *                              array("count")  or
      *                              array("start", "count")
-     * 
+     *
      * @return object|boolean An array of $classname instances keyed by the $key field (if set),
      *                        false on failure.
      */
@@ -135,7 +141,7 @@ class Database
      *                                  field => value  OR
      *                                  field => array(operator, value)
      *                              )
-     * 
+     *
      * @return object An instance of $classname on success, false on failure.
      */
     public function load_object($classname, $db_key, array $conditions = array(), array $sort_rules = array())
@@ -148,7 +154,7 @@ class Database
      *
      * @param Model $object The object with the data to write into the database.
      * @param string $db_key The name of the table in the database.
-     * 
+     *
      * @return boolean Returns true on success, false on failure.
      */
     public function write_object(Model $object, $db_key)
@@ -167,7 +173,7 @@ class Database
      *                                  field => array(operator, value)
      *                              )
      * @param array  $updatefields An array of fields to update in each object.
-     * 
+     *
      * @return boolean Returns true on success, false on failure.
      */
     public function update_object(Model $object, $db_key, array $conditions, array $updatefields)
@@ -184,7 +190,7 @@ class Database
      *                                  field => value  OR
      *                                  field => array(operator, value)
      *                              )
-     * 
+     *
      * @return boolean Returns true on success, false on failure.
      */
     public function delete_object($db_key, array $conditions)

@@ -1,7 +1,7 @@
 <?php
 /**
  * A Mongo DB implementation of the DatabaseService.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core\Database\Service
  * @author    John Roepke <john@justjohn.us>
@@ -20,7 +20,7 @@ use Foundry\Core\Exceptions\FieldDoesNotExistException;
 
 /**
  * The Mongo implementation of DatabaseService.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core\Database\Service
  * @author    John Roepke <john@justjohn.us>
@@ -47,7 +47,7 @@ class Mongo extends \Mongo implements DatabaseService {
             parent::__construct("mongodb://$cred$host/" . $options["db"]);
             parent::connect();
             $this->db = parent::selectDB($options["db"]);
-            
+
         } catch (\MongoConnectionException $exception) {
             throw new ServiceConnectionException("Unable to connect to MongoDB." . $exception->getMessage());
         }
@@ -73,30 +73,49 @@ class Mongo extends \Mongo implements DatabaseService {
                     }
                 } else {
                     $op = "";
+                    $cond_arr = array();
                     if (is_array($value)) {
+                        if (is_array($value[0])) {
+                            // multiple conditions
+                            // should be in the form array(array(op, value), ...)
+                            $cond_arr = $value;
+                        } else {
+                            // $value should be array(op, value)
+                            $cond_arr = $value;
+                        }
+                    } else {
+                        // Single equals condition
+                        $cond_arr[] = array($op, $value);
+                    }
+                    // Loop through all conditions for the field
+                    if (count($cond_arr) > 0) foreach ($cond_arr as $value) {
                         $op = $value[0];
                         $value = $value[1];
                     }
-                    if ($obj !== NULL) {
-                        $type = $obj->getFieldType($key);
-                        if ($type == Model::INT) $value = intval($value);
-                    }
-                    if (empty($op)) {
-                        $condition[$key] = $value;
-                    } else {
-                        if ($op == '>') $op = '$gt';
-                        else if ($op == '<') $op = '$lt';
-                        else if ($op == '!=') $op = '$ne';
-
-                        if (!isset($condition[$key])) $condition[$key] = array();
-                        $condition[$key][$op] = $value;
-                    }
+                    $this->addConditionToArray($condition, $key, $op, $value, $obj);
                 }
             }
         }
         return $condition;
     }
-    
+
+    private function addConditionToArray(&$condition, $key, $op, $value, $obj) {
+        if ($obj !== NULL) {
+            $type = $obj->getFieldType($key);
+            if ($type == Model::INT) $value = intval($value);
+        }
+        if (empty($op)) {
+            $condition[$key] = $value;
+        } else {
+            if ($op == '>') $op = '$gt';
+            else if ($op == '<') $op = '$lt';
+            else if ($op == '!=') $op = '$ne';
+
+            if (!isset($condition[$key])) $condition[$key] = array();
+            $condition[$key][$op] = $value;
+        }
+    }
+
     /**
      * Get an array of sort values.
      *
@@ -107,16 +126,16 @@ class Mongo extends \Mongo implements DatabaseService {
         if (count($rules) > 0) {
             foreach ($rules as $key => $op) {
                 $key = strtolower($key);
-                
+
                 if ($op == "DESC") $op = -1;
                 else if ($op == "ASC") $op = 1;
-                
+
                 $sort[$key] = $op;
             }
         }
         return $sort;
     }
-    
+
     /**
      * Load objects from a table in the database.
      *
@@ -149,20 +168,20 @@ class Mongo extends \Mongo implements DatabaseService {
 
         $objects = array();
         $collection = $this->db->selectCollection($collection_name);
-        
+
         $condition = $this->get_conditions($conditions, $obj);
         //print("\tPre-condition: " . $cursor->count() . "\n");
-        
+
         //print("\tConditions:\n" . get_a($condition) . "\n");
         //print("\tSort:\n" . get_a($this->get_sort($sort_rules)) . "\n");
-        
+
         $cursor = $collection->find($condition);
-        
+
         //print("\tPre-sort: " . $cursor->count() . "\n");
         if (count($sort_rules) > 0) {
             $cursor = $cursor->sort($this->get_sort($sort_rules));
         }
-        
+
         $start = 0;
         $end = -1;
         if (count($limits) == 1) {
@@ -178,7 +197,7 @@ class Mongo extends \Mongo implements DatabaseService {
         if (count($cursor) > 0) {
             foreach ($cursor as $record) {
                 if ($i++ < $start) continue;
-                
+
                 $obj = new $classname();
                 if ($obj->isExpandable()) {
                     foreach ($record as $field => $value) {
@@ -208,11 +227,11 @@ class Mongo extends \Mongo implements DatabaseService {
                 } else {
                     $objects[] = $obj;
                 }
-                
+
                 if ($end >= 0 && $i >= $end) break;
             }
         }
-        return $objects;        
+        return $objects;
     }
 
     /**
@@ -225,7 +244,7 @@ class Mongo extends \Mongo implements DatabaseService {
      */
     public function count_objects($collection_name, array $conditions = array()) {
         $collection = $this->db->selectCollection($collection_name);
-        
+
         $condition = $this->get_conditions($conditions);
         $cursor = $collection->find($condition);
         return $cursor->count(true);
@@ -261,10 +280,10 @@ class Mongo extends \Mongo implements DatabaseService {
     public function write_object(Model $object, $collection_name) {
         $collection = $this->db->selectCollection($collection_name);
         $array = $object->asArray();
-        
+
         try {
             $collection->insert($array, true);
-            
+
         } catch (\MongoCursorException $exception) {
             return false;
         }
@@ -284,20 +303,20 @@ class Mongo extends \Mongo implements DatabaseService {
                                   array $conditions,
                                   array $updatefields) {
         if (count($updatefields) == 0) return false;
-        
+
         $collection = $this->db->selectCollection($collection_name);
         $array = $object->asArray();
         $condition = $this->get_conditions($conditions, $object);
-        
+
         $data = array();
         foreach ($updatefields as $field) {
             $field = strtolower($field);
             $data[$field] = $object->get($field);
         }
-        
+
         try {
             $collection->update($condition, array('$set'=>$data), array('multiple'=>true, 'safe'=>true));
-            
+
         } catch (\MongoCursorException $exception) {
             return false;
         }
