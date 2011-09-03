@@ -1,7 +1,7 @@
 <?php
 /**
  * A MySQL based implementation of the Database Service.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core\Database\Service
  * @author    John Roepke <john@justjohn.us>
@@ -18,7 +18,7 @@ use Foundry\Core\Exceptions\ServiceConnectionException;
 
 /**
  * The MySQL implementation of DatabaseService.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core\Database\Service
  * @author    John Roepke <john@justjohn.us>
@@ -251,7 +251,7 @@ class Mysql extends \mysqli implements DatabaseService {
      *
      * @param object $object The object with the data to write into the database.
      * @param string $tablename The name of the table in the database.
-     * @return boolean true on success, false on failure. 
+     * @return boolean true on success, false on failure.
      */
     public function write_object(Model $object, $tablename) {
 
@@ -398,6 +398,15 @@ class Mysql extends \mysqli implements DatabaseService {
         return true;
     }
 
+    /**
+     * Refresh the database connection. Useful if a long term connection is required and connection
+     * timeouts become an issue.
+     *
+     * @return boolean true if the connection was refreshed, false if not.
+     */
+    public function refresh_connection() {
+        // TODO: implement
+    }
 }
 
 ?>

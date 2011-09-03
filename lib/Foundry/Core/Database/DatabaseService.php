@@ -1,7 +1,7 @@
 <?php
 /**
  * The Database service interface.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
@@ -18,7 +18,7 @@ use Foundry\Core\Model;
  *
  * This interface treats all databases as object-based. For a table-based database
  * this is done by mapping object fields to table fields.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core\Database
  * @author    John Roepke <john@justjohn.us>
@@ -117,6 +117,13 @@ interface DatabaseService {
      */
     public function delete_object($db_key, array $conditions);
 
+    /**
+     * Refresh the database connection. Useful if a long term connection is required and connection
+     * timeouts become an issue.
+     *
+     * @return boolean true if the connection was refreshed, false if not.
+     */
+    public function refresh_connection();
 }
 
 ?>

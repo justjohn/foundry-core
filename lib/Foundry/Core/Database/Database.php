@@ -197,6 +197,16 @@ class Database
     {
         return $this->database->delete_object($db_key, $conditions);
     }
+
+    /**
+     * Refresh the database connection. Useful if a long term connection is required and connection
+     * timeouts become an issue.
+     *
+     * @return boolean true if the connection was refreshed, false if not.
+     */
+    public function refresh_connection() {
+        return $this->database->refresh_connection();
+    }
 }
 
 ?>

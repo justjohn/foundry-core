@@ -342,6 +342,17 @@ class Mongo extends \Mongo implements DatabaseService {
         return true;
     }
 
+    /**
+     * Refresh the database connection. Useful if a long term connection is required and connection
+     * timeouts become an issue.
+     *
+     * @return boolean true if the connection was refreshed, false if not.
+     */
+    public function refresh_connection() {
+        parent::close();
+        parent::connect();
+        $this->db = parent::selectDB($options["db"]);
+    }
 }
 
 ?>
