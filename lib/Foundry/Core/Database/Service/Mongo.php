@@ -81,7 +81,7 @@ class Mongo extends \Mongo implements DatabaseService {
                             $cond_arr = $value;
                         } else {
                             // $value should be array(op, value)
-                            $cond_arr = $value;
+                            $cond_arr[] = $value;
                         }
                     } else {
                         // Single equals condition
