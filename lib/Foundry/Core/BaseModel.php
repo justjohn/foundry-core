@@ -20,7 +20,8 @@ use Foundry\Core\Exceptions\FieldNameNotValidException;
  * access to set/get methods.
  */
 class BaseModel implements Model {
-    /** Fields reserved because methods get... exist in the Model class. */
+    /** Fields reserved because methods get... exist in the Model class. 
+     *  @var array */
     public static $reserved_fields = array("fields", "fieldtype", "keyfield");
     
     /**
@@ -28,16 +29,25 @@ class BaseModel implements Model {
      * @var string
      */
     private $key_field;
+    
     /**
      * The data model field names.
      * @var array
      */
     private $fields = array();
+    
     /**
      * The data stored in this model.
      * @var array
      */
     private $data = array();
+
+    /**
+     * Extra data (not stored in the db) but needed for output in asArray, asJSON, etc...
+     * @var array
+     */
+    private $extra_data = array();
+
     /**
      * Does this model allow custom fields.
      * @var boolean
@@ -191,7 +201,7 @@ class BaseModel implements Model {
      * Get the model as an array.
      */
     public function asArray() {
-        return $this->data;
+        return array_merge($this->data, $this->extra_data);
     }
     
     /**
@@ -199,8 +209,9 @@ class BaseModel implements Model {
      */
     public function asJSON() {
         Core::requires('\Foundry\Core\Utilities\Renderer');
-        
-        return \Foundry\Core\Utilities\Renderer::asJSON($this);
+
+        return json_encode($this->asArray());
+        // return \Foundry\Core\Utilities\Renderer::asJSON($this);
     }
 
     /**
@@ -289,6 +300,10 @@ class BaseModel implements Model {
     
     public function isExpandable() {
         return $this->expandable;
+    }
+
+    public function setExtraData(array $arr) {
+        $this->extra_data = $arr;
     }
 }
 
