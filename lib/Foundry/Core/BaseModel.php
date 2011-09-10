@@ -1,7 +1,7 @@
 <?php
 /**
  * The base implementation of the data model interface.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core
  * @author    John Roepke <john@justjohn.us>
@@ -20,22 +20,22 @@ use Foundry\Core\Exceptions\FieldNameNotValidException;
  * access to set/get methods.
  */
 class BaseModel implements Model {
-    /** Fields reserved because methods get... exist in the Model class. 
+    /** Fields reserved because methods get... exist in the Model class.
      *  @var array */
     public static $reserved_fields = array("fields", "fieldtype", "keyfield");
-    
+
     /**
      * The key field.
      * @var string
      */
     private $key_field;
-    
+
     /**
      * The data model field names.
      * @var array
      */
     private $fields = array();
-    
+
     /**
      * The data stored in this model.
      * @var array
@@ -64,7 +64,7 @@ class BaseModel implements Model {
                 $field = strtolower($field_orig);
                 if (in_array($field, self::$reserved_fields))
                         throw new FieldNameNotValidException("Field name $field is a reserved name.");
-                
+
                 $this->fields[$field] = $type;
                 switch ($type) {
                     case Model::BOOL:
@@ -88,10 +88,10 @@ class BaseModel implements Model {
 
     /**
      * Handle undefined functions (primarily set/get calls).
-     * 
+     *
      * @param string $name The name of the function to handle.
      * @param array $arguments The function arguments.
-     * 
+     *
      * @throws MethodDoesNotExistException If the field being
      *         referenced by a set/get function does not exist.
      */
@@ -122,7 +122,7 @@ class BaseModel implements Model {
                 $data = $arguments[0];
             }
             $this->set($field, $data);
-            
+
         } else {
             if (!isset($this->data[$field])) {
                 $this->data[$field] = "";
@@ -145,10 +145,10 @@ class BaseModel implements Model {
 
     /**
      * Set a field in the model.
-     * 
+     *
      * @param string $field The field to set.
      * @param object $data The data to set in the field.
-     * 
+     *
      * @throws FieldDoesNotExistException
      */
     public function set($field, $data) {
@@ -175,12 +175,12 @@ class BaseModel implements Model {
         }
         $this->data[$field] = $data;
     }
-    
+
     /**
      * Get the value of a single field.
-     * 
+     *
      * @param string $field The name of the field to get.
-     * 
+     *
      * @throws \Foundry\Core\Exceptions\FieldDoesNotExistException
      */
     public function get($field) {
@@ -189,29 +189,29 @@ class BaseModel implements Model {
         if (!isset($this->fields[$field]) && !$this->expandable) {
             throw new \Foundry\Core\Exceptions\FieldDoesNotExistException("Field $field does not exist.");
         }
-        
+
         if (!isset($this->data[$field])) {
             $this->data[$field] = '';
         }
 
         return $this->data[$field];
-    } 
-    
+    }
+
     /**
      * Get the model as an array.
      */
     public function asArray() {
         return array_merge($this->data, $this->extra_data);
     }
-    
+
     /**
      * Get the model as JSON.
      */
     public function asJSON() {
         Core::requires('\Foundry\Core\Utilities\Renderer');
 
-        return json_encode($this->asArray());
-        // return \Foundry\Core\Utilities\Renderer::asJSON($this);
+        // return json_encode($this->asArray());
+        return \Foundry\Core\Utilities\Renderer::asJSON($this);
     }
 
     /**
@@ -219,13 +219,13 @@ class BaseModel implements Model {
      */
     public function asXML() {
         Core::requires('\Foundry\Core\Utilities\Renderer');
-        
+
         return \Foundry\Core\Utilities\Renderer::asXML($this);
     }
 
     /**
      * Update values in this Model from a JSON export of the same Model type.
-     * 
+     *
      * @param string $json The exported JSON.
      */
     public function fromJSON($json) {
@@ -234,15 +234,15 @@ class BaseModel implements Model {
     }
     /**
      * Update values in this Model from a XML export of the same Model type.
-     * 
+     *
      * @param string $xml The exported XML.
      */
     public function fromXML($xml) {
-        
+
     }
     /**
      * Update values in this Model from an Array export of the same Model type.
-     * 
+     *
      * @param array $array The exported array.
      */
     public function fromArray(array $array) {
@@ -252,13 +252,13 @@ class BaseModel implements Model {
             }
         }
     }
-    
+
     /**
      * Get all the fields in the object except (optinally) the index field.
      *
      * @param boolean $include_index Whether to include the model index
      *                               field in the returned fields.
-     * 
+     *
      * @return array An array of field types keyed by field name.
      */
     public function getFields($include_index = true) {
@@ -277,7 +277,7 @@ class BaseModel implements Model {
      * See the list of consts in the Model class.
      *
      * @param string $fieldname
-     * 
+     *
      * @return mixed false if the field doesn't exist, the field type
      *               as a string if it does exist.
      */
@@ -297,7 +297,7 @@ class BaseModel implements Model {
     public function getKeyField() {
         return $this->key_field;
     }
-    
+
     public function isExpandable() {
         return $this->expandable;
     }
