@@ -31,10 +31,13 @@ use Foundry\Core\Exceptions\FieldDoesNotExistException;
 class Mongo extends \Mongo implements DatabaseService {
     public static $required_options = array("host", "db");
 
+    private $options;
+
     private $db;
 
     public function __construct($options) {
         Service::validate($options, self::$required_options);
+        $this->options = $options;
         $username = isset($options["username"])?$options["username"]:'';
         $password = isset($options["password"])?$options["password"]:'';
         $host = $options["host"];
@@ -351,7 +354,7 @@ class Mongo extends \Mongo implements DatabaseService {
     public function refresh_connection() {
         parent::close();
         parent::connect();
-        $this->db = parent::selectDB($options["db"]);
+        $this->db = parent::selectDB($this->options["db"]);
     }
 }
 
