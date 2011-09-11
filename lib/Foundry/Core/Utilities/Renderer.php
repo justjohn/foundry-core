@@ -70,19 +70,8 @@ class Renderer {
                 $type = $model->getFieldType($key);
                 if ($type == Model::INT) {
                     $value = intval($value);
-                } else if ($type == Model::LST || is_array($value)) {
-                    /* $values = "";
-                    $j = 0;
-                    foreach ($value as $item) {
-                        $item = self::jsonValue($item);
-                        $values .= "\t\t\t\t\"$item\"".(++$j<count($value)?",":"")."\n";
-                    }
-                    $value = " [" . (empty($values)?"":"\n$values\t\t\t") . "]"; */
-                    $value = self::jsonArray($value);
-                } else if ($type == Model::BOOL) {
-                    $value = $value?"true":"false";
-                } else { //  STR
-                    $value = self::jsonValue($value);
+                } else {
+                    $value = self::jsonIt($value);
                 }
                 $output .= "\t\t\t\"$key\": $value" . (++$i<count($data)?",":"") . "\n";
             }
@@ -91,17 +80,22 @@ class Renderer {
         return $output;
     }
 
+    private static function jsonIt($item) {
+        if (is_array($item)) {
+            $item = self::jsonArray($item);
+        } else if ($item instanceof Model) {
+            $item = $item->asJSON();
+        } else {
+            $item = self::jsonValue($item);
+        }
+        return $item;
+    }
+
     private static function jsonArray($arr) {
         $values = "";
         $j = 0;
         foreach ($arr as $item) {
-            if (is_array($item)) {
-                $item = self::jsonArray($item);
-            } else if ($item instanceof Model) {
-                $item = $item->asJSON();
-            } else {
-                $item = self::jsonValue($item);
-            }
+            $item = self::jsonIt($item);
             $values .= "\t\t\t\t$item".(++$j<count($arr)?",":"")."\n";
         }
         $value = " [" . (empty($values)?"":"\n$values\t\t\t") . "]";

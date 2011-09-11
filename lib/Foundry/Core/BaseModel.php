@@ -171,7 +171,7 @@ class BaseModel implements Model {
                 break;
             case Model::STR:
             default:
-                $data = (string)$data;
+                $data = $data;
         }
         $this->data[$field] = $data;
     }
