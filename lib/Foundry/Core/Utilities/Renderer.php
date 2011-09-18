@@ -63,7 +63,7 @@ class Renderer {
 
     static function asJSON(Model $model) {
         $data = $model->asArray();
-        $output = "\t\t{\n";
+        $output = "{";
         if (count($data) > 0) {
             $i = 0;
             foreach ($data as $key=>$value) {
@@ -73,10 +73,10 @@ class Renderer {
                 } else {
                     $value = self::jsonIt($value);
                 }
-                $output .= "\t\t\t\"$key\": $value" . (++$i<count($data)?",":"") . "\n";
+                $output .= "\"$key\": $value" . (++$i<count($data)?",":"");
             }
         }
-        $output .= "\t\t}";
+        $output .= "}";
         return $output;
     }
 
@@ -96,9 +96,9 @@ class Renderer {
         $j = 0;
         foreach ($arr as $item) {
             $item = self::jsonIt($item);
-            $values .= "\t\t\t\t$item".(++$j<count($arr)?",":"")."\n";
+            $values .= "$item".(++$j<count($arr)?",":"");
         }
-        $value = " [" . (empty($values)?"":"\n$values\t\t\t") . "]";
+        $value = " [$values]";
         return $value;
     }
 
