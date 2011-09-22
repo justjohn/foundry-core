@@ -1,7 +1,7 @@
 <?php
 /**
  * API for sending email via SMTP.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core\Email
  * @author    John Roepke <john@justjohn.us>
@@ -27,7 +27,7 @@ require_once 'Mail/mime.php';
 
 /**
  * Send emails.
- * 
+ *
  * @category  Foundry-Core
  * @package   Foundry\Core\Email
  * @author    John Roepke <john@justjohn.us>
@@ -87,7 +87,7 @@ class Email {
      */
     public function sendEmail($to, $subject, $body, $textbody = '', $from = '') {
         Log::info('Log::sendEmail', "sendEmail($to, $subject, ".get_a($body).", <pre>$textbody</pre>, $from)");
-        
+
         if (trim($to) == '') {
             return false;
         }
@@ -96,6 +96,7 @@ class Email {
         }
         $crlf = "\n";
         $headers = array ('To'           => $to,
+                          'Reply-To'     => $from,
                           'From'         => $from,
                           'Return-Path'  => $from,
                           'Subject'      => $this->prefix.' '.$subject);
